@@ -1,0 +1,31 @@
+<div class="center-box">
+    <div class="center-box-header">
+        <div class='organization-logo'><img src='{{ organization_logo }}'></div>
+        <h5 class='organization-name'>{{ organization_name }}</h5>
+    </div>
+
+    <form id='user-form' name="user" method="GET">
+        <div class='input-field'>
+            <label>Username</label>
+            <input id='username' name='username' type='text'>
+        </div>
+
+        <div class='input-field'>
+            <label>Password</label>
+            <input id='password' name='password' type='password' autocomplete="on">
+        </div>
+
+        <input type="hidden" name="login" value="true">
+
+        <div id='submit-block'>
+            <div><div id='login' class='btn btn-primary waves-light'>Log in</div></div>
+            <div id='login-error'></div>
+            <div id='forgot-password'>
+                <a href='forgot-password.php'>Forgot password</a>
+                &bull;
+                <a href="attendance.php">Attendance</a>
+            </div>
+        </div>
+
+    </form>
+</div>
