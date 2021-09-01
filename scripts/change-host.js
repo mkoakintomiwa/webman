@@ -48,6 +48,9 @@ let node_ids = fx.arg_node_ids(argv);
 
 
         if (!argv.d){
+
+            await fx.shell_exec(`webman cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
+
             await ssh.execute_command(`cd public_html && rm -rf ${node_id}.zip && zip -r ${node_id}.zip .`,node_ssh_connection);
 
             await ssh.execute_command(`cd public_html &&  node /nodejs/scp --host ${new_host_ip} --username ${new_host_username}  --password '${node.ssh.password}' --local-file-path '${node_id}.zip' --remote-file-path '/home/${new_host_username}/public_html/${node_id}.zip'`,node_ssh_connection);

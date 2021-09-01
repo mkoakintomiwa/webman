@@ -369,7 +369,9 @@ function run_command(node_id){
         });
     }
 
-    if (argv["node-id"]){
+    if (argv["n"]){
+        run_through = argv["n"].split(",");
+    }else if (argv["node-id"]){
         run_through = argv["node-id"].split(",");
     }else{
         if (!argv.steps) await info_prompt("Note: Node ID was not passed","general run","Enter");
