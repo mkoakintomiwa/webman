@@ -24,18 +24,12 @@ let node_ids = fx.arg_node_ids(argv);
         let node = fx.node(node_id);
 
         let new_host_ip = argv["h"] || await sx.info_prompt("New host IP Address > ","host","162.152.80.45");
-        let new_host_username = argv["u"] || await sx.info_prompt("New host username > ","username", node.ssh.username);
+        let new_host_username = argv["u"] || node.ssh.username;
 
         console.log("Connecting to servers...");
         
         let node_ssh_connection = await ssh.node_ssh_connection(node_id);
         let node_root_ssh_connection = await ssh.node_root_ssh_connection(node_id);
-        
-        let ssh_connection = await ssh.ssh_connection({
-            host: new_host_ip,
-            username: new_host_username,
-            password: node.ssh.password
-        });
 
         let config = fx.config();
         let new_host_root = config["roots"][new_host_ip];
@@ -44,6 +38,16 @@ let node_ids = fx.arg_node_ids(argv);
             host: new_host_ip,
             username: new_host_root.username,
             password: new_host_root.password
+        });
+
+
+        await ssh.execute_command(`wpanel account create -u ${new_host_username} -p ${node.ssh.password} -d ${node.domain_name}`,ssh_root_connection);
+
+
+        let ssh_connection = await ssh.ssh_connection({
+            host: new_host_ip,
+            username: new_host_username,
+            password: node.ssh.password
         });
 
 

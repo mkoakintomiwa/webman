@@ -5,12 +5,16 @@ const path = require("path")
 const ssh = require("./ssh");
 const sx = require("./stdout"); 
 var axios = require('axios');
+var Table = require('cli-table3');
 
 let document_root = fx.document_root();
 
 let node_id = fx.arg_node_ids(argv)[0];
 
 let node = fx.node(node_id);
+
+let cloudflareAccounts = JSON.parse(fs.readFileSync(path.join(document_root,".webman","cloudflare","accounts.json")));
+
 let cloudflare = node.cloudflare;
 
 if (cloudflare){
@@ -18,9 +22,12 @@ if (cloudflare){
     let context = argv._[0];
     let activity = argv._[1];
 
+    let email = cloudflare.email;
+    let account = cloudflareAccounts[email];
+
     let cloudflareHeaders = {
-        'X-Auth-Email': cloudflare.email,
-        'X-Auth-Key': cloudflare.auth_key,
+        'X-Auth-Email': email,
+        'X-Auth-Key': account.auth_key,
         'Content-Type': 'application/json'
     };
 
@@ -35,10 +42,22 @@ if (cloudflare){
             
                         axios({
                             method: 'get',
-                            url: `${cloudflareEndpoint}/zones/${cloudflare.zone_identifier}/dns_records`,
+                            url: `${cloudflareEndpoint}/zones/${cloudflare.zone.id}/dns_records?type=A`,
                             headers: cloudflareHeaders
                         }).then(function (response) {
-                            console.log(response.data);
+                            let records = response.data["result"];
+
+                            var table = new Table({
+                                head: ['DNS ID', 'Name', 'IP Address']
+                            });
+
+                            for(let record of records){
+                                table.push([record.id,record.name,record.content]);
+                            }
+
+                            console.log(table.toString());
+
+
                         }).catch(function (error) {
                             console.log(error);
                         });
@@ -50,11 +69,11 @@ if (cloudflare){
 
                         axios({
                             method: 'put',
-                            url: `${cloudflareEndpoint}/zones/${cloudflare.zone_identifier}/dns_records/${cloudflare.dns_identifier}`,
+                            url: `${cloudflareEndpoint}/zones/${cloudflare.zone.id}/dns_records/${cloudflare.dns.id}`,
                             headers: cloudflareHeaders,
                             data: JSON.stringify({
                                 "type":"A",
-                                "name": node.domain_name,
+                                "name": cloudflare.dns.name,
                                 "content":argv["h"],
                                 "ttl": 1,
                                 "proxied": true
