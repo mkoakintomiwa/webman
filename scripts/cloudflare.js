@@ -13,11 +13,12 @@ let node_id = fx.arg_node_ids(argv)[0];
 
 let node = fx.node(node_id);
 
-let cloudflareAccounts = JSON.parse(fs.readFileSync(path.join(document_root,".webman","cloudflare","accounts.json")));
-
 let cloudflare = node.cloudflare;
 
 if (cloudflare){
+
+    let cloudflareAccounts = JSON.parse(fs.readFileSync(path.join(document_root,".webman","cloudflare","accounts.json")));
+
 
     let context = argv._[0];
     let activity = argv._[1];
