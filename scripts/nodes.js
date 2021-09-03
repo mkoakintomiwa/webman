@@ -115,12 +115,12 @@ async function runNodes(){
         let records = await db.fetch(command,[],connection);
 
         var table = new Table({
-            head: ['Node ID', 'Name', 'Node URL', 'IP Address','SSH Username','SSH Password'].map(x=>chalk.yellowBright(x))
+            head: ['Node ID', 'Name', 'IP Address','SSH Username','SSH Password'].map(x=>chalk.yellowBright(x))
         });
 
         for(let record of records){
             let ssh = JSON.parse(record.ssh);
-            table.push([record.node_id,record.name, record.node_url, record.host, ssh.username, ssh.password]);
+            table.push([record.node_id,record.name, record.host, ssh.username, ssh.password]);
         }
 
         console.log(table.toString());
