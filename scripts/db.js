@@ -59,8 +59,8 @@ const second_intent = argv._[2];
 
         case "open":
             const project_root = fx.project_root();
-            const heidisql = path.join(project_root,"HeidiSQL","heidisql.exe");
-            fx.shell_exec(fx.hstart(`"${heidisql}" -h "${path.join(document_root,".webman","webman.db")}" -n 10 -l sqlite3.dll --session="${path.join(document_root,".webman","webman.db")}"`));
+            const sqlbrowser = path.join(project_root,"DB Browser for SQLite","DB Browser for SQLite.exe");
+            fx.shell_exec(fx.hstart(`"${sqlbrowser}" "${path.join(document_root,".webman","webman.db")}"`));
         break;
     }
     conn.close();

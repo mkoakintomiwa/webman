@@ -1,9 +1,11 @@
 const fs = require("fs");
+const fsExtra = require("fs-extra");
 const path = require("path");
 const {spawn} = require("child_process");
 const sqlite = require("./sqlite");
 const EventEmitter = require('events');
 const process = require("process");
+const readline = require('readline');
 
 const eventEmitter = new EventEmitter();
 
@@ -1423,6 +1425,53 @@ var runProjectSpecificScript = exports.runProjectSpecificScript = async function
     await shell_exec(`webman ${filename} ${argsCommandAppend()}`);
 
     fs.unlinkSync(path.join(scripts_dir,filename));
+}
+
+
+var setTerminalTitle = exports.setTerminalTitle = function(title){
+  process.stdout.write(
+    String.fromCharCode(27) + "]0;" + title + String.fromCharCode(7)
+  );
+}
+
+
+var readlineInterface = exports.readlineInterface = function(historyName){
+	let _document_root = document_root();
+
+	let historyPath = path.join(_document_root,".webman","terminal-histories",historyName+".json");
+
+	if(!fs.existsSync(path.dirname(historyPath))) fsExtra.mkdirpSync(path.dirname(historyPath));
+
+	let history = [];
+
+	if (fs.existsSync(historyPath)){
+		history = JSON.parse(fs.readFileSync(historyPath).toString());
+	}
+
+	let rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
+
+	rl.on("SIGINT",function(){
+		rl.write("Ctrl-C -- exit!");
+		rl.close();
+		println();
+		println();
+	});
+
+	rl.history = history;
+
+	return rl;
+}
+
+
+var saveReadlineInterfaceHistory = exports.saveReadlineInterfaceHistory = function(historyName, history){
+	let _document_root = document_root();
+
+	let historyPath = path.join(_document_root,".webman","terminal-histories",historyName+".json");
+
+	fs.writeFileSync(historyPath,JSON.stringify(history,null,4));
 }
 
 

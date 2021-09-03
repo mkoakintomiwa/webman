@@ -9,26 +9,32 @@ var connection = exports.connection = function(){
 
 var execute = exports.execute = function(query,parameters=[],sqlite_connection){
     return new Promise(resolve=>{    
-        sqlite_connection.prepare(query,parameters).run().finalize();
-        resolve();
+        sqlite_connection.prepare(query,parameters,function(){
+            resolve();
+        }).run().finalize();
     });
 }
 
 
-var fetch = exports.fetch = function(query,parameters=[],sqlite_connection){
-    return new Promise(function(resolve){
+var fetch = exports.fetch = async function(query,parameters=[],sqlite_connection){
+    let _rows;
+    await new Promise(function(resolve){
         sqlite_connection.all(query,parameters,(err,rows)=>{
-            resolve(rows);
+            _rows = rows;
+            resolve();
         })
     });
+    return _rows;
 }
 
 
 
-var fetch_one = exports.fetch_one = function(query,parameters=[],sqlite_connection){
-    return new Promise(resolve=>{
-        fetch(query,parameters,sqlite_connection).then(rows=>{
-            resolve(rows[0]);
-        });
-    });
+var fetch_one = exports.fetch_one = async function(query,parameters=[],sqlite_connection){
+    let rows = await fetch(query,parameters,sqlite_connection)
+
+    if (rows.length > 0){
+        return rows[0];
+    }else{
+        return false;
+    }
 }
