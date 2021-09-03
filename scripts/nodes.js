@@ -112,7 +112,11 @@ async function runNodes(){
         fx.println();
     }else{
         
-        let records = await db.fetch(command,[],connection);
+        let records = [];
+        
+        let _records = await db.fetch(command,[],connection);
+
+        if (_records) records = _records;
 
         var table = new Table({
             head: ['Node ID', 'Name', 'IP Address','SSH Username','SSH Password'].map(x=>chalk.yellowBright(x))
@@ -125,6 +129,7 @@ async function runNodes(){
 
         console.log(table.toString());
         fx.println()
+        fx.println();
 
         await runNodes();
     }
