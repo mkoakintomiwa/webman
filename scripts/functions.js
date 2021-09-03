@@ -1457,7 +1457,6 @@ var readlineInterface = exports.readlineInterface = function(historyName){
 		rl.write("Ctrl-C -- exit!");
 		rl.close();
 		println();
-		println();
 	});
 
 	rl.history = history;

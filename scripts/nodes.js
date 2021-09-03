@@ -14,42 +14,55 @@ const rl = fx.readlineInterface(historyName);
 
 let connection;
 
+let dbTransactions = `BEGIN TRANSACTION;`;
+
+let dbColumns = [];
+
 if (argv["run"]){
     (async _=>{
            
 
         fx.setTerminalTitle("Nodes session");
-
-        fx.println();
         
-        const spinner = ora('Creating new nodes session').start();
+        //const spinner = ora('Creating new nodes session').start();
 
         connection = db.connection();
 
-        await db.execute("DROP TABLE IF EXISTS nodes;",[],connection);
+        dbTransactions += `DROP TABLE IF EXISTS nodes;`;
 
-        await db.execute(`
+        dbTransactions += `
             CREATE TABLE IF NOT EXISTS "nodes" (
                 "id"	INTEGER,
                 "node_id"	TEXT,
                 PRIMARY KEY("id" AUTOINCREMENT)
             );
-        `,[],connection);
+        `;
 
-
+        
         for(let node_id in nodes){
             let node = nodes[node_id];
 
-            await db.execute(`INSERT INTO nodes (node_id) VALUES(?)`,[node_id],connection);
+            dbTransactions += `INSERT INTO nodes (node_id) VALUES('${node_id}');`;
+
+            for (let key in node){
+                if (!dbColumns.includes(key)) dbColumns.push(key);
+            }
+        }
+
+        for (let column of dbColumns){
+            dbTransactions += `ALTER TABLE nodes ADD COLUMN "${column}" TEXT;`;
+        }
+
+        for(let node_id in nodes){
+            let node = nodes[node_id];
 
             let updateSubquery = "";
             let updateParameters = [];
 
             for (let key in node){
                 let value = node[key];
-                try{
-                    await db.execute(`ALTER TABLE nodes ADD COLUMN "${key}" TEXT`,[],connection);
-                }catch(e){}
+
+                let content = '';
 
                 if (typeof value === "object"){
                     content = JSON.stringify(value);    
@@ -57,27 +70,36 @@ if (argv["run"]){
                     content = value;
                 }
 
-                updateSubquery += `${key}=?,`;
-                updateParameters.push(content);
+                if (typeof content === "string"){
+                    content = content.replace(/'/g,`''`);
+                    updateSubquery += `${key}='${content}',`;
+                }
+                //updateParameters.push(content);
             }
 
-            updateParameters.push(node_id);
+            //updateParameters.push(node_id);
 
             updateSubquery = updateSubquery.replace(/\,$/,"");
 
-            await db.execute(`UPDATE nodes SET ${updateSubquery} WHERE node_id=?`,updateParameters,connection);
+            dbTransactions += `UPDATE nodes SET ${updateSubquery} WHERE node_id='${node_id}';`;
         }
 
-        spinner.stop();
+        dbTransactions += 'COMMIT;'
 
-        console.log(`Nodes session, query all nodes details with SQL
 
-Copyright (c) 2021, webman.
+        await new Promise(function(resolve){
+            connection.exec(dbTransactions,function(){
+                resolve();
+            });
+        });
 
-Type 'exit;' to quit session.
-`)
+        //spinner.stop();
 
-        fx.println();
+        fx.println(`Nodes session, query all nodes details with SQL [GCC 10.2.0 64 bit (AMD64)] on win32`);
+
+        fx.println(`Copyright (c) 2021, webman.`);
+
+        fx.println(`Type 'exit;' to quit session.`);
 
         await runNodes();
     })();
@@ -108,8 +130,7 @@ async function runNodes(){
     if (exitCommands.includes(command.trim()) || exitCommands.map(x=>x+";").includes(command.trim())){
         connection.close();
         rl.close();
-        fx.println();
-        fx.println();
+        fx.println("Bye!");
     }else{
         
         let records = [];
@@ -129,7 +150,6 @@ async function runNodes(){
 
         console.log(table.toString());
         fx.println()
-        fx.println();
 
         await runNodes();
     }

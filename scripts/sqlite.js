@@ -1,5 +1,5 @@
 var fx = require("./functions");
-var sqlite3 = require('sqlite3').verbose();
+var sqlite3 = require('sqlite3');
 
 var connection = exports.connection = function(){
     var document_root = fx.document_root();
