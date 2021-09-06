@@ -4,17 +4,17 @@ $document_root =__DIR__;while(true){if (file_exists($document_root."/settings.js
 
 $settings = json_decode(file_get_contents($document_root."/settings.json"));
 
-$db_host = $settings->db_host;
+$db_host = isset($settings->mysql->host)?$settings->mysql->host:"localhost";
 
-$db_name = $settings->db_name;
+$db_name = $settings->mysql->databases[0];
 
-$db_user = $settings->db_user;
+$db_user = $settings->mysql->username;
 
-$db_password = $settings->db_password;
+$db_password = $settings->mysql->password;
 
-$phpmyadmin_auth_key = @$settings->phpmyadmin_auth_key;
+$phpmyadmin_auth_key = isset($settings->mysql->phpmyadmin_auth_key)?$settings->mysql->phpmyadmin_auth_key:"";
 
-$site_port = $settings->site_port;
+$file_manager_auth_key = isset($settings->file_manager_auth_key)?$settings->file_manager_auth_key:"";
 
 $rel_dirname;
 if (!isset($portal_type)){
