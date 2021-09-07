@@ -58,7 +58,7 @@ let first_file_location = _first_file_location();
                         }else if (file_format==="php"){
                             pre_content = fx.template_content("page.php");
                         }else if (file_format==="ts"){
-                            pre_content = `import { noConflict } from "jquery"`
+                            //pre_content = `import { noConflict } from "jquery"`
                         }
                         fs.writeFileSync(file_location,pre_content);
                     }
