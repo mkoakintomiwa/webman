@@ -13,14 +13,14 @@ var is_source_file = false;
 var is_specs_file = false;
 var is_test_mode = typeof argv["test"]!="undefined";
 
-if (relative_path.match(/^source/)!=null){
+if (relative_path.match(/^src/)!=null){
     switch (application_type){
         case "web":
-            relative_path = path.dirname(relative_path.replace(/^source\\/,"")).concat(".php");
+            relative_path = path.dirname(relative_path.replace(/^src\\/,"")).concat(".php");
         break;
 
         case "mobile":
-            relative_path = path.dirname(relative_path.replace(/^source\\/,"")).concat(".html");
+            relative_path = path.dirname(relative_path.replace(/^src\\/,"")).concat(".html");
         break;
     }
     

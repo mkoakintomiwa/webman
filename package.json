@@ -45,11 +45,16 @@
     "sass": "^1.26.10",
     "sqlite": "^4.0.15",
     "sqlite3": "^5.0.0",
+    "terser": "^5.7.2",
+    "uglify-js": "^3.14.1",
     "unirest": "^0.6.0",
     "yargs": "^15.4.1",
     "yo": "^3.1.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.15.4",
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.4",
     "@swc/cli": "^0.1.27",
     "@swc/core": "^1.2.39"
   }

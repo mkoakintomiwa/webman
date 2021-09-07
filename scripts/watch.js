@@ -12,8 +12,8 @@ chokidar.watch('.',{
     ignored: new RegExp(config.watch_file_ignored),
 }).on('add', async (path,event) => {
     var is_source_file = false
-    if (path.match(/^source/)!=null){
-        path = px.dirname(path.replace(/^source\\/,"")).concat(".php");
+    if (path.match(/^src/)!=null){
+        path = px.dirname(path.replace(/^src\\/,"")).concat(".php");
         is_source_file = true;
     }
     await fx.trace_save(path,is_source_file);

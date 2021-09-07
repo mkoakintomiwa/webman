@@ -60,8 +60,8 @@ password = ${node.mysql.password}
         break;
 
 
-        case "source":
-            await fx.copyProjectTemplateDirectory("source");
+        case "src":
+            await fx.copyProjectTemplateDirectory("src");
         break;
 
 

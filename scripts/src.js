@@ -12,10 +12,10 @@ const document_root = fx.document_root();
 
 
 var file_rel_dir = first_intent;
-var source_path = path.join(document_root,'source/');
+var src_path = path.join(document_root,'src/');
 
-var file_dir = path.join(source_path,file_rel_dir);
-var destination_dir = path.join(source_path,second_intent);
+var file_dir = path.join(src_path,file_rel_dir);
+var destination_dir = path.join(src_path,second_intent);
 
 var config = fx.config();
 

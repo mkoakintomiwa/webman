@@ -57,7 +57,7 @@ switch (application_type){
         fc = row.filename.replace(/^\\/,'').replace('\\','/');
         
         if (row.is_source_file==="true"){
-            var source_dir = document_root + '/source'
+            var source_dir = document_root + '/src'
             var source_file_name = path.basename(row.filename).replace(project_extension,'');
             var source_rel_dir = path.dirname(row.filename);
             var file_ordinance = path.normalize(`${source_dir}/${source_rel_dir}/${source_file_name}/${source_file_name}`);

@@ -9,12 +9,14 @@ const chalk = require("chalk");
 const context = argv._[0];
 const first_intent = argv._[1];
 const second_intent = argv._[2];
-const $node_id = argv["node-id"];
+const $node_id = argv["node-id"] || argv["n"];
 const $node = fx.node($node_id);
 let $host = argv["host"] || "localhost"
 
 let _node_ids;
-if (argv["node-id"]){
+if (argv["n"]){
+    _node_ids = [argv["n"]];
+}else if (argv["node-id"]){
     _node_ids = [argv["node-id"]];
 }else{
     _node_ids = fx.node_ids();
