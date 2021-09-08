@@ -79,8 +79,11 @@ class AppExtension extends AbstractExtension
 
 
 $loader = new FilesystemLoader(__DIR__);
-$twig = new Environment($loader);
+$twig = new Environment($loader,[
+    'debug' => true
+]);
 
 $twig->addExtension(new AppExtension());
+$twig->addExtension(new \Twig\Extension\DebugExtension());
 
 ?>
