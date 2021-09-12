@@ -1106,6 +1106,17 @@ var active_node_ids = exports.active_node_ids = function(){
 }
 
 
+var active_root_ips = exports.active_root_ips = function(){
+	let accumulator = [];
+
+	for (let node_id of active_node_ids()){
+		let _node = node(node_id);
+		if (_node.active && !accumulator.includes(_node.host)) accumulator.push(_node.host);
+	}
+	return accumulator;
+}
+
+
 var hstart = exports.hstart = function(command){
 	return `hstart /NOCONSOLE "${command}"`;
 }

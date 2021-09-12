@@ -80,6 +80,27 @@ var node_root_ssh_options = exports.node_root_ssh_options = function(node_id,_op
 }
 
 
+
+var root_ssh_options = exports.root_ssh_options = function(root_ip,_options={}){
+    var options = fx.setDefaults({
+        cwd: null,
+        show_put_file:true,
+        show_spinner:true
+      },_options); 
+      
+      let _root = fx.root(root_ip);
+
+      return {
+        host: root_ip,
+        username: _root.username,
+        password: _root.password,
+        //cwd:options.cwd,
+        show_put_file:options.show_put_file,
+        show_spinner:options.show_spinner
+    }
+}
+
+
 var interactive_shell = exports.interactive_shell = function(_options,command=null){
   
     var options = ssh_options(_options);
@@ -143,14 +164,18 @@ var ssh_connection = exports.ssh_connection = async function(_options={}){
     var options = ssh_options(_options);
     var ssh = new NodeSSH();
     
-    await new Promise(resolve=>{
-        ssh.connect(options).then(_=>{
-            resolve();
-        }).catch(e=>{
-            console.log(e);
-            console.log(options);
-            resolve();
-        });
+    await new Promise((resolve,reject)=>{
+        try{
+            ssh.connect(options).then(_=>{
+                resolve();
+            }).catch(e=>{
+                console.log(e);
+                console.log(options);
+                resolve();
+            });
+        }catch(e){
+            reject(e);
+        }
     });
     return ssh;
 }
@@ -161,6 +186,11 @@ var ssh_connection = exports.ssh_connection = async function(_options={}){
 var node_ssh_connection = exports.node_ssh_connection = function(node_id,_options={}){
     return ssh_connection(node_ssh_options(node_id,_options));
 }
+
+var root_ssh_connection = exports.root_ssh_connection = function(root_ip,_options={}){
+    return ssh_connection(root_ssh_options(root_ip,_options));
+}
+
 
 var node_root_ssh_connection = exports.node_root_ssh_connection = function(node_id,_options={}){
     return ssh_connection(node_root_ssh_options(node_id,_options));
@@ -204,6 +234,8 @@ var upload_files = exports.upload_files = function(local_remote_files_array,ssh_
         //if(options.show_spinner) spinner.stop(true);
         try{
             ssh_connection.putFiles(local_remote_files_array).then(_=>{
+                resolve();
+            }).catch(e=>{
                 resolve();
             });
         }catch(e){
