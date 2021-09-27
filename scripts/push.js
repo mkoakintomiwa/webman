@@ -69,71 +69,8 @@ switch (application_type){
             let source_file_renderer_path = `${file_ordinance}${project_extension}`;
 
             if (fs.existsSync(source_file_renderer_path)){
-                switch(application_type){
-                    case "web":
-                        var source_content = fs.readFileSync(`${file_ordinance}.php`).toString();
-
-                        var transpiled_typescript;
-                        if (fs.existsSync(`${file_ordinance}.ts`)){
-                            await transpile_typescript(`${file_ordinance}.ts`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
-                                transpiled_typescript = _transpiled;
-                            });
-                        }else if (fs.existsSync(`${file_ordinance}.tsx`)){
-                            await transpile_react(`${file_ordinance}.tsx`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
-                                transpiled_typescript = _transpiled;
-                            });
-                        }else if (fs.existsSync(`${file_ordinance}.jsx`)){
-                            await transpile_react(`${file_ordinance}.jsx`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
-                                transpiled_typescript = _transpiled;
-                            });
-                        }
-                        
-                        if(transpiled_typescript){
-                            source_content += `\n<script>\n${transpiled_typescript}\n</script>`;
-                        }
-
-                        var transpiled_sass;
-                        
-                        // await transpile_sass(`${file_ordinance}.scss`).then(_transpiled=>{
-                        //     transpiled_sass = _transpiled;
-                        // });
-
-                        // if (transpiled_sass){
-                        //     source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
-                        // }
-                        
-                        source_content = source_content.replace('<!--HTML-->',fs.readFileSync(`${file_ordinance}.html`).toString());
-                    break;
-
-
-
-                    case "mobile":
-                        var source_content = fs.readFileSync(`${file_ordinance}.html`).toString();
-
-                        var transpiled_typescript;
-                        await transpile_typescript(`${file_ordinance}.ts`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
-                            transpiled_typescript = _transpiled;
-                        });
-                        
-                        if(transpiled_typescript){
-                            source_content = source_content.replace(`</html>`,"");
-                            source_content += `\n<script>\n${transpiled_typescript}\n</script>\n\n</html>`;
-                        }
-
-                        var transpiled_sass;
-                        
-                        await transpile_sass(`${file_ordinance}.scss`).then(_transpiled=>{
-                            transpiled_sass = _transpiled;
-                        });
-
-                        if (transpiled_sass){
-                            source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
-                        }
-                        
-                    break;
-
-                }
-                    
+                
+                await fx.compileApp(row.filename,null,application_type);
 
                 var output_file_path;
 
