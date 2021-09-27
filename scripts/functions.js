@@ -1146,59 +1146,68 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 
 	return new Promise(async resolve=>{
 
-        for (let node_id of _active_node_ids){
+		if (filename==="settings.json"){
+			println();
+			console.log("settings.json ignored");
+			println();
+		}else{
+			for (let node_id of _active_node_ids){
 			
-			if (filename==="update.php"){
-
-				let rows;
-				await sqlite.fetch("SELECT node_id FROM 'update' WHERE node_id=?",[node_id],conn).then(_rows=>{
-					rows = _rows;
-				});
-
-				if (rows.length===0){
-					await sqlite.execute("INSERT INTO 'update' (node_id, synced) VALUES (?, ?)",[node_id, "false"],conn);
-					//println(`New entry for '${filename} - ${node_id}' saved`);
+				if (filename==="update.php"){
+	
+					let rows;
+					await sqlite.fetch("SELECT node_id FROM 'update' WHERE node_id=?",[node_id],conn).then(_rows=>{
+						rows = _rows;
+					});
+	
+					if (rows.length===0){
+						await sqlite.execute("INSERT INTO 'update' (node_id, synced) VALUES (?, ?)",[node_id, "false"],conn);
+						//println(`New entry for '${filename} - ${node_id}' saved`);
+					}else{
+						await sqlite.execute("UPDATE 'update' SET synced = ? WHERE node_id=?",["false", node_id],conn);
+						//println(`Initial entry for '${filename} - ${node_id}' saved`);
+					}
+	
 				}else{
-					await sqlite.execute("UPDATE 'update' SET synced = ? WHERE node_id=?",["false", node_id],conn);
-					//println(`Initial entry for '${filename} - ${node_id}' saved`);
+	
+					let rows;
+					await sqlite.fetch("SELECT node_id,filename FROM files WHERE node_id=? AND filename=?",[node_id,filename],conn).then(_rows=>{
+						rows = _rows;
+					});
+	
+					if (rows.length===0){
+						await sqlite.execute("INSERT INTO files (node_id, filename, is_source_file, is_specs_file, synced) VALUES (?, ?, ?, ?, ?)",[node_id,filename, is_source_file?"true":"false", is_specs_file?"true":"false","false"],conn);
+						//println(`New entry for '${filename} - ${node_id}' saved`);
+					}else{
+						await sqlite.execute("UPDATE files SET synced = ? WHERE node_id=? AND filename=?",["false", node_id,filename],conn);
+						//println(`Initial entry for '${filename} - ${node_id}' saved`);
+					}
 				}
+				
+			}
 
-			}else{
-
-				let rows;
-				await sqlite.fetch("SELECT node_id,filename FROM files WHERE node_id=? AND filename=?",[node_id,filename],conn).then(_rows=>{
-					rows = _rows;
+			if (_config.test.active){
+				let test_rows;
+				let node_id = _config.test.node_id;
+				await sqlite.fetch("SELECT node_id,filename FROM test_files WHERE node_id=? AND filename=?",[node_id,filename],conn).then(_rows=>{
+					test_rows = _rows;
 				});
-
-				if (rows.length===0){
-					await sqlite.execute("INSERT INTO files (node_id, filename, is_source_file, is_specs_file, synced) VALUES (?, ?, ?, ?, ?)",[node_id,filename, is_source_file?"true":"false", is_specs_file?"true":"false","false"],conn);
+	
+				if (test_rows.length===0){
+					await sqlite.execute("INSERT INTO test_files (node_id, filename, is_source_file, is_specs_file, synced) VALUES (?, ?, ?, ?, ?)",[node_id,filename, is_source_file?"true":"false", is_specs_file?"true":"false","false"],conn);
 					//println(`New entry for '${filename} - ${node_id}' saved`);
 				}else{
-					await sqlite.execute("UPDATE files SET synced = ? WHERE node_id=? AND filename=?",["false", node_id,filename],conn);
+					await sqlite.execute("UPDATE test_files SET synced = ? WHERE node_id=? AND filename=?",["false", node_id,filename],conn);
 					//println(`Initial entry for '${filename} - ${node_id}' saved`);
 				}
 			}
-			
+			println("Saved");
+			conn.close()
 		}
+        
 
 
-		if (_config.test.active){
-			let test_rows;
-			let node_id = _config.test.node_id;
-			await sqlite.fetch("SELECT node_id,filename FROM test_files WHERE node_id=? AND filename=?",[node_id,filename],conn).then(_rows=>{
-				test_rows = _rows;
-			});
-
-			if (test_rows.length===0){
-				await sqlite.execute("INSERT INTO test_files (node_id, filename, is_source_file, is_specs_file, synced) VALUES (?, ?, ?, ?, ?)",[node_id,filename, is_source_file?"true":"false", is_specs_file?"true":"false","false"],conn);
-				//println(`New entry for '${filename} - ${node_id}' saved`);
-			}else{
-				await sqlite.execute("UPDATE test_files SET synced = ? WHERE node_id=? AND filename=?",["false", node_id,filename],conn);
-				//println(`Initial entry for '${filename} - ${node_id}' saved`);
-			}
-		}
-		println("Saved");
-		conn.close()
+		
 		resolve();
     });
 }

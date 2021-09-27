@@ -5,6 +5,86 @@ const fx = require("./functions.js");
 const { chalk } = require("./stdout");
 const swc = require("@swc/core");
 const terser = require("terser");
+const webpack = require('webpack');
+const ora = require("ora");
+
+
+function n(module){
+    return path.join(fx.project_root(),"node_modules",module);
+}
+
+
+var transpile_react = exports.transpile_react = function(file_path,output_path=null,minify=true){
+    let bundleFilename = fx.unique_characters_from_fs(fx.tmp_directory())+'.js';
+    let _tmp_directory = fx.tmp_directory();
+    let bundlePath = path.join(_tmp_directory,bundleFilename);
+    let _document_root = fx.document_root();
+    
+    return new Promise(async resolve=>{
+        var _return = null;
+        
+        fx.println();
+        const spinner = ora(`${chalk.magentaBright('Building bundle: ')} ${chalk.cyanBright(file_path)}`).start();
+
+        try{
+            await new Promise(resolve=>{
+                webpack({
+                    entry: file_path,
+                    output: {
+                        filename: bundleFilename,
+                        path: _tmp_directory,
+                        pathinfo: false
+                    },
+                    "cache":true,
+                    "mode":"production",
+                    "module":{
+                        rules: [
+                            {
+                                //test: /\.m?js$/,
+                                include: path.join(_document_root,"src"),
+                                use: {
+                                    loader: n('babel-loader'),
+                                    options: {
+                                        presets: [n('@babel/preset-env'),n('@babel/preset-react'),n("@babel/preset-typescript")]
+                                    },
+                                }
+                            }
+                        ]
+                    }
+                    
+                }, (err, stats) => {
+                    spinner.stop();
+                    resolve();
+                    (stats || "").toString({
+                        chunks: false,  // Makes the build much quieter
+                        colors: true    // Shows colors in the console
+                    });
+
+
+                    if (err) {
+                        console.error(err);
+                    }
+                
+                    console.log((stats||"").toString({
+                        chunks: false,  // Makes the build much quieter
+                        colors: true    // Shows colors in the console
+                    }));
+                });
+            });
+
+            _return = fs.readFileSync(bundlePath).toString();
+
+            fs.unlinkSync(path.join(_tmp_directory,bundleFilename));
+
+            fs.unlinkSync(path.join(_tmp_directory,bundleFilename+".LICENSE.txt"));
+            
+        }catch(e){
+            console.log(chalk.redBright(e))
+        }
+
+        resolve(_return);
+    });
+}
 
 
 var transpile_typescript = exports.transpile_typescript = function(file_path,output_path=null,minify=true){

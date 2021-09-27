@@ -2,7 +2,7 @@ const fx = require("./functions");
 const path = require("path");
 const unirest = require("unirest");
 const fs = require("fs");
-const { transpile_typescript,transpile_sass } = require("./transpilers");
+const { transpile_typescript,transpile_sass, transpile_react } = require("./transpilers");
 const chalk  = require("chalk");
 const  ssh = require("./ssh");
 const db = require("./sqlite");
@@ -74,12 +74,22 @@ switch (application_type){
                         var source_content = fs.readFileSync(`${file_ordinance}.php`).toString();
 
                         var transpiled_typescript;
-                        await transpile_typescript(`${file_ordinance}.ts`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
-                            transpiled_typescript = _transpiled;
-                        });
+                        if (fs.existsSync(`${file_ordinance}.ts`)){
+                            await transpile_typescript(`${file_ordinance}.ts`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
+                                transpiled_typescript = _transpiled;
+                            });
+                        }else if (fs.existsSync(`${file_ordinance}.tsx`)){
+                            await transpile_react(`${file_ordinance}.tsx`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
+                                transpiled_typescript = _transpiled;
+                            });
+                        }else if (fs.existsSync(`${file_ordinance}.jsx`)){
+                            await transpile_react(`${file_ordinance}.jsx`,null,file_ordinance.indexOf("head_script")===-1).then(_transpiled=>{
+                                transpiled_typescript = _transpiled;
+                            });
+                        }
                         
                         if(transpiled_typescript){
-                            source_content = source_content.replace("<script></script>",`<script>\n\t${transpiled_typescript}\n</script>`);
+                            source_content += `\n<script>\n${transpiled_typescript}\n</script>`;
                         }
 
                         var transpiled_sass;

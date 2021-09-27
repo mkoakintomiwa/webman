@@ -6,10 +6,12 @@ const fx = require("./functions");
 
 
 
+let _document_root = fx.document_root();
 var run_through;
 var rootRun = false;
 
 if (argv["root"]) rootRun = true;
+let isDevMode = typeof argv["dev"] != "undefined";
 
 let contexts = ["custom","db-backup","cron-job","update","pull","ftp","putty","app","explore","code","cmder"];
 
@@ -36,14 +38,20 @@ function run_command(context_id){
         var node = null;
         var root = null;
 
-        if (rootRun){
+        if (isDevMode){
+            node = {
+                
+            }
+        }else if (rootRun){
             root = fx.root(root_ip);
         }else{
             node = fx.node(node_id);
         }
 
         console.log("");
-        if (rootRun){
+        if (isDevMode){
+            //console.log(`--------------------- ${chalk.greenBright(`(${node_id})`)} ---------------------`);
+        }else if (rootRun){
             console.log(`--------------------- ${chalk.greenBright(root_ip)} ---------------------`);
         }else{
             console.log(`--------------------- ${node.name} ${chalk.greenBright(`(${node_id})`)} ---------------------`);
@@ -52,12 +60,13 @@ function run_command(context_id){
         let ssh_connection = null;
         let root_ssh_connection = null;
 
-        if (rootRun){
-            root_ssh_connection = await ssh.root_ssh_connection(root_ip);
-        }else{
-            ssh_connection = await ssh.node_ssh_connection(node_id);
-        }
-        
+        if (!isDevMode){
+            if (rootRun){
+                root_ssh_connection = await ssh.root_ssh_connection(root_ip);
+            }else{
+                ssh_connection = await ssh.node_ssh_connection(node_id);
+            }
+        }        
 
         let activities, intents, secondIntents;
 
@@ -108,7 +117,13 @@ function run_command(context_id){
                     break;
                     
                     case "htaccess":
-                        await ssh.update_htaccess(node_id,ssh_connection);
+                        if (isDevMode){
+                            let htaccess = fx._.generate_htaccess();
+                            fs.writeFileSync(path.join(_document_root,".htaccess"),htaccess);
+                            fx.println(`${chalk.magentaBright("Dev Mode:")} ${chalk.cyanBright(".htaccess generated")}`);
+                        }else{
+                            await ssh.update_htaccess(node_id,ssh_connection);
+                        }
                     break;
 
                     case "composer":
@@ -324,10 +339,12 @@ function run_command(context_id){
 
         }
 
-        if (rootRun){
-            root_ssh_connection.dispose();
-        }else{
-            ssh_connection.dispose();
+        if (!isDevMode){
+            if (rootRun){
+                root_ssh_connection.dispose();
+            }else{
+                ssh_connection.dispose();
+            }
         }
         resolve();
     });
@@ -345,8 +362,9 @@ function run_command(context_id){
     }
 
     
-
-    if (argv["p"]){
+    if (isDevMode){
+        run_through = ["dev"];
+    }else if (argv["p"]){
         rootRun = true;
         run_through = argv["p"].split(",");
     }else if (argv["ip"]){
@@ -369,7 +387,7 @@ function run_command(context_id){
             root_ip: context_id
         }
 
-        if (!rootRun){
+        if (!rootRun && !isDevMode){
             customVariables = Object.assign(customVariables,{
                 remote_portal_dir: fx.remote_node_dir(context_id),
                 remote_public_html: fx.remote_node_dir(context_id)
