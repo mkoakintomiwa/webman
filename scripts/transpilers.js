@@ -65,10 +65,10 @@ var transpile_react = exports.transpile_react = function(file_path,output_path=n
                         console.error(err);
                     }
                 
-                    console.log((stats||"").toString({
-                        chunks: false,  // Makes the build much quieter
-                        colors: true    // Shows colors in the console
-                    }));
+                    // console.log((stats||"").toString({
+                    //     chunks: false,  // Makes the build much quieter
+                    //     colors: true    // Shows colors in the console
+                    // }));
                 });
             });
 

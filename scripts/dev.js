@@ -30,33 +30,14 @@ var output_file_dir = path.dirname(output_file_path);
 if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:true});
 
 let bundleWatcher = null;
+let filesWatcher = null;
 let webpackBundler = null;
 
 (async _=>{
 
     var saveState = async ()=>{
-        var source_content = fs.readFileSync(`${file_ordinance}.php`).toString();
-
-        var transpiled_typescript = fs.readFileSync(bundlePath).toString();
-        
-        
-        if(transpiled_typescript){
-            source_content += `\n<script>\n${transpiled_typescript}\n</script>`;
-        }
-
-        var transpiled_sass;
-        
-        await transpile_sass(`${file_ordinance}.scss`).then(_transpiled=>{
-            transpiled_sass = _transpiled;
-        });
-
-        if (transpiled_sass){
-            source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
-        }
-        
-        source_content = source_content.replace('<!--HTML-->',fs.readFileSync(`${file_ordinance}.html`).toString());
-
-        fs.writeFileSync(output_file_path,source_content);
+        await fx.compileApp(sPath,bundlePath);
+        fx.println(`${chalk.magentaBright("event:")} ${chalk.cyanBright("app compiled")}`);
     }
     
     fx.println();
@@ -118,6 +99,15 @@ let webpackBundler = null;
         bundleWatcher.on("change",async function(path,stats){
             saveState();
         });
+
+        
+        filesWatcher = chokidar.watch(path.dirname(file_ordinance),{
+            ignored: /.*\.jsx/,
+        });
+
+        filesWatcher.on("change",function(){
+            saveState();
+        });
         
     }catch(e){
         console.log(chalk.redBright(e))
@@ -127,8 +117,10 @@ let webpackBundler = null;
 
 process.on("SIGINT",function(){
     bundleWatcher.close();
+    filesWatcher.close();
     webpackBundler.close(function(){
         fs.unlinkSync(bundlePath);
+        fx.println();
     });
 });
     

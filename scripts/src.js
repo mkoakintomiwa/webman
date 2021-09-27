@@ -25,7 +25,7 @@ var file_formats;
 
 switch (application_type){
     case "web":
-        file_formats = ['php','html','scss','ts'];
+        file_formats = ['php','html','jsx'];
     break;
 
     case "mobile":
@@ -53,13 +53,25 @@ let first_file_location = _first_file_location();
                         
                         if (!fs.existsSync(file_dir)) fs.mkdirSync(file_dir,{recursive:true});
                         var pre_content = '';
-                        if (file_format==="scss"){
-                            pre_content = '@use "assets/scss/styles" as *;'    
-                        }else if (file_format==="php"){
-                            pre_content = fx.template_content("page.php");
-                        }else if (file_format==="ts"){
-                            //pre_content = `import { noConflict } from "jquery"`
+
+                        switch(file_format){
+                            case "scss":
+                                pre_content = '@use "assets/scss/styles" as *;';
+                            break;
+
+                            case "php":
+                                pre_content = fx.template_content("page.php");
+                            break;
+
+                            case "jsx":
+                                pre_content = fx.template_content("page.jsx");
+                            break;
+
+                            case "html":
+                                pre_content = fx.template_content("page.html");
+                            break;
                         }
+
                         fs.writeFileSync(file_location,pre_content);
                     }
 

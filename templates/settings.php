@@ -206,6 +206,8 @@ $assets = $document_root . "/assets";
 
 
 function public_html($public_html_directory_name=null){
+    global $document_root;
+    if (is_localhost()) return $document_root; 
     if (!$public_html_directory_name) $public_html_directory_name = "public_html";
     $public_html = __FILE__;
 
@@ -218,5 +220,20 @@ function public_html($public_html_directory_name=null){
 }
 
 
+function show_errors(){
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+
+function hide_errors(){
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 0);
+    error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+}
+
+
+hide_errors();
+//show_errors();
 
 ?>

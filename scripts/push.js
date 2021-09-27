@@ -94,13 +94,13 @@ switch (application_type){
 
                         var transpiled_sass;
                         
-                        await transpile_sass(`${file_ordinance}.scss`).then(_transpiled=>{
-                            transpiled_sass = _transpiled;
-                        });
+                        // await transpile_sass(`${file_ordinance}.scss`).then(_transpiled=>{
+                        //     transpiled_sass = _transpiled;
+                        // });
 
-                        if (transpiled_sass){
-                            source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
-                        }
+                        // if (transpiled_sass){
+                        //     source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
+                        // }
                         
                         source_content = source_content.replace('<!--HTML-->',fs.readFileSync(`${file_ordinance}.html`).toString());
                     break;
@@ -116,7 +116,8 @@ switch (application_type){
                         });
                         
                         if(transpiled_typescript){
-                            source_content = source_content.replace("<script></script>",`<script>\n\t${transpiled_typescript}\n</script>`);
+                            source_content = source_content.replace(`</html>`,"");
+                            source_content += `\n<script>\n${transpiled_typescript}\n</script>\n\n</html>`;
                         }
 
                         var transpiled_sass;
