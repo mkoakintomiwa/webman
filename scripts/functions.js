@@ -6,7 +6,7 @@ const sqlite = require("./sqlite");
 const EventEmitter = require('events');
 const process = require("process");
 const readline = require('readline');
-const { transpile_react } = require("./transpilers");
+const { transpile_react, transpile_typescript, transpile_sass } = require("./transpilers");
 
 const eventEmitter = new EventEmitter();
 
@@ -1509,6 +1509,8 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 	let output_file_path = path.join(_document_root,`${sPath}.php`);
 	var output_file_dir = path.dirname(output_file_path);
 
+	let appIsReact = fs.existsSync(`${file_ordinance}.jsx`);
+
 	switch(appType){
 		case "web":
 			
@@ -1516,27 +1518,33 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 
 			var source_content = fs.readFileSync(`${file_ordinance}.php`).toString();
 
-			//var transpiled_sass;
+			if (!appIsReact){
+				var transpiled_sass;
 			
-			// await transpile_sass(`${file_ordinance}.scss`).then(_transpiled=>{
-			//     transpiled_sass = _transpiled;
-			// });
+				await transpile_sass(`${file_ordinance}.scss`).then(_transpiled=>{
+					transpiled_sass = _transpiled;
+				});
 
-			// if (transpiled_sass){
-			//     source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
-			// }
+				if (transpiled_sass){
+					source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
+				}
+			}
+		
 			
 			source_content = source_content.replace('<!--HTML-->',fs.readFileSync(`${file_ordinance}.html`).toString());
 
-
-			if (bundlePath){
-				var transpiled_typescript = fs.readFileSync(bundlePath).toString();
+			if (appIsReact){
+				if (bundlePath){
+					var transpiled_typescript = fs.readFileSync(bundlePath).toString();
+				}else{
+					var transpiled_typescript = await transpile_react(`${file_ordinance}.jsx`);
+				}
 			}else{
-				var transpiled_typescript = await transpile_react(`${file_ordinance}.jsx`);
+				var transpiled_typescript = await transpile_typescript(`${file_ordinance}.ts`);
 			}
 
 			if(transpiled_typescript){
-				source_content = source_content.replace(`</html>`,"");
+				source_content = source_content.replace(/<\/html>/g,"");
 				source_content += `\n\n\t<script>${transpiled_typescript}</script>\n\n</html>`;
 			}
 

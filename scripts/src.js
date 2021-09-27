@@ -23,9 +23,15 @@ var application_type = config.application_type || "web";
 
 var file_formats;
 
+let appIsVanilla = argv["vanilla"];
+
 switch (application_type){
     case "web":
-        file_formats = ['php','html','jsx'];
+        if (appIsVanilla){
+            file_formats = ['php','html','scss','ts'];
+        }else{
+            file_formats = ['php','html','jsx'];
+        }
     break;
 
     case "mobile":
@@ -60,7 +66,11 @@ let first_file_location = _first_file_location();
                             break;
 
                             case "php":
-                                pre_content = fx.template_content("page.php");
+                                if (appIsVanilla){
+                                    pre_content = fx.template_content("page-vanilla.php");
+                                }else{
+                                    pre_content = fx.template_content("page.php");
+                                }
                             break;
 
                             case "jsx":
@@ -68,7 +78,9 @@ let first_file_location = _first_file_location();
                             break;
 
                             case "html":
-                                pre_content = fx.template_content("page.html");
+                                if (!appIsVanilla){
+                                    pre_content = fx.template_content("page.html");
+                                }
                             break;
                         }
 

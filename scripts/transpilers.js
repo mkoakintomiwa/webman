@@ -23,7 +23,7 @@ var transpile_react = exports.transpile_react = function(file_path,output_path=n
     return new Promise(async resolve=>{
         var _return = null;
         
-        fx.println();
+        //fx.println();
         const spinner = ora(`${chalk.magentaBright('Building bundle: ')} ${chalk.cyanBright(file_path)}`).start();
 
         try{
