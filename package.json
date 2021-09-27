@@ -65,6 +65,7 @@
     "@swc/core": "^1.2.39",
     "babel-loader": "^8.2.2",
     "webpack": "^5.54.0",
-    "webpack-dev-server": "^4.3.0"
+    "webpack-dev-server": "^4.3.0",
+    "yargs-parser": "^20.2.9"
   }
 }

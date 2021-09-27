@@ -5,8 +5,10 @@ const db = require("./sqlite");
 const ora = require("ora");
 const cliSpinners = require('cli-spinners');
 var Table = require('cli-table3');
+const argsParser = require('yargs-parser');
 
 let nodes = fx.config()["nodes"];
+let nodeID = null;
 
 let historyName = "nodes-session";
 
@@ -118,7 +120,7 @@ async function runNodes(){
     
     await new Promise(function(resolve){
         
-        rl.question(chalk.cyanBright(">>> "), (answer) => {
+        rl.question((nodeID?chalk.magentaBright(`[${fx.node(nodeID).name}] `):"")+chalk.cyanBright(">>> "), (answer) => {
             command = answer;
             fx.saveReadlineInterfaceHistory(historyName,rl.history);
             resolve();
@@ -127,28 +129,47 @@ async function runNodes(){
     
     let exitCommands = ["exit","die"];
 
+    let _command = command.trim();
+
     if (exitCommands.includes(command.trim()) || exitCommands.map(x=>x+";").includes(command.trim())){
         connection.close();
         rl.close();
         fx.println("Bye!");
+        fx.println();
     }else{
+
+        let _argv = argsParser(_command);
+        let runContext = _argv._[0]||"";
+        let runArgs = _command.replace(new RegExp(`^${runContext}`),"");
         
-        let records = [];
+        if (_argv._[0] === "use"){
+            nodeID = _argv._[1];
+            fx.println();
+            console.log("Node ID changed");
+
+        }else if( ["putty","fz","pma"].includes(runContext)){
+            
+            fx.shell_exec(`webman ${runContext} ${nodeID} ${runArgs}`);
         
-        let _records = await db.fetch(command,[],connection);
+        }else{
+            let records = [];
+        
+            let _records = await db.fetch(command,[],connection);
 
-        if (_records) records = _records;
+            if (_records) records = _records;
 
-        var table = new Table({
-            head: ['Node ID', 'Name', 'IP Address','SSH Username','SSH Password'].map(x=>chalk.yellowBright(x))
-        });
+            var table = new Table({
+                head: ['Node ID', 'Name', 'IP Address','SSH Username','SSH Password'].map(x=>chalk.yellowBright(x))
+            });
 
-        for(let record of records){
-            let ssh = JSON.parse(record.ssh);
-            table.push([record.node_id,record.name, record.host, ssh.username, ssh.password]);
+            for(let record of records){
+                let ssh = JSON.parse(record.ssh);
+                table.push([record.node_id,record.name, record.host, ssh.username, ssh.password]);
+            }
+
+            console.log(table.toString());
         }
-
-        console.log(table.toString());
+        
         fx.println()
 
         await runNodes();
