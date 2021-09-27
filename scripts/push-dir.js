@@ -3,9 +3,7 @@ const fx = require("./functions");
 const argv = require("yargs").argv;
 const path = require("path")
 const ssh = require("./ssh");
-const EventEmitter = require('events');
-
-const eventEmitter = new EventEmitter();
+const process = require("process");
 
 let document_root = fx.document_root();
 
@@ -49,7 +47,7 @@ let node_ids = fx.arg_node_ids(argv);
 })();
 
 
-eventEmitter.on("SIGINT",function(){
+process.on("SIGINT",function(){
     if (fs.existsSync(tmp_file)) fs.unlinkSync(tmp_file);
     if (fs.existsSync(zip_file_path)) fs.unlinkSync(zip_file_path);
 });

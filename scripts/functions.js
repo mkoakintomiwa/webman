@@ -10,10 +10,10 @@ const readline = require('readline');
 const eventEmitter = new EventEmitter();
 
 
-process.on("SIGINT",function(){
-	eventEmitter.emit("SIGINT");
-	process.exit();
-});
+// process.on("SIGINT",function(){
+// 	eventEmitter.emit("SIGINT");
+// 	process.exit();
+// });
 
 
 class log{

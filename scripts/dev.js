@@ -10,6 +10,7 @@ const ora = require("ora");
 const argv = require("yargs").argv;
 const chokidar = require('chokidar');
 const { transpile_typescript,transpile_sass, transpile_react } = require("./transpilers");
+const process = require("process");
 
 function n(module){
     return path.join(fx.project_root(),"node_modules",module);
@@ -27,6 +28,9 @@ let file_path = `${file_ordinance}.jsx`;
 let output_file_path = path.join(_document_root,`${sPath}.php`);
 var output_file_dir = path.dirname(output_file_path);
 if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:true});
+
+let bundleWatcher = null;
+let webpackBundler = null;
 
 (async _=>{
 
@@ -60,7 +64,7 @@ if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:tru
 
     try{
         await new Promise(resolve=>{
-            webpack({
+            webpackBundler = webpack({
                 entry: file_path,
                 "cache": true,
                 output: {
@@ -107,18 +111,24 @@ if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:tru
             });
         });
 
-        const watcher = chokidar.watch(bundlePath, {
+        bundleWatcher = chokidar.watch(bundlePath, {
             persistent: true
         });
 
-        watcher.on("change",async function(path,stats){
+        bundleWatcher.on("change",async function(path,stats){
             saveState();
         });
-
-        //fs.unlinkSync(path.join(_tmp_directory,bundleFilename));
         
     }catch(e){
         console.log(chalk.redBright(e))
     }
 })();
+
+
+process.on("SIGINT",function(){
+    bundleWatcher.close();
+    webpackBundler.close(function(){
+        fs.unlinkSync(bundlePath);
+    });
+});
     
