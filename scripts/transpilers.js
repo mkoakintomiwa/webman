@@ -72,7 +72,7 @@ var transpile_react = exports.transpile_react = function(file_path,output_path=n
                 });
             });
 
-            _return = fs.readFileSync(bundlePath).toString();
+            _return = fs.readFileSync(bundlePath).toString().replace(/\/\*! For license information please see .*\.LICENSE\.txt \*\/\n/,"");
 
             fs.unlinkSync(path.join(_tmp_directory,bundleFilename));
 

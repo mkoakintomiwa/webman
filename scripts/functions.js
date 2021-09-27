@@ -1532,7 +1532,6 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 			if (bundlePath){
 				var transpiled_typescript = fs.readFileSync(bundlePath).toString();
 			}else{
-			
 				var transpiled_typescript = await transpile_react(`${file_ordinance}.jsx`);
 			}
 

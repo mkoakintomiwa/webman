@@ -70,7 +70,7 @@ switch (application_type){
 
             if (fs.existsSync(source_file_renderer_path)){
                 
-                await fx.compileApp(row.filename,null,application_type);
+                await fx.compileApp(row.filename.replace(project_extension,''),null,application_type);
 
                 var output_file_path;
 
@@ -81,16 +81,18 @@ switch (application_type){
                 }
 
                 
-                var output_file_dir = path.dirname(output_file_path);
-                if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:true});
-                fs.writeFileSync(output_file_path,source_content);
+                // var output_file_dir = path.dirname(output_file_path);
+                // if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:true});
+                // fs.writeFileSync(output_file_path,source_content);
                 
             
+                console.log();
+                console.log(chalk.green(`${path.normalize(fc)} successfully transpiled`));
 
-                if(transpiled_typescript!=null && transpiled_sass!=null){
-                    console.log();
-                    console.log(chalk.green(`${path.normalize(fc)} successfully transpiled`));
-                }
+                // if(transpiled_typescript!=null && transpiled_sass!=null){
+                //     console.log();
+                //     console.log(chalk.green(`${path.normalize(fc)} successfully transpiled`));
+                // }
             }
                 
         }

@@ -73,7 +73,6 @@ let webpackBundler = null;
                 
             }, (err, stats) => {
                 spinner.stop();
-                saveState();
                 resolve();
                 (stats || "").toString({
                     chunks: false,  // Makes the build much quieter
@@ -92,6 +91,8 @@ let webpackBundler = null;
             });
         });
 
+        saveState();
+
         bundleWatcher = chokidar.watch(bundlePath, {
             persistent: true
         });
@@ -105,7 +106,7 @@ let webpackBundler = null;
             ignored: /.*\.jsx/,
         });
 
-        filesWatcher.on("change",function(){
+        filesWatcher.on("change",function(path,stats){
             saveState();
         });
         
