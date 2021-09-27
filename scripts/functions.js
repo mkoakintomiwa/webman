@@ -1506,11 +1506,12 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 	let sPath = appLocation;
 	let sPathName = path.basename(sPath);
 	let file_ordinance = path.join(_document_root,"src",sPath,sPathName);
+	let output_file_path = path.join(_document_root,`${sPath}.php`);
+	var output_file_dir = path.dirname(output_file_path);
 
 	switch(appType){
 		case "web":
-			let output_file_path = path.join(_document_root,`${sPath}.php`);
-			var output_file_dir = path.dirname(output_file_path);
+			
 			if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:true});
 
 			var source_content = fs.readFileSync(`${file_ordinance}.php`).toString();

@@ -116,11 +116,11 @@ let webpackBundler = null;
 
 
 process.on("SIGINT",function(){
+    fx.println();
     bundleWatcher.close();
     filesWatcher.close();
     webpackBundler.close(function(){
         fs.unlinkSync(bundlePath);
-        fx.println();
     });
 });
     
