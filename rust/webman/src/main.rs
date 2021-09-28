@@ -12,6 +12,8 @@ fn main() {
             let arg = std::env::args().nth(i).unwrap();
             command = format!("{} {} ",command,arg);   
         }
+    }else{
+        command = format!("{} {} ",command," nodes --run ");
     }
 
     Exec::shell(command).join().unwrap();
