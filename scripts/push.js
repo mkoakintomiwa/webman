@@ -87,7 +87,7 @@ switch (application_type){
                 
             
                 console.log();
-                console.log(chalk.green(`${path.normalize(fc)} successfully transpiled`));
+                console.log(chalk.green(`${path.normalize(fc)} successfully compiled`));
 
                 // if(transpiled_typescript!=null && transpiled_sass!=null){
                 //     console.log();
