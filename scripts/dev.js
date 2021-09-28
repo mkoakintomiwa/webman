@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const fx = require("./functions.js");
-const { chalk } = require("./stdout");
+const chalk = require("chalk");
 const webpack = require('webpack');
 const ora = require("ora");
 const argv = require("yargs").argv;

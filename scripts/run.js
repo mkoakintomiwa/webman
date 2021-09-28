@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const { argv,info_prompt,chalk,die, info_console } = require("./stdout");
+const { argv,info_prompt,die } = require("./stdout");
+const chalk = require("chalk");
 const ssh = require("./ssh");
 const fx = require("./functions");
 

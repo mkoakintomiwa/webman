@@ -141,16 +141,40 @@ async function runNodes(){
         let _argv = argsParser(_command);
         let runContext = _argv._[0]||"";
         let runArgs = _command.replace(new RegExp(`^${runContext}`),"");
+
+        let _nodeID = nodeID;
+
+        if(_argv["n"]){
+            _nodeID = _argv["n"];
+        }
         
-        if (_argv._[0] === "use"){
+        if (runContext === "use"){
             nodeID = _argv._[1];
             fx.println();
             console.log("Node ID changed");
 
         }else if( ["putty","fz","pma"].includes(runContext)){
             
-            fx.shell_exec(`webman ${runContext} ${nodeID} ${runArgs}`);
+            await fx.shell_exec(`webman ${runContext} ${_nodeID} ${runArgs}`);
         
+        }else if( ["generate"].includes(runContext)){
+            
+            await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
+        
+        }else if( ["update","custom"].includes(runContext)){
+            
+            await fx.shell_exec(`webman run ${runContext} ${runArgs} --node-id ${_nodeID}`);
+        
+        }else if(runContext === "get"){
+
+            fx.println();
+
+            if (_argv._[1]){
+                console.log(fx.dotted_parameter(fx.node(_nodeID),_argv._[1]))
+            }else{
+                console.log(fx.node(_nodeID));
+            }
+
         }else{
             let records = [];
         

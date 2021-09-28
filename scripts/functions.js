@@ -288,15 +288,19 @@ var shell_exec = exports.shell_exec = function(command,_options={}){
 			spawnOptions['cwd'] = options['cwd'];
 		}
 
-		const ls = spawn(command,spawnOptions);
+		try{
+			const ls = spawn(command,spawnOptions);
 
-		// ls.stdout.on("data",data=>{
-		// 	options.stdout(data);
-		// });
+			// ls.stdout.on("data",data=>{
+			// 	options.stdout(data);
+			// });
 
-		ls.on("exit",code=>{
+			ls.on("exit",code=>{
+				resolve();
+			});
+		}catch(e){
 			resolve();
-		});
+		}
 	});
 }
 
@@ -1476,9 +1480,9 @@ var readlineInterface = exports.readlineInterface = function(historyName){
 
 	rl.on("SIGINT",function(){
 		rl.write("Ctrl-C -- exit!");
+		println();
+		println();
 		rl.close();
-		println();
-		println();
 	});
 
 	rl.history = history;

@@ -4,7 +4,6 @@ const argv = require("yargs").argv;
 const path = require("path")
 const ssh = require("./ssh");
 const sx = require("./stdout"); 
-const EventEmitter = require('events');
 
 if (argv.help){
     fx.println();
@@ -12,8 +11,6 @@ if (argv.help){
     console.log(`webman change-host --node-id epLklwTvel --host-ip 34.66.194.243 --host-username brighthope`);
     process.exit();
 }
-
-const eventEmitter = new EventEmitter();
 
 let document_root = fx.document_root();
 
