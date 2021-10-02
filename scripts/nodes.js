@@ -157,7 +157,7 @@ async function runNodes(){
             
             await fx.shell_exec(`webman ${runContext} ${_nodeID} ${runArgs}`);
         
-        }else if( ["generate","install"].includes(runContext)){
+        }else if( ["generate","install","push","pull","push-dir"].includes(runContext)){
             
             await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
         
