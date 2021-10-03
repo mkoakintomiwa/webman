@@ -153,6 +153,8 @@ async function runNodes(){
             fx.println();
             console.log("Node ID changed");
 
+        }else if (["nodes"].includes(runContext)){
+            await fx.shell_exec(`webman get ${runContext}`);
         }else if( ["putty","fz","pma"].includes(runContext)){
             
             await fx.shell_exec(`webman ${runContext} ${_nodeID} ${runArgs}`);
