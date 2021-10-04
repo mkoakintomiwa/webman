@@ -128,7 +128,11 @@ function run_command(context_id){
                     break;
 
                     case "composer":
-                        await ssh.update_composer(node_id,ssh_connection);
+                        if (isDevMode){
+                            await ssh.dev_update_composer();
+                        }else{
+                            await ssh.update_composer(node_id,ssh_connection);
+                        }
                     break;
 
                     case "cronjob":

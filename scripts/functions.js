@@ -3,18 +3,9 @@ const fsExtra = require("fs-extra");
 const path = require("path");
 const {spawn} = require("child_process");
 const sqlite = require("./sqlite");
-const EventEmitter = require('events');
 const process = require("process");
 const readline = require('readline');
 const { transpile_react, transpile_typescript, transpile_sass } = require("./transpilers");
-
-const eventEmitter = new EventEmitter();
-
-
-// process.on("SIGINT",function(){
-// 	eventEmitter.emit("SIGINT");
-// 	process.exit();
-// });
 
 
 class log{
@@ -1564,6 +1555,29 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 
 	fs.writeFileSync(output_file_path,source_content);
 }
+
+
+var download = exports.download = function(fileUrl,localPath,options){
+	var http;
+	if (fileUrl.indexOf("https://")!=-1){
+		http = require('https');
+	}else{
+		http = require('http');
+	}
+
+
+    const file = fs.createWriteStream(localPath);
+    
+    return new Promise(function(resolve){
+        http.get(fileUrl,function(response){
+            response.pipe(file);
+            file.on("finish",function(){
+                resolve(file);
+            });
+        })
+    })
+}
+
 
 let project_functions_path = path.join(project_specific_scripts_path(),"functions.js");
 

@@ -442,6 +442,19 @@ var update_portal_templates = exports.update_portal_templates = function(){
 }
 
 
+
+var dev_update_composer = exports.dev_update_composer = async function(){
+    let _document_root = fx.document_root();
+    let composer_path = path.join(_document_root,"composer");
+
+    await fx.download("https://getcomposer.org/composer.phar",path.join(composer_path,"composer.phar"));
+
+    await fx.shell_exec(`php composer.phar update`,{
+        cwd: composer_path
+    })
+}
+
+
 var update_composer = exports.update_composer = function(node_id,ssh_connection){
     return new Promise(async resolve=>{
         await node_upload_files([
