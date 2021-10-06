@@ -1235,7 +1235,7 @@ var rigid_public_ip = exports.rigid_public_ip = function(){
 } 
 
 
-function round(number, precision=2) {
+var round = exports.round = function(number, precision=2) {
 	return Math.round((number+Number.EPSILON) * Math.pow(10, precision)) / Math.pow(10, precision);
 }
 
