@@ -177,6 +177,8 @@ async function runNodes(){
                 console.log(fx.node(_nodeID));
             }
 
+        }else if (runContext === "test"){
+            await fx.shell_exec(`webman set test.node_id ${_nodeID}`);
         }else{
             let records = [];
         
