@@ -1540,7 +1540,7 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 			}
 
 			if(transpiled_typescript){
-				source_content += `\n\n\t<script>${transpiled_typescript}</script>\n\n`;
+				source_content = source_content.replace('<script></script>',`\n\n<script>${transpiled_typescript}</script>\n\n`);
 			}
 
 		break;
