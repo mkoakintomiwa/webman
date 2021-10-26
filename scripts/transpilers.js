@@ -28,31 +28,14 @@ var transpile_react = exports.transpile_react = function(file_path,output_path=n
 
         try{
             await new Promise(resolve=>{
-                webpack({
-                    entry: file_path,
-                    output: {
+                webpack(fx.webpackOptions({
+                    filePath: file_path,
+                    output:{
                         filename: bundleFilename,
                         path: _tmp_directory,
-                        pathinfo: false
                     },
-                    "cache":true,
-                    "mode":"production",
-                    "module":{
-                        rules: [
-                            {
-                                //test: /\.m?js$/,
-                                include: path.join(_document_root,"src"),
-                                use: {
-                                    loader: n('babel-loader'),
-                                    options: {
-                                        presets: [n('@babel/preset-env'),n('@babel/preset-react'),n("@babel/preset-typescript")]
-                                    },
-                                }
-                            }
-                        ]
-                    }
-                    
-                }, (err, stats) => {
+                    mode: "production"
+                }), (err, stats) => {
                     spinner.stop();
                     resolve();
                     (stats || "").toString({

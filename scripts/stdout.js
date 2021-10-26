@@ -17,7 +17,7 @@ class line{
     }
     
     object(){ 
-        return functions.real_array(this.value.split('\n')); 
+        return functions.realArray(this.value.split('\n')); 
     }
 
 
@@ -28,7 +28,7 @@ class line{
                 delete _object[index];
             }
         });
-        this.value = functions.real_array(_object).join('\n');
+        this.value = functions.realArray(_object).join('\n');
         return this;
     }
 
@@ -40,7 +40,7 @@ class line{
                 delete _object[index];
             }
         });
-        this.value = functions.real_array(_object).join('\n');
+        this.value = functions.realArray(_object).join('\n');
         return this;
     }
 
@@ -58,7 +58,7 @@ class line{
     edit(content,line_number){
         var _object = this.object();
         _object[line_number-1] = content;
-        this.value = functions.real_array(_object).join('\n');
+        this.value = functions.realArray(_object).join('\n');
         return this;
     }
 
@@ -66,7 +66,7 @@ class line{
     add(content){
         var _object = this.object();
         _object[_object.length] = content;
-        this.value = functions.real_array(_object).join('\n');
+        this.value = functions.realArray(_object).join('\n');
         return this;
     }
 }

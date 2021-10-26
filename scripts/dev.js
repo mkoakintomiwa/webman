@@ -44,33 +44,15 @@ let webpackBundler = null;
 
         try{
             await new Promise(resolve=>{
-                webpackBundler = webpack({
-                    entry: file_path,
-                    "cache": true,
-                    output: {
+                
+                webpackBundler = webpack(fx.webpackOptions({
+                    filePath: file_path,
+                    output:{
                         filename: bundleFilename,
                         path: _tmp_directory,
-                        pathinfo: false
                     },
-                    "cache":true,
-                    "mode":argv["prod"]?"production":"development",
-                    "watch":true,
-                    "module":{
-                        rules: [
-                            {
-                                //test: /\.m?js$/,
-                                include: path.join(_document_root,"src"),
-                                use: {
-                                    loader: n('babel-loader'),
-                                    options: {
-                                        presets: [n('@babel/preset-env'),n('@babel/preset-react'),n("@babel/preset-typescript")]
-                                    },
-                                }
-                            }
-                        ]
-                    }
-                    
-                }, (err, stats) => {
+                    mode: argv["prod"]?"production":"development"
+                }), (err, stats) => {
                     spinner.stop();
                     resolve();
                     (stats || "").toString({

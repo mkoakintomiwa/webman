@@ -6,6 +6,7 @@ const sqlite = require("./sqlite");
 const process = require("process");
 const readline = require('readline');
 const { transpile_react, transpile_typescript, transpile_sass } = require("./transpilers");
+const LineManager = require("./LineManager");
 
 
 class log{
@@ -584,6 +585,17 @@ var dollar_replace = exports.dollar_replace = function(string,properties){
 
 
 var real_array = exports.real_array = function(array,trim=false){
+	var output = [];
+	array.forEach(element=>{
+		if (element.trim().length>0){
+			output.push(trim?element.trim():element);
+		}
+	});
+	return output;
+}
+
+
+var realArray = exports.realArray = function(array,trim=false){
 	var output = [];
 	array.forEach(element=>{
 		if (element.trim().length>0){
@@ -1512,7 +1524,7 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 			
 			if (!fs.existsSync(output_file_dir)) fs.mkdirSync(output_file_dir,{recursive:true});
 
-			var source_content = fs.readFileSync(`${file_ordinance}.php`).toString();
+			var sourceContent = fs.readFileSync(`${file_ordinance}.php`).toString();
 
 			if (!appIsReact){
 				var transpiled_sass;
@@ -1522,12 +1534,12 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 				});
 
 				if (transpiled_sass){
-					source_content = source_content.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
+					sourceContent = sourceContent.replace("<style></style>",`<style>\n\t${transpiled_sass}\n</style>`);
 				}
 			}
 		
 			
-			source_content = source_content.replace('<!--HTML-->',fs.readFileSync(`${file_ordinance}.html`).toString());
+			sourceContent = sourceContent.replace('<!--HTML-->',fs.readFileSync(`${file_ordinance}.html`).toString());
 
 			if (appIsReact){
 				if (bundlePath){
@@ -1540,7 +1552,13 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 			}
 
 			if(transpiled_typescript){
-				source_content = source_content.replace('<script></script>',`\n\n<script>${transpiled_typescript}</script>\n\n`);
+				//sourceContent = sourceContent.replace('<script></script>',``);
+				let lineManager = new LineManager(sourceContent);
+				let lineNumber = lineManager.search("<script></script>");
+				if (lineManager){
+					lineManager.edit(`\n\n<script>${transpiled_typescript}</script>\n\n`,lineNumber);
+					sourceContent = lineManager.content();
+				}
 			}
 
 		break;
@@ -1552,7 +1570,7 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 
 	
 
-	fs.writeFileSync(output_file_path,source_content);
+	fs.writeFileSync(output_file_path,sourceContent);
 }
 
 
@@ -1574,7 +1592,47 @@ var download = exports.download = function(fileUrl,localPath,options){
                 resolve(file);
             });
         })
-    })
+    });
+}
+
+
+var n = exports.n = function(module){
+    return path.join(project_root(),"node_modules",module);
+}
+
+
+var webpackOptions = exports.webpackOptions = function({ filePath, output, mode }){
+	let _document_root = document_root();
+	let _options = {
+		entry: filePath,
+		"cache": true,
+		output: {
+			filename: output.filename,
+			path: output.path,
+			pathinfo: false
+		},
+		"mode": mode,
+		"watch":true,
+		"module":{
+			rules: [
+				{
+					//test: /\.m?js$/,
+					include: [path.join(_document_root,"src"),path.join(_document_root,"reactjs")],
+					use: {
+						loader: n('babel-loader'),
+						options: {
+							presets: [n('@babel/preset-env'),n('@babel/preset-react'),n("@babel/preset-typescript")]
+						},
+					}
+				}
+			]
+		},
+		resolve:{
+			extensions: ['.tsx', '.ts', '.js']
+		}
+		
+	}
+	return _options;
 }
 
 
