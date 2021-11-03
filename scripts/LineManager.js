@@ -76,6 +76,21 @@ class LineManager{
         return null;
     }
 
+
+    trim(){
+        var _object = this.object();
+        let trimmedObject = [];
+
+		for (let [index,value] of _object.entries()){
+			if (value.trim().length > 0){
+                trimmedObject.push(value.trim());
+            }
+		}
+
+        this.value = trimmedObject.join('\n');
+        return this;
+    }
+
     /**
      * 
      * @returns {string}

@@ -119,11 +119,11 @@ function run_command(context_id){
                     
                     case "htaccess":
                         if (isDevMode){
-                            let htaccess = fx._.generate_htaccess();
+                            let htaccess = fx._.generateHtaccess();
                             fs.writeFileSync(path.join(_document_root,".htaccess"),htaccess);
                             fx.println(`${chalk.magentaBright("Dev Mode:")} ${chalk.cyanBright(".htaccess generated")}`);
                         }else{
-                            await ssh.update_htaccess(node_id,ssh_connection);
+                            await ssh.updateHtaccess(node_id,ssh_connection);
                         }
                     break;
 
@@ -136,7 +136,7 @@ function run_command(context_id){
                     break;
 
                     case "cronjob":
-                        await ssh.update_cronjob(node_id,ssh_connection);
+                        await ssh.updateCronjob(node_id,ssh_connection);
                     break;
 
                     case "google-credentials":

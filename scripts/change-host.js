@@ -79,10 +79,6 @@ let node_ids = fx.arg_node_ids(argv);
 
         if(!argv.d){
             await ssh.execute_command(`cd public_html && unzip -o ${node_id}.zip && rm -rf ${node_id}.zip`,ssh_connection);
-
-            await fx.shell_exec(`webman run update htaccess --node-id ${node_id}`);
-
-            await fx.shell_exec(`webman run update cronjob --node-id ${node_id}`);
         }
 
         
@@ -90,6 +86,13 @@ let node_ids = fx.arg_node_ids(argv);
         await fx.shell_exec(`webman set nodes.${node_id}.host ${new_host_ip}`);
         await fx.shell_exec(`webman set nodes.${node_id}.ssh.username ${new_host_username}`);
         await fx.shell_exec(`webman set nodes.${node_id}.ftp.user ${new_host_username}`);
+
+        
+        if(!argv.d){
+            await fx.shell_exec(`webman run update htaccess --node-id ${node_id}`).catch(e=>{});
+            await fx.shell_exec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
+        }
+        
 
         ssh_connection.dispose();
         ssh_root_connection.dispose();

@@ -475,7 +475,7 @@ var update_composer = exports.update_composer = function(node_id,ssh_connection)
 
 
 
-var update_cronjob = exports.update_cronjob = function(node_id,ssh_connection){
+var updateCronjob = exports.updateCronjob = function(node_id,ssh_connection){
     return new Promise(async resolve=>{
 
         let node = fx.node(node_id);
@@ -486,22 +486,24 @@ var update_cronjob = exports.update_cronjob = function(node_id,ssh_connection){
             remote_node_dir: fx.remote_node_dir(node_id)
         };
 
-        let crontab = fx._.generate_crontab(options);
+        let crontab = fx._.generateCrontab(options);
 
         let tmp_file = fx.new_tmp_file();
 
         fs.writeFileSync(tmp_file,crontab);
 
-        await node_upload_files([
-            {
-                local: tmp_file,
-                remote:`${fx.remote_node_dir(node_id)}/.crontab`
-            }
-        ],node_id,ssh_connection);
+        console.log(tmp_file);
 
-        await node_execute_command(`echo "" >> .crontab && crontab .crontab`, ssh_connection,{
-            cwd:`${fx.remote_node_dir(node_id)}`
-        });
+        // await node_upload_files([
+        //     {
+        //         local: tmp_file,
+        //         remote:`${fx.remote_node_dir(node_id)}/.crontab`
+        //     }
+        // ],node_id,ssh_connection);
+
+        // await node_execute_command(`echo "" >> .crontab && crontab .crontab`, ssh_connection,{
+        //     cwd:`${fx.remote_node_dir(node_id)}`
+        // });
 
         fs.unlinkSync(tmp_file);
 
@@ -590,7 +592,7 @@ var update_google_token = exports.update_google_token = function(node_id,ssh_con
 
 
 
-var update_htaccess = exports.update_htaccess = function(node_id,ssh_connection){
+var updateHtaccess = exports.updateHtaccess = function(node_id,ssh_connection){
     return new Promise(async resolve=>{
 
         let node = fx.node(node_id);
@@ -598,22 +600,25 @@ var update_htaccess = exports.update_htaccess = function(node_id,ssh_connection)
         let options = {
             node_id: node_id,
             node: node,
+            libDir: path.join(fx.project_root(),"scripts")
         };
 
-        let htaccess = fx._.generate_htaccess(options);
+        let htaccess = fx._.generateHtaccess(options);
 
         let tmp_file = fx.new_tmp_file();
 
         fs.writeFileSync(tmp_file,htaccess);
 
-        await node_upload_files([
-            {
-                local: tmp_file,
-                remote:`${fx.remote_node_dir(node_id)}/.htaccess`
-            }
-        ],node_id,ssh_connection);
+        console.log(tmp_file);
 
-        fs.unlinkSync(tmp_file);
+        // await node_upload_files([
+        //     {
+        //         local: tmp_file,
+        //         remote:`${fx.remote_node_dir(node_id)}/.htaccess`
+        //     }
+        // ],node_id,ssh_connection);
+
+        //fs.unlinkSync(tmp_file);
 
         resolve();
     });
