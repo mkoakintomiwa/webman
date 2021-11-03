@@ -492,18 +492,16 @@ var updateCronjob = exports.updateCronjob = function(node_id,ssh_connection){
 
         fs.writeFileSync(tmp_file,crontab);
 
-        console.log(tmp_file);
+        await node_upload_files([
+            {
+                local: tmp_file,
+                remote:`${fx.remote_node_dir(node_id)}/.crontab`
+            }
+        ],node_id,ssh_connection);
 
-        // await node_upload_files([
-        //     {
-        //         local: tmp_file,
-        //         remote:`${fx.remote_node_dir(node_id)}/.crontab`
-        //     }
-        // ],node_id,ssh_connection);
-
-        // await node_execute_command(`echo "" >> .crontab && crontab .crontab`, ssh_connection,{
-        //     cwd:`${fx.remote_node_dir(node_id)}`
-        // });
+        await node_execute_command(`echo "" >> .crontab && crontab .crontab`, ssh_connection,{
+            cwd:`${fx.remote_node_dir(node_id)}`
+        });
 
         fs.unlinkSync(tmp_file);
 
@@ -609,16 +607,14 @@ var updateHtaccess = exports.updateHtaccess = function(node_id,ssh_connection){
 
         fs.writeFileSync(tmp_file,htaccess);
 
-        console.log(tmp_file);
+        await node_upload_files([
+            {
+                local: tmp_file,
+                remote:`${fx.remote_node_dir(node_id)}/.htaccess`
+            }
+        ],node_id,ssh_connection);
 
-        // await node_upload_files([
-        //     {
-        //         local: tmp_file,
-        //         remote:`${fx.remote_node_dir(node_id)}/.htaccess`
-        //     }
-        // ],node_id,ssh_connection);
-
-        //fs.unlinkSync(tmp_file);
+        fs.unlinkSync(tmp_file);
 
         resolve();
     });
