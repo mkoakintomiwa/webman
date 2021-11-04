@@ -1,7 +1,7 @@
 const fs = require("fs");
 const fx = require("./functions");
 const path = require("path");
-const argv = require("yargs").argv;
+const argv = require("yargs").parseSync();
 const chalk = require("chalk");
 const ssh = require("./ssh");
 
@@ -12,10 +12,7 @@ const node_id = argv["node-id"];
     var root = fx.node_root(node_id);
     var node = fx.node(node_id);
 
-    var ssh_connection;    
-    await ssh.node_ssh_connection(node_id).then(x=>{
-        ssh_connection = x;
-    });
+    var ssh_connection = await ssh.node_ssh_connection(node_id);
 
     switch(context){
         case "phpmyadmin":
@@ -41,7 +38,7 @@ const node_id = argv["node-id"];
 
             var lastest_phpmyadmin = 'phpMyAdmin-5.1.0-all-languages';
 
-            await ssh.node_execute_command(`mkdir -p phpmyadmin && cd phpmyadmin && rm -rf "${lastest_phpmyadmin}.zip" &&  rm -rf "${lastest_phpmyadmin}" && rm -rf "${phpmyadmin_auth_key}" && wget "https://files.phpmyadmin.net/phpMyAdmin/5.1.0/${lastest_phpmyadmin}.zip" && unzip -o "${lastest_phpmyadmin}.zip" && mv "${lastest_phpmyadmin}" "${phpmyadmin_auth_key}" && cd "${phpmyadmin_auth_key}" && mv config.sample.inc.php config.inc.php`,ssh_connection,{
+            await ssh.node_execute_command(`mkdir -p phpmyadmin && cd phpmyadmin && rm -rf "${lastest_phpmyadmin}.zip" &&  rm -rf "${lastest_phpmyadmin}" && rm -rf "${phpmyadmin_auth_key}" && wget "https://files.phpmyadmin.net/phpMyAdmin/5.1.0/${lastest_phpmyadmin}.zip" --no-check-certificate && unzip -o "${lastest_phpmyadmin}.zip" && mv "${lastest_phpmyadmin}" "${phpmyadmin_auth_key}" && cd "${phpmyadmin_auth_key}" && mv config.sample.inc.php config.inc.php`,ssh_connection,{
                 cwd: fx.remote_node_dir(node_id)
             });
 

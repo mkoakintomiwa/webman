@@ -694,7 +694,7 @@ var node_open_putty = exports.node_open_putty = function(node_id){
     var _node = fx.node(node_id);
     var ssh = _node.ssh;
 
-    var argv = require("yargs").argv;
+    var argv = require("yargs").parseSync();
 
     var puttyOptions = {
         username:ssh.username,
@@ -715,7 +715,7 @@ var node_root_open_putty = exports.node_root_open_putty = function(node_id){
     var _node_root = fx.node_root(node_id);
     var ssh = _node.ssh;
 
-    var argv = require("yargs").argv;
+    var argv = require("yargs").parseSync();
 
     var puttyOptions = {
         username:_node_root.username,
