@@ -1,5 +1,5 @@
 const fx = require("./functions");
-const { escape_sed,remote_portal_dir,portal_properties_dir,remote_public_html } = require("./functions");
+const { escape_sed,portal_properties_dir,remote_public_html } = require("./functions");
 const chalk = require('chalk');
 const {NodeSSH} = require('node-ssh')
 const { Client } = require('ssh2');
@@ -7,7 +7,7 @@ var readline = require('readline');
 const fs = require("fs");
 var stdout = require('./stdout');
 const path = require("path");
-const argv = require("yargs").argv;
+const argv = require("yargs").parseSync();
 
 
 var ssh_options = exports.ssh_options = function(_options){
@@ -247,6 +247,19 @@ var upload_files = exports.upload_files = function(local_remote_files_array,ssh_
 
 
 
+var upload_file = exports.upload_file = function(localPath, remotePath, sshConnection){
+  
+    return upload_files([
+        {
+            "local":localPath,
+            "remote": remotePath
+        }
+    ],sshConnection);
+    
+}
+
+
+
 var put_directory = exports.put_directory = function(local_directory,remote_directory,_options){
     var ssh = new NodeSSH();
   
@@ -383,17 +396,6 @@ var build_delete_cron_job_command = exports.build_delete_cron_job_command = func
 }
 
 
-var add_cron_job = exports.add_cron_job = function(command_array,portal_id){
-    var command =  cron_command_from_array(command_array);
-    return portal_execute_command(build_cron_job_command(command),portal_id);
-}
-
-
-var delete_cron_job = exports.delete_cron_job = function(command_array,portal_id){
-    var command =  cron_command_from_array(command_array);
-    return portal_execute_command(build_delete_cron_job_command(command),portal_id);
-}
-
 
 var create_cron_job = exports.create_cron_job = function(command_array,portal_id){
     var portal_properties = fx.portal_properties(portal_id);
@@ -423,23 +425,6 @@ var create_cron_job = exports.create_cron_job = function(command_array,portal_id
     });
 }
 
-
-var update_portal_properties = exports.update_portal_properties = function(){
-    var portal_id = "demo";
-    var _remote_portal_dir = remote_portal_dir(portal_id);
-    return portal_execute_command(`git pull origin master`,portal_id,{
-        cwd:`${_remote_portal_dir}/specs/assets/portal-properties`
-    });
-}
-
-
-var update_portal_templates = exports.update_portal_templates = function(){
-    var portal_id = "demo";
-    var _remote_portal_dir = remote_portal_dir(portal_id);
-    return portal_execute_command(`git pull origin master`,portal_id,{
-        cwd:`${_remote_portal_dir}/specs/assets/portal-templates`
-    });
-}
 
 
 
@@ -637,25 +622,6 @@ var update_nodejs = exports.update_nodejs = function(node_id,ssh_connection){
 
 
 
-var upload_htaccess = exports.upload_htaccess = function(portal_id){
-    return portal_put_files([{
-        local:`${portal_properties_dir(portal_id)}/.htaccess`,
-        remote:`${remote_portal_dir(portal_id)}/.htaccess`
-    }],portal_id);
-}
-
-
-var upload_settings = exports.upload_settings = function(portal_id){
-    var _portal_properties_dir = portal_properties_dir(portal_id);
-    var school = fx.school(portal_id);
-    fs.writeFileSync(`${_portal_properties_dir}/settings.json`,JSON.stringify(school.settings,null,4));
-    return portal_put_files([{
-        local:`${portal_properties_dir(portal_id)}/settings.json`,
-        remote:`${remote_public_html(portal_id)}/settings.json`
-    }],portal_id);
-}
-
-
 var open_filezilla = exports.open_filezilla = function(options){
     var command;
     const project_root = fx.project_root();
@@ -766,7 +732,7 @@ var node_root_open_putty = exports.node_root_open_putty = function(node_id){
 var root_open_putty = exports.root_open_putty = function(root_ip_address){
     var _node_root = fx.root(root_ip_address);
 
-    var argv = require("yargs").argv;
+    var argv = require("yargs").parseSync();
 
     var puttyOptions = {
         username:_node_root.username,
