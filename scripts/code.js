@@ -97,5 +97,5 @@ const configPath = path.join(sshPath,"config");
     }
 
     await fx.shell_exec(`code --remote ssh-remote+${Host} ${defaultRemoteDir}`);
-    console.log(`code --remote ssh-remote+${Host} ${defaultRemoteDir}`);
+    fx.println();
 })();
