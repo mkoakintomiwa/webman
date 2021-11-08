@@ -1541,14 +1541,15 @@ var compileApp = exports.compileApp = async function(appLocation, bundlePath=nul
 			
 			sourceContent = sourceContent.replace('<!--HTML-->',fs.readFileSync(`${file_ordinance}.html`).toString());
 
+			var transpiled_typescript
 			if (appIsReact){
 				if (bundlePath){
-					var transpiled_typescript = fs.readFileSync(bundlePath).toString();
+					transpiled_typescript = fs.readFileSync(bundlePath).toString();
 				}else{
-					var transpiled_typescript = await transpile_react(`${file_ordinance}.jsx`);
+					transpiled_typescript = await transpile_react(`${file_ordinance}.jsx`);
 				}
 			}else{
-				var transpiled_typescript = await transpile_typescript(`${file_ordinance}.ts`);
+				transpiled_typescript = await transpile_typescript(`${file_ordinance}.ts`);
 			}
 
 			if(transpiled_typescript){
@@ -1612,7 +1613,7 @@ var webpackOptions = exports.webpackOptions = function({ filePath, output, mode 
 			pathinfo: false
 		},
 		"mode": mode,
-		"watch":true,
+		"watch": mode==="development",
 		"module":{
 			rules: [
 				{

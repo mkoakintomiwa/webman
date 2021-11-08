@@ -21,7 +21,7 @@ var transpile_react = exports.transpile_react = function(file_path,output_path=n
     let _document_root = fx.document_root();
     
     return new Promise(async resolve=>{
-        var _return = null;
+        var _transpiled = "";
         
         //fx.println();
         const spinner = ora(`${chalk.magentaBright('Building bundle: ')} ${chalk.cyanBright(file_path)}`).start();
@@ -55,7 +55,7 @@ var transpile_react = exports.transpile_react = function(file_path,output_path=n
                 });
             });
 
-            _return = fs.readFileSync(bundlePath).toString().replace(/\/\*! For license information please see .*\.LICENSE\.txt \*\/\n/,"");
+            _transpiled = fs.readFileSync(bundlePath).toString().replace(/\/\*! For license information please see .*\.LICENSE\.txt \*\/\n/,"");
 
             fs.unlinkSync(path.join(_tmp_directory,bundleFilename));
 
@@ -65,7 +65,7 @@ var transpile_react = exports.transpile_react = function(file_path,output_path=n
             console.log(chalk.redBright(e))
         }
 
-        resolve(_return);
+        resolve(_transpiled);
     });
 }
 
@@ -126,7 +126,7 @@ var transpile_sass = exports.transpile_sass = function(file_path,output_path=nul
             if (output_path){
                 var output_dirname = path.dirname(output_path);
                 if (!fs.existsSync(output_dirname)) fs.mkdirSync(output_dirname,{recursive:true});
-                fs.writeFileSync(output_path,transpiled);
+                fs.writeFileSync(output_path,css);
             }
 
             _return = css;

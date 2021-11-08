@@ -2,7 +2,6 @@ const fx = require("./functions");
 const path = require("path");
 const unirest = require("unirest");
 const fs = require("fs");
-const { transpile_typescript,transpile_sass, transpile_react } = require("./transpilers");
 const chalk  = require("chalk");
 const  ssh = require("./ssh");
 const db = require("./sqlite");
