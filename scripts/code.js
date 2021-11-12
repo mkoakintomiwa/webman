@@ -35,14 +35,14 @@ const configPath = path.join(sshPath,"config");
             HostName = node.host;
             User = root.username;
             remoteHomeDir = '/root';
-            defaultRemoteDir = '/';
+            defaultRemoteDir = '/root';
         }else{
             let nodeId = argv._[0];
             let node = fx.node(nodeId);
             HostName = node.host;
             User = node.ssh.username;
             remoteHomeDir = fx.remote_dir(nodeId);
-            defaultRemoteDir = remoteHomeDir;
+            defaultRemoteDir = remoteHomeDir+"/public_html";
         }
     }
 
