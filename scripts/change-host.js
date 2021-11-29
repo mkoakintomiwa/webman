@@ -1,6 +1,6 @@
 const fs = require("fs");
 const fx = require("./functions");
-const argv = require("yargs").argv;
+const argv = require("yargs").parseSync();
 const path = require("path")
 const ssh = require("./ssh");
 const sx = require("./stdout"); 
@@ -19,6 +19,7 @@ let node_ids = fx.arg_node_ids(argv);
 (async _=>{
     for (let node_id of node_ids){
         let node = fx.node(node_id);
+
 
         let new_host_ip = argv["h"] || await sx.info_prompt("New host IP Address > ","host","162.152.80.45");
         let new_host_username = argv["u"] || node.ssh.username;
