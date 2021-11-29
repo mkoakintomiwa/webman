@@ -54,7 +54,7 @@ const node_id = argv["node-id"];
 
             await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remote_node_dir(node_id).concat(`/phpmyadmin/${phpmyadmin_auth_key}/config.inc.php`),node_id,ssh_connection);
 
-            // await ssh.node_upload_file(fx.template_path("restricted.php"),fx.remote_node_dir(node_id).concat(`/phpmyadmin/index.php`),node_id,ssh_connection);
+            await ssh.node_upload_file(fx.template_path("restricted.php"),fx.remote_node_dir(node_id).concat(`/phpmyadmin/index.php`),node_id,ssh_connection);
 
         break;
 

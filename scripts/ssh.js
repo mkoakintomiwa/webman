@@ -449,7 +449,7 @@ var update_composer = exports.update_composer = function(node_id,ssh_connection)
             }
         ],node_id,ssh_connection);
 
-        await node_execute_command(`wget https://getcomposer.org/composer.phar &&
+        await node_execute_command(`rm -rf composer.phar && wget https://getcomposer.org/composer.phar &&
         chmod +x composer.phar && php composer.phar update`, ssh_connection,{
             cwd:`${fx.remote_node_dir(node_id)}/composer`
         });
