@@ -93,6 +93,8 @@ let node_ids = fx.arg_node_ids(argv);
             await fx.shell_exec(`webman run update htaccess --node-id ${node_id}`).catch(e=>{});
             await fx.shell_exec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
         }
+
+        console.log(`\nNode URL: ${node.node_url}\n\n`);
         
 
         ssh_connection.dispose();

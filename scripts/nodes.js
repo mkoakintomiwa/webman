@@ -30,70 +30,7 @@ if (argv["run"]){
 
         connection = db.connection();
 
-        dbTransactions += `DROP TABLE IF EXISTS nodes;`;
-
-        dbTransactions += `
-            CREATE TABLE IF NOT EXISTS "nodes" (
-                "id"	INTEGER,
-                "node_id"	TEXT,
-                PRIMARY KEY("id" AUTOINCREMENT)
-            );
-        `;
-
-        
-        for(let node_id in nodes){
-            let node = nodes[node_id];
-
-            dbTransactions += `INSERT INTO nodes (node_id) VALUES('${node_id}');`;
-
-            for (let key in node){
-                if (!dbColumns.includes(key)) dbColumns.push(key);
-            }
-        }
-
-        for (let column of dbColumns){
-            dbTransactions += `ALTER TABLE nodes ADD COLUMN "${column}" TEXT;`;
-        }
-
-        for(let node_id in nodes){
-            let node = nodes[node_id];
-
-            let updateSubquery = "";
-            let updateParameters = [];
-
-            for (let key in node){
-                let value = node[key];
-
-                let content = '';
-
-                if (typeof value === "object"){
-                    content = JSON.stringify(value);    
-                }else{
-                    content = value;
-                }
-
-                if (typeof content === "string"){
-                    content = content.replace(/'/g,`''`);
-                    updateSubquery += `${key}='${content}',`;
-                }
-                //updateParameters.push(content);
-            }
-
-            //updateParameters.push(node_id);
-
-            updateSubquery = updateSubquery.replace(/\,$/,"");
-
-            dbTransactions += `UPDATE nodes SET ${updateSubquery} WHERE node_id='${node_id}';`;
-        }
-
-        dbTransactions += 'COMMIT;'
-
-
-        await new Promise(function(resolve){
-            connection.exec(dbTransactions,function(){
-                resolve();
-            });
-        });
+        loadNodes(connection);
 
         //spinner.stop();
 
@@ -117,11 +54,14 @@ if (argv["run"]){
 
 
 async function runNodes(){
+
+    let command = "";
     
     await new Promise(function(resolve){
         
         rl.question((nodeID?chalk.magentaBright(`[${fx.node(nodeID).name}] `):"")+chalk.cyanBright(">>> "), (answer) => {
             command = answer;
+            // @ts-ignore
             fx.saveReadlineInterfaceHistory(historyName,rl.history);
             resolve();
         });
@@ -147,9 +87,12 @@ async function runNodes(){
         if(_argv["n"]){
             _nodeID = _argv["n"];
         }
-        
-        if (runContext === "use"){
+
+        if (runContext === "reload"){
+            await loadNodes(connection);
+        }else if (runContext === "use"){
             nodeID = _argv._[1];
+            await fx.shell_exec(`webman set test.node_id ${nodeID}`);
             fx.println();
             console.log("Node ID changed");
 
@@ -159,7 +102,15 @@ async function runNodes(){
             
             await fx.shell_exec(`webman ${runContext} ${_nodeID} ${runArgs}`);
         
-        }else if( ["generate","install","push","pull","push-dir"].includes(runContext)){
+        }else if(["push"].includes(runContext)){
+
+            if (_argv["all"]){
+                await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
+            }else{
+                await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID} --test`);
+            }
+
+        } else if( ["generate","install","pull","push-dir"].includes(runContext)){
             
             await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
         
@@ -203,3 +154,72 @@ async function runNodes(){
         await runNodes();
     }
 };
+
+
+
+async function loadNodes(connection){
+    dbTransactions += `DROP TABLE IF EXISTS nodes;`;
+
+    dbTransactions += `
+        CREATE TABLE IF NOT EXISTS "nodes" (
+            "id"	INTEGER,
+            "node_id"	TEXT,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );
+    `;
+
+    
+    for(let node_id in nodes){
+        let node = nodes[node_id];
+
+        dbTransactions += `INSERT INTO nodes (node_id) VALUES('${node_id}');`;
+
+        for (let key in node){
+            if (!dbColumns.includes(key)) dbColumns.push(key);
+        }
+    }
+
+    for (let column of dbColumns){
+        dbTransactions += `ALTER TABLE nodes ADD COLUMN "${column}" TEXT;`;
+    }
+
+    for(let node_id in nodes){
+        let node = nodes[node_id];
+
+        let updateSubquery = "";
+        let updateParameters = [];
+
+        for (let key in node){
+            let value = node[key];
+
+            let content = '';
+
+            if (typeof value === "object"){
+                content = JSON.stringify(value);    
+            }else{
+                content = value;
+            }
+
+            if (typeof content === "string"){
+                content = content.replace(/'/g,`''`);
+                updateSubquery += `${key}='${content}',`;
+            }
+            //updateParameters.push(content);
+        }
+
+        //updateParameters.push(node_id);
+
+        updateSubquery = updateSubquery.replace(/\,$/,"");
+
+        dbTransactions += `UPDATE nodes SET ${updateSubquery} WHERE node_id='${node_id}';`;
+    }
+
+    dbTransactions += 'COMMIT;'
+
+
+    await new Promise(function(resolve){
+        connection.exec(dbTransactions,function(){
+            resolve();
+        });
+    });
+}
