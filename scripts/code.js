@@ -6,11 +6,10 @@ const SSHConfig = require('ssh-config');
 const ssh = require("./ssh");
 var argv = require('yargs').parseSync();
 
-const sshPath = path.join(os.homedir(),".webman",".ssh");
+const sshPath = path.join(os.homedir(),".ssh");
 const configPath = path.join(sshPath,"config");
 
 (async _=>{
-    if (!fs.existsSync(path.dirname(sshPath))) fs.mkdirSync(path.dirname(sshPath));
     if (!fs.existsSync(sshPath)) fs.mkdirSync(sshPath);
     if (!fs.existsSync(configPath)) fs.writeFileSync(configPath,"");
     
