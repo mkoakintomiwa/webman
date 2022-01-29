@@ -3,7 +3,9 @@ const fx = require("./functions");
 const argv = require("yargs").parseSync();
 const path = require("path")
 const ssh = require("./ssh");
-const sx = require("./stdout"); 
+const sx = require("./stdout");
+const axios = require("axios").default;
+
 
 if (argv.help){
     fx.println();
@@ -17,9 +19,9 @@ let document_root = fx.document_root();
 let node_ids = fx.arg_node_ids(argv);
 
 (async _=>{
+    
     for (let node_id of node_ids){
         let node = fx.node(node_id);
-
 
         let new_host_ip = argv["h"] || await sx.info_prompt("New host IP Address > ","host","162.152.80.45");
         let new_host_username = argv["u"] || node.ssh.username;
@@ -30,6 +32,7 @@ let node_ids = fx.arg_node_ids(argv);
         let node_root_ssh_connection = await ssh.node_root_ssh_connection(node_id);
 
         let config = fx.config();
+        // @ts-ignore
         let new_host_root = config["roots"][new_host_ip];
 
         let ssh_root_connection = await ssh.ssh_connection({
@@ -92,6 +95,12 @@ let node_ids = fx.arg_node_ids(argv);
         if(!argv.d){
             await fx.shell_exec(`webman run update htaccess --node-id ${node_id}`).catch(e=>{});
             await fx.shell_exec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
+        }
+
+        let response =  await axios.get(`${node.node_url}/ip-address`);
+
+        if (response.status === 200){
+            console.log(`\nIP Address: ${node.node_url}`);
         }
 
         console.log(`\nNode URL: ${node.node_url}\n\n`);

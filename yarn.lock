@@ -8647,7 +8647,7 @@
   "resolved" "https://registry.npmjs.org/pseudomap/-/pseudomap-1.0.2.tgz"
   "version" "1.0.2"
 
-"psl@^1.1.28":
+"psl@^1.1.28", "psl@^1.8.0":
   "integrity" "sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ=="
   "resolved" "https://registry.npmjs.org/psl/-/psl-1.8.0.tgz"
   "version" "1.8.0"

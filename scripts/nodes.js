@@ -90,6 +90,7 @@ async function runNodes(){
 
         if (runContext === "reload"){
             await loadNodes(connection);
+            await runNodes();
         }else if (runContext === "use"){
             nodeID = _argv._[1];
             await fx.shell_exec(`webman set test.node_id ${nodeID}`);

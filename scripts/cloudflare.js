@@ -6,6 +6,9 @@ const ssh = require("./ssh");
 const sx = require("./stdout"); 
 var axios = require('axios');
 var Table = require('cli-table3');
+var psl = require('psl');
+const dns = require('dns');
+
 
 let document_root = fx.document_root();
 
@@ -13,14 +16,21 @@ let node_id = fx.arg_node_ids(argv)[0];
 
 let node = fx.node(node_id);
 
+var parsed = psl.parse(node.domain_name);
+
+// @ts-ignore
+let rootDomainName = parsed.domain;
+
 let cloudflare = node.cloudflare;
 
 if (cloudflare){
 
-    let cloudflareAccounts = JSON.parse(fs.readFileSync(path.join(document_root,".webman","cloudflare","accounts.json")));
+    let cloudflareAccounts = JSON.parse(fs.readFileSync(path.join(document_root,".webman","cloudflare","accounts.json")).toString());
 
 
+    // @ts-ignore
     let context = argv._[0];
+    // @ts-ignore
     let activity = argv._[1];
 
     let email = cloudflare.email;
@@ -35,18 +45,15 @@ if (cloudflare){
     let cloudflareEndpoint = `https://api.cloudflare.com/client/v4`;
 
     (async _=>{
+
         switch(context){
             case "dns":
 
                 switch(activity){
                     case "list":
             
-                        axios({
-                            method: 'get',
-                            url: `${cloudflareEndpoint}/zones/${cloudflare.zone.id}/dns_records?type=A`,
-                            headers: cloudflareHeaders
-                        }).then(function (response) {
-                            let records = response.data["result"];
+                        // @ts-ignore
+                        dnsARecords().then(function (records) {
 
                             var table = new Table({
                                 head: ['DNS ID', 'Name', 'IP Address']
@@ -68,13 +75,16 @@ if (cloudflare){
 
                     case "update":
 
+                        let dns = await getDNSRecord();         
+
+                        // @ts-ignore
                         axios({
                             method: 'put',
-                            url: `${cloudflareEndpoint}/zones/${cloudflare.zone.id}/dns_records/${cloudflare.dns.id}`,
+                            url: `${cloudflareEndpoint}/zones/${dns.zone_id}/dns_records/${dns.id}`,
                             headers: cloudflareHeaders,
                             data: JSON.stringify({
                                 "type":"A",
-                                "name": cloudflare.dns.name,
+                                "name": node.domain_name,
                                 "content":argv["h"],
                                 "ttl": 1,
                                 "proxied": true
@@ -89,10 +99,70 @@ if (cloudflare){
                             console.log(error);
                         });
                     break;
+
+                    case "get":
+                        console.log(await getDNSRecord());
+                    break;
+
                 }
 
             break;
-        }
-    })();    
-}
 
+            case "zone":
+                switch(activity){
+                    case "list":
+                        console.log(await getAllZones());
+                    break;
+
+                    case "get":
+                        console.log(await getZone());
+                    break;
+                }
+            break;
+        }
+    })();
+
+
+    async function getAllZones(){
+        // @ts-ignore
+        let response = await axios({
+            method: 'get',
+            url: `${cloudflareEndpoint}/zones`,
+            headers: cloudflareHeaders
+        });
+        return response.data["result"];
+    }
+
+
+    async function getZone(){
+        for (let zone of await getAllZones()){
+            if (zone.name === rootDomainName){
+                return zone;
+            }
+        }
+        return null;
+    }
+
+
+    async function dnsARecords(){
+        let zone = await getZone();
+        // @ts-ignore
+        let response = await axios({
+            method: 'get',
+            url: `${cloudflareEndpoint}/zones/${zone.id}/dns_records?type=A`,
+            headers: cloudflareHeaders
+        });
+        return response.data["result"];
+    }
+
+
+    async function getDNSRecord(){
+
+        for (let record of await dnsARecords()){
+            if (record.name === node.domain_name){
+                return record;
+            }
+        }
+        return null;
+    }
+}
