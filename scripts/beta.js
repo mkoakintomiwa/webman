@@ -27,6 +27,9 @@ let nodeID = argv["n"] || argv["node-id"];
             });
 
 
+            await fx.shell_exec(`_ generate settings.json -n ${nodeID}`);
+
+
             let dbIndex = 0;
             for (let dbName of node.mysql.databases){
             
