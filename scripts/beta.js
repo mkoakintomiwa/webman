@@ -10,6 +10,7 @@ let nodeID = argv["n"] || argv["node-id"];
 (async _=>{
     switch(context){
         case "clone":
+            let nodeID = argv._[1]; 
             let node = fx.node(nodeID);
             let betaNode = fx.node("beta");
             
