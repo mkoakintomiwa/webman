@@ -14,7 +14,7 @@ var rootRun = false;
 if (argv["root"]) rootRun = true;
 let isDevMode = typeof argv["dev"] != "undefined";
 
-let contexts = ["custom","db-backup","cron-job","update","pull","ftp","putty","app","explore","code","cmder"];
+let contexts = ["custom","db-backup","cron-job","update","pull","ftp","putty","app","explore","code","cmder","repair-workspace"];
 
 var custom_command;
 var custom_command_template;
@@ -340,6 +340,10 @@ function run_command(context_id){
                 console.log(`Task > open "${_path}" in cmder`)
                 await fx.shell_exec(`cd "${_path}" && cmder`);
 
+            break;
+
+            case "repair-workspace":
+                await ssh.repairWorkspace(node_id,ssh_connection);
             break;
 
         }

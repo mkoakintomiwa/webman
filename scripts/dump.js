@@ -33,6 +33,9 @@ switch(context){
     case "show_errors":
         dump(`ini_set('display_errors', 1);ini_set('display_startup_errors', 1);error_reporting(E_ALL);`);
     break;
+
+    case "portal-git":
+        dump(`git remote add origin https://icitify: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@github.com/icitify/portal-beta`);
 }
 
 

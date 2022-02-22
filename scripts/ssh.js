@@ -622,6 +622,50 @@ var update_nodejs = exports.update_nodejs = function(node_id,ssh_connection){
 
 
 
+var repairWorkspace = exports.repairWorkspace = async function(nodeId, sshConnection){
+
+    let remoteNodeDir = fx.remote_node_dir(nodeId);
+    let remoteDir = fx.remote_dir(nodeId); 
+
+    await node_execute_command(`mv specs ${remoteDir}/specs`,sshConnection,{
+        cwd: remoteNodeDir
+    });
+
+
+    await node_execute_command(`rm -rf * && rm -rf .*`,sshConnection,{
+        cwd: remoteNodeDir
+    });
+
+
+    await node_execute_command(`git init && git remote add origin https://icitify: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@github.com/icitify/portal-beta && git pull origin master`,sshConnection,{
+        cwd: remoteNodeDir
+    });
+
+
+    await fx.shell_exec(`webman generate settings.json -n ${nodeId}`);
+
+    await node_execute_command(`mv ${remoteDir}/specs specs`,sshConnection,{
+        cwd: remoteNodeDir
+    });
+
+
+    await node_execute_command(`npm i ejs`,sshConnection,{
+        cwd: remoteNodeDir
+    });
+
+
+    await node_execute_command(`npm i`,sshConnection,{
+        cwd: `${remoteNodeDir}/updates`
+    });
+
+
+    await node_execute_command(`node update`,sshConnection,{
+        cwd: `${remoteNodeDir}/nodejs/app`
+    });
+
+}
+
+
 var open_filezilla = exports.open_filezilla = function(options){
     var command;
     const project_root = fx.project_root();
