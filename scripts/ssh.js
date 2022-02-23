@@ -637,7 +637,7 @@ var repairWorkspace = exports.repairWorkspace = async function(nodeId, sshConnec
     });
 
 
-    await node_execute_command(`git init && git remote add origin https://icitify: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@github.com/icitify/portal-beta && git pull origin master`,sshConnection,{
+    await node_execute_command(`git init && git config user.name icitify && git config user.email icitifyportals@gmail.com && git remote add origin https://icitify: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@github.com/icitify/portal-beta && git pull origin master`,sshConnection,{
         cwd: remoteNodeDir
     });
 
@@ -663,6 +663,11 @@ var repairWorkspace = exports.repairWorkspace = async function(nodeId, sshConnec
         cwd: `${remoteNodeDir}/nodejs/app`
     });
 
+}
+
+
+var updateGitRemoteOrigin = exports.updateGitRemoteOrigin = function(){
+    
 }
 
 

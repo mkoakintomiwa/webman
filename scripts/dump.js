@@ -22,9 +22,9 @@ switch(context){
 
     case "install-wpanel":
         if (!argv.u){
-            dump(`yum install wget -y && wget api.wpanel.dev/wpanel/wpanel-centos-7 -q && chmod +x wpanel-centos-7 && mv wpanel-centos-7 /bin/wpanel && wpanel --version`);
+            dump(`yum install wget -y && wget api.wpanel.dev/wpanel/wpanel-ubuntu-20.04 -q && chmod +x wpanel-ubuntu-20.04 && mv wpanel-ubuntu-20.04 /bin/wpanel && wpanel --version`);
         }else{
-            dump(`wget api.wpanel.dev/wpanel/wpanel-centos-7 -q && chmod +x wpanel-centos-7 && mv wpanel-centos-7 /bin/wpanel -f && wpanel --version`);
+            dump(`wget api.wpanel.dev/wpanel/wpanel-ubuntu-20.04 -q && chmod +x wpanel-ubuntu-20.04 && mv wpanel-ubuntu-20.04 /bin/wpanel -f && wpanel --version`);
         }
         
     break;
