@@ -22,7 +22,7 @@ switch(context){
 
     case "install-wpanel":
         if (!argv.u){
-            dump(`wget api.wpanel.dev/wpanel/wpanel-ubuntu-20.04 -q && chmod +x wpanel-ubuntu-20.04 && mv wpanel-ubuntu-20.04 /bin/wpanel && export DEBIAN_FRONTEND=none && wpanel --version`);
+            dump(`wget api.wpanel.dev/wpanel/wpanel-ubuntu-20.04 -q && chmod +x wpanel-ubuntu-20.04 && mv wpanel-ubuntu-20.04 /bin/wpanel && wpanel --version`);
         }else{
             dump(`wget api.wpanel.dev/wpanel/wpanel-ubuntu-20.04 -q && chmod +x wpanel-ubuntu-20.04 && mv wpanel-ubuntu-20.04 /bin/wpanel -f && wpanel --version`);
         }
