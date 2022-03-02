@@ -11525,7 +11525,7 @@
   "resolved" "https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.0.0.tgz"
   "version" "21.0.0"
 
-"yargs@^17.1.1-candidate.0":
+"yargs@^17.3.1":
   "integrity" "sha512-WUANQeVgjLbNsEmGk20f+nlHgOqzRFpiGWVaBrYGYIGANIIu3lWjoyi0fNlFmJkvfhCZ6BXINe7/W2O2bV4iaA=="
   "resolved" "https://registry.npmjs.org/yargs/-/yargs-17.3.1.tgz"
   "version" "17.3.1"

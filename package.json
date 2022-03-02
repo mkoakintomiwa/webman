@@ -52,7 +52,7 @@
     "terser": "^5.7.2",
     "uglify-js": "^3.14.1",
     "unirest": "^0.6.0",
-    "yargs": "^17.1.1-candidate.0",
+    "yargs": "^17.3.1",
     "yo": "^3.1.1"
   },
   "devDependencies": {

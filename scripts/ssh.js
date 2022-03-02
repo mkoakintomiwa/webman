@@ -789,7 +789,7 @@ var root_open_putty = exports.root_open_putty = function(root_ip_address){
         host: root_ip_address
     };
     var path = require("path");
-    if (argv.ppk) puttyOptions.key_path = path.join(fx.document_root(),".webman",".ssh","roots",_node.host,"id_rsa.ppk");  
+    //if (argv.ppk) puttyOptions.key_path = path.join(fx.document_root(),".webman",".ssh","roots",_node.host,"id_rsa.ppk");  
     
     return open_putty(puttyOptions);
 };

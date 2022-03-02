@@ -81,11 +81,11 @@ var copyFiles = exports.copyFiles = function(source,destination,excluded=[]){
 	if (!fs.existsSync(destination)) fs.mkdirSync(destination,{recursive:true});
 	const ncp = require("ncp").ncp;
 	return new Promise (resolve=>{
-		ncp.limit = 16;
+		//ncp.limit = 16;
 
-		ncpOptions = {
+		let ncpOptions = {
 			filter : function(file){
-				filesBool = [];
+				let filesBool = [];
 				excluded.forEach((k)=>{
 				filesBool.push(file.toString().indexOf(k)===-1);
 				});
@@ -281,6 +281,7 @@ var shell_exec = exports.shell_exec = function(command,_options={}){
 		}
 
 		try{
+			// @ts-ignore
 			const ls = spawn(command,spawnOptions);
 
 			// ls.stdout.on("data",data=>{
@@ -369,7 +370,7 @@ var encoded_url = exports.encoded_url = function(main_link,queryStringObject={})
 	var url = main_link;
 	if (Object.keys(queryStringObject).length>0) url+="?";
 
-	for (key in queryStringObject){
+	for (let key in queryStringObject){
 		var value = queryStringObject[key];
 		url+=`${encodeURIComponent(key)}=${encodeURIComponent(value)}&`;
 	}
@@ -742,7 +743,7 @@ var parse_htaccess = exports.parse_htaccess = function(portal_id){
                 new_lines.push(line.replace(`<<${condition}>>`,""));
             }
         }else{
-            if (!(index===0 && line.trim().length===0)){
+            if (!(parseInt(index)===0 && line.trim().length===0)){
                 new_lines.push(line);
             }
         }
@@ -820,7 +821,7 @@ var file_request_error_message = exports.file_request_error_message = function(s
 	console.log("");
 }
 
-
+let variables = {}
 
 var servers = exports.servers = function(){
 	var properties_containers = subdirectories(variables.servers_properties_dir);
@@ -853,14 +854,15 @@ var write_portal_properties = exports.write_portal_properties = function(portal_
 class minify{
 	
 	static js(code){
-		const { minify } = require("javascript-minifier");
-		return new Promise(resolve=>{
-			minify(code).then(minified_code=>{
-				resolve(minified_code);
-			}).catch(error=>{
-				resolve(null);
-			});
-		})
+		// const { minify } = require("javascript-minifier");
+		// return new Promise(resolve=>{
+		// 	minify(code).then(minified_code=>{
+		// 		resolve(minified_code);
+		// 	}).catch(error=>{
+		// 		resolve(null);
+		// 	});
+		// })
+		return false;
 	}
 }
 
@@ -1040,7 +1042,7 @@ var hftp_request = exports.hftp_request = function(node_id,request_options={}){
 
 	const _node = node(node_id);
 
-	var request_options = setDefaults({
+	request_options = setDefaults({
 		fields:{},
 		attachments:{}
 	},request_options);
@@ -1139,7 +1141,7 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 
 	let conn = sqlite.connection();
 
-	_project_root = project_root();
+	let _project_root = project_root();
 
 	let _config = config();
 
@@ -1163,7 +1165,7 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 			
 				if (filename==="update.php"){
 	
-					let rows;
+					let rows = [];
 					await sqlite.fetch("SELECT node_id FROM 'update' WHERE node_id=?",[node_id],conn).then(_rows=>{
 						rows = _rows;
 					});
@@ -1178,7 +1180,7 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 	
 				}else{
 	
-					let rows;
+					let rows=[];
 					await sqlite.fetch("SELECT node_id,filename FROM files WHERE node_id=? AND filename=?",[node_id,filename],conn).then(_rows=>{
 						rows = _rows;
 					});
@@ -1195,7 +1197,7 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 			}
 
 			if (_config.test.active){
-				let test_rows;
+				let test_rows = [];
 				let node_id = _config.test.node_id;
 				await sqlite.fetch("SELECT node_id,filename FROM test_files WHERE node_id=? AND filename=?",[node_id,filename],conn).then(_rows=>{
 					test_rows = _rows;
@@ -1427,7 +1429,7 @@ var argsCommandAppend = exports.argsCommandAppend = function(lastArgIndex=1){
 	for(let index in process.argv){
 		let arg = process.argv[index];
 
-		if (index > lastArgIndex){
+		if (parseInt(index) > lastArgIndex){
 			commandAppend += " " + arg;
 		}
 	}
@@ -1446,9 +1448,9 @@ var runProjectSpecificScript = exports.runProjectSpecificScript = async function
 
     fs.writeFileSync(path.join(scripts_dir,filename),script_content);
 
-	eventEmitter.on("SIGINT",function(){
-		fs.unlinkSync(path.join(scripts_dir,filename));
-	});
+	// eventEmitter.on("SIGINT",function(){
+	// 	fs.unlinkSync(path.join(scripts_dir,filename));
+	// });
 
     await shell_exec(`webman ${filename} ${argsCommandAppend()}`);
 
@@ -1488,6 +1490,7 @@ var readlineInterface = exports.readlineInterface = function(historyName){
 		rl.close();
 	});
 
+	// @ts-ignore
 	rl.history = history;
 
 	return rl;
@@ -1636,6 +1639,13 @@ var webpackOptions = exports.webpackOptions = function({ filePath, output, mode 
 	return _options;
 }
 
+
+
+var currentGitToken = exports.currentGitToken = async function(){
+	return {
+		portalBeta: "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"
+	}
+}
 
 let project_functions_path = path.join(project_specific_scripts_path(),"functions.js");
 

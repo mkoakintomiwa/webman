@@ -1,5 +1,5 @@
 const fx = require("./functions");
-const argv = require("yargs").argv;
+const argv = require("yargs").parseSync();
 
 let context = argv._[0];
 
