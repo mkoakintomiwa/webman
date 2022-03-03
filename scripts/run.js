@@ -1,9 +1,10 @@
 const fs = require("fs");
 const path = require("path");
-const { argv,info_prompt,die } = require("./stdout");
+const { info_prompt,die } = require("./stdout");
 const chalk = require("chalk");
 const ssh = require("./ssh");
 const fx = require("./functions");
+const argv = require("yargs").parseSync();
 
 
 
@@ -14,11 +15,25 @@ var rootRun = false;
 if (argv["root"]) rootRun = true;
 let isDevMode = typeof argv["dev"] != "undefined";
 
-let contexts = ["custom","db-backup","cron-job","update","pull","ftp","putty","app","explore","code","cmder","repair-workspace"];
+let contexts = [
+    "custom",
+    "db-backup",
+    "cron-job",
+    "git",
+    "update",
+    "pull",
+    "ftp",
+    "putty",
+    "app",
+    "explore",
+    "code",
+    "cmder",
+    "repair-workspace"
+];
 
 var custom_command;
 var custom_command_template;
-var context = argv._[0];
+var context = argv._[0].toString();
 
 if (!(context && contexts.includes(context))){
     die(`You must pass a valid context of the run. contexts: ${contexts.join(",")}.`);
@@ -78,7 +93,7 @@ function run_command(context_id){
                 activities = ['google-token'];
 
 
-                var activity = argv._[1];
+                var activity = argv._[1].toString();
 
                 if (!(activity && activities.includes(activity))){
                     die(`You must pass a valid command action, Command actions: ${activities.join(",")}.`);
@@ -99,13 +114,30 @@ function run_command(context_id){
             break;
 
 
+            case "git":
+                activities = ['get-url','set-url'];
+
+                var activity = argv._[1].toString();
+
+                switch (activity){
+                    case "get-url":
+                        await ssh.execute_command(`cd public_html && git remote get-url origin`,ssh_connection);
+                    break;
+
+                    case "set-url":
+                        let gitToken = (await fx.currentGitToken()).portalBeta;
+
+                        await ssh.execute_command(`cd public_html && git remote set-url origin https://icitify:${gitToken}@github.com/icitify/portal-beta && git remote get-url origin`,ssh_connection);
+                }                
+            break;
+
 
             case "update":
                 
                 activities = ['composer','nodejs','htaccess','cronjob','google-credentials','google-token'];
 
 
-                var activity = argv._[1];
+                var activity = argv._[1].toString();
 
                 if (!(activity && activities.includes(activity))){
                     die(`You must pass a valid component to be updated, Components: ${activities.join(",")}.`);
@@ -176,101 +208,101 @@ function run_command(context_id){
             case "app":
                 intents = ['android','ios','windows','mac','linux'];
 
-                var intent = argv._[1];
+                var intent = argv._[1].toString();
 
                 if (!(intent && intents.includes(intent))){
                     die(`You must pass a valid platform, Platforms: ${intents.join(",")}.`);
                 }
 
-                if (intent==="android"){
+                // if (intent==="android"){
 
-                    const _android = require("../apps/android/build");
-                    const android_dir = path.join(_android.projects_dir,node_id);
-                    const android_template_dir = _android.project_template_dir;
-                    const template_res_dir = path.join(android_template_dir,_android.res_rel_dir);
+                //     const _android = require("../apps/android/build");
+                //     const android_dir = path.join(_android.projects_dir,node_id);
+                //     const android_template_dir = _android.project_template_dir;
+                //     const template_res_dir = path.join(android_template_dir,_android.res_rel_dir);
 
-                    const pp_dir = fx.portal_properties_dir(node_id);
-                    const pp_res_dir = path.join(pp_dir,_android.pp_res_rel_dir);
+                //     const pp_dir = fx.portal_properties_dir(node_id);
+                //     const pp_res_dir = path.join(pp_dir,_android.pp_res_rel_dir);
                     
-                    secondIntents = ['build','copy-res','db-dump','debug','release','run-release','locate-release','install-release','verify','install','uninstall','start'];
+                //     secondIntents = ['build','copy-res','db-dump','debug','release','run-release','locate-release','install-release','verify','install','uninstall','start'];
 
-                    var secondIntent = argv._[2];
+                //     var secondIntent = argv._[2];
 
-                    if (!(secondIntent && secondIntents.includes(secondIntent))){
-                        die(`Third intent (${secondIntent}) > You must pass a valid action, Actions: ${secondIntents.join(",")}.`);
-                    }
+                //     if (!(secondIntent && secondIntents.includes(secondIntent))){
+                //         die(`Third intent (${secondIntent}) > You must pass a valid action, Actions: ${secondIntents.join(",")}.`);
+                //     }
                     
-                    const _build = require("../apps/android/build");
-                    const build = _build.build;
+                //     const _build = require("../apps/android/build");
+                //     const build = _build.build;
 
-                    if (secondIntent==="build"){                    
-                        await build.run(node_id);
-                    }
-
-
-                    if (secondIntent==="debug"){                    
-                        await build.debug(node_id);
-                    }
+                //     if (secondIntent==="build"){                    
+                //         await build.run(node_id);
+                //     }
 
 
-                    if (secondIntent==="release"){                    
-                        await build.release(node_id);
-                    }
+                //     if (secondIntent==="debug"){                    
+                //         await build.debug(node_id);
+                //     }
 
 
-                    if (secondIntent==="run-release"){                    
-                        await build.run_release(node_id);
-                    }
+                //     if (secondIntent==="release"){                    
+                //         await build.release(node_id);
+                //     }
 
 
-                    if (secondIntent==="install-release"){                    
-                        await build.install_release(node_id);
-                    }
+                //     if (secondIntent==="run-release"){                    
+                //         await build.run_release(node_id);
+                //     }
+
+
+                //     if (secondIntent==="install-release"){                    
+                //         await build.install_release(node_id);
+                //     }
 
                     
-                    if (secondIntent==="locate-release"){                    
-                        await build.locate_release(node_id);
-                    }
+                //     if (secondIntent==="locate-release"){                    
+                //         await build.locate_release(node_id);
+                //     }
 
 
-                    if (secondIntent==="verify"){                    
-                        await build.verify(node_id);
-                    }
+                //     if (secondIntent==="verify"){                    
+                //         await build.verify(node_id);
+                //     }
 
 
-                    if (secondIntent==="install"){                    
-                        await build.install(node_id);
-                    }
+                //     if (secondIntent==="install"){                    
+                //         await build.install(node_id);
+                //     }
 
 
-                    if (secondIntent==="uninstall"){                    
-                        await build.uninstall(node_id);
-                    }
+                //     if (secondIntent==="uninstall"){                    
+                //         await build.uninstall(node_id);
+                //     }
 
 
-                    if (secondIntent==="start"){                    
-                        await build.start_activity(node_id);
-                    }
+                //     if (secondIntent==="start"){                    
+                //         await build.start_activity(node_id);
+                //     }
 
 
-                    if (secondIntent==="db-dump"){
-                        await build.db_dump(node_id);
-                    }
+                //     if (secondIntent==="db-dump"){
+                //         await build.db_dump(node_id);
+                //     }
 
 
-                    if (secondIntent==="copy-res"){
-                        console.log("Task > Copy android resources from template project to portal properties");
-                        await fx.copyFiles(template_res_dir,pp_res_dir);
-                        await fx.rmdirs(["layout","values"],pp_res_dir);                    
-                    }
-                }
+                //     if (secondIntent==="copy-res"){
+                //         console.log("Task > Copy android resources from template project to portal properties");
+                //         await fx.copyFiles(template_res_dir,pp_res_dir);
+                //         await fx.rmdirs(["layout","values"],pp_res_dir);                    
+                //     }
+                // }
             break;
 
             
             case "explore":
                 intents = ['pp','android','ios','windows','mac','linux'];
 
-                var intent = argv._[1];
+                var intent = argv._[1].toString();
 
                 if (!(intent && intents.includes(intent))){
                     die(`You must pass a valid platform, Platforms: ${intents.join(",")}.`);
@@ -279,11 +311,11 @@ function run_command(context_id){
                 var _path;
 
                 if (intent==="pp"){
-                    _path = pp_dir;
+                    //_path = pp_dir;
                 }
 
                 if (intent==="android"){
-                    var _path = android_dir;
+                    //var _path = android_dir;
                 }
                 console.log(`Task > show "${_path}" in explorer`)
                 await fx.show_in_explorer(_path,false);
@@ -296,7 +328,7 @@ function run_command(context_id){
                 
                 intents = ['pp','android','ios','windows','mac','linux'];
 
-                var intent = argv._[1];
+                var intent = argv._[1].toString();
 
                 if (!(intent && intents.includes(intent))){
                     die(`You must pass a valid platform, Platforms: ${intents.join(",")}.`);
@@ -305,11 +337,11 @@ function run_command(context_id){
                 var _path
 
                 if (intent==="pp"){
-                    _path = pp_dir;
+                    //_path = pp_dir;
                 }
 
                 if (intent==="android"){
-                    _path = android_dir;
+                    //_path = android_dir;
                 }
                 console.log(`Task > open "${_path}" in Visual Studio Code`)
                 await fx.shell_exec(`code "${_path}"`);
@@ -323,7 +355,7 @@ function run_command(context_id){
                 
                 intents = ['pp','android','ios','windows','mac','linux'];
 
-                var intent = argv._[1];
+                var intent = argv._[1].toString();
 
                 if (!(intent && intents.includes(intent))){
                     die(`You must pass a valid platform, Platforms: ${intents.join(",")}.`);
@@ -331,11 +363,11 @@ function run_command(context_id){
 
                 var _path
                 if (intent==="pp"){
-                    _path = pp_dir;
+                    //_path = pp_dir;
                 }
 
                 if (intent==="android"){
-                    _path = android_dir;
+                    //_path = android_dir;
                 }
                 console.log(`Task > open "${_path}" in cmder`)
                 await fx.shell_exec(`cd "${_path}" && cmder`);
@@ -375,19 +407,19 @@ function run_command(context_id){
         run_through = ["dev"];
     }else if (argv["p"]){
         rootRun = true;
-        run_through = argv["p"].split(",");
+        run_through = argv["p"].toString().split(",");
     }else if (argv["ip"]){
         rootRun = true;
-        run_through = argv["ip"].split(",");
+        run_through = argv["ip"].toString().split(",");
     }else if (argv["root"]){
         run_through = fx.active_root_ips();
     }else if (argv["n"]){
-        run_through = argv["n"].split(",");
+        run_through = argv["n"].toString().split(",");
     }else if (argv["node-id"]){
-        run_through = argv["node-id"].split(",");
+        run_through = argv["node-id"].toString().split(",");
     }else{
         if (!argv.steps) await info_prompt("Note: Node ID was not passed","general run","Enter");
-        run_through = fx.node_ids();  
+        run_through = fx.active_node_ids();  
     }
     
     for (let context_id of run_through){

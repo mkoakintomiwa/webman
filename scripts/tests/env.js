@@ -1,2 +1,5 @@
-require('dotenv').config();
-console.log(process.env.PORTAL_BETA_GIT_TOKEN);
+let fx = require("../functions");
+
+(async _=>{
+    console.log(await fx.currentGitToken());
+})();

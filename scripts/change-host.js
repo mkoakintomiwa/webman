@@ -85,7 +85,6 @@ let node_ids = fx.arg_node_ids(argv);
 
             let gitToken = (await fx.currentGitToken()).portalBeta;
 
-
             await ssh.execute_command(`cd public_html && git init && git config user.name icitify && git config user.email icitifyportals@gmail.com && git remote add origin https://icitify:${gitToken}@github.com/icitify/portal-beta && git pull origin master && mkdir specs && mv ../${node_id}.zip specs/${node_id}.zip && cd specs && unzip -o ${node_id}.zip && rm -rf ${node_id}.zip`,ssh_connection);
         }
 

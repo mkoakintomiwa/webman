@@ -1644,7 +1644,7 @@ var webpackOptions = exports.webpackOptions = function({ filePath, output, mode 
 
 var currentGitToken = exports.currentGitToken = async function(){
 	return {
-		portalBeta: process.env.PORTAL_BETA_GIT_TOKEN
+		portalBeta: process.env.ICITIFY_GIT_TOKEN
 	}
 }
 
