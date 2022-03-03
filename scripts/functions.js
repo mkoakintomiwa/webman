@@ -7,6 +7,7 @@ const process = require("process");
 const readline = require('readline');
 const { transpile_react, transpile_typescript, transpile_sass } = require("./transpilers");
 const LineManager = require("./LineManager");
+require('dotenv').config();
 
 
 class log{
@@ -1643,7 +1644,7 @@ var webpackOptions = exports.webpackOptions = function({ filePath, output, mode 
 
 var currentGitToken = exports.currentGitToken = async function(){
 	return {
-		portalBeta: "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"
+		portalBeta: process.env.PORTAL_BETA_GIT_TOKEN
 	}
 }
 

@@ -135,12 +135,18 @@ if (cloudflare){
 
 
     async function getZone(){
-        for (let zone of await getAllZones()){
-            if (zone.name === rootDomainName){
-                return zone;
+
+        // @ts-ignore
+        let response = await axios({
+            method: 'get',
+            url: `${cloudflareEndpoint}/zones`,
+            headers: cloudflareHeaders,
+            params: {
+                "name": rootDomainName
             }
-        }
-        return null;
+        });
+        
+        return response.data["result"][0];
     }
 
 
