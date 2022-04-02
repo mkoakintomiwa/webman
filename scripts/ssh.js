@@ -294,7 +294,7 @@ var get_file = exports.get_file = function(local_file,remote_file,ssh_connection
 
 var node_get_file = exports.node_get_file = function(relative_path,node_id,ssh_connection){
     let local_file = path.join(fx.document_root(),relative_path);
-    let remote_file = fx.remote_node_dir(node_id).concat("/").concat(relative_path);
+    let remote_file = fx.remoteNodeDir(node_id).concat("/").concat(relative_path);
     return get_file(local_file,remote_file,ssh_connection);
 }
 
@@ -303,7 +303,7 @@ var node_get_file = exports.node_get_file = function(relative_path,node_id,ssh_c
 var node_execute_command = exports.node_execute_command = function(command,node_ssh_connection,_options={}){
     let node_id = _options.node_id || "";
     let options = fx.setDefaults({
-        cwd: fx.remote_node_dir(node_id)
+        cwd: fx.remoteNodeDir(node_id)
     },_options);
     return execute_command(command,node_ssh_connection,options);
 }
@@ -357,7 +357,7 @@ var upload_project_files = exports.upload_project_files = function(file_relative
 		
 		local_remote_array.push({
 			local: path.join(fx.document_root(),rel_path),
-			remote: fx.remote_node_dir(node_id).concat("/").concat(rel_path)
+			remote: fx.remoteNodeDir(node_id).concat("/").concat(rel_path)
 		});
 	}
 	return node_upload_files(local_remote_array, node_id, ssh_connection, message);
@@ -445,13 +445,13 @@ var update_composer = exports.update_composer = function(node_id,ssh_connection)
         await node_upload_files([
             {
                 local:`${fx.document_root()}/composer/composer.json`,
-                remote:`${fx.remote_node_dir(node_id)}/composer/composer.json`
+                remote:`${fx.remoteNodeDir(node_id)}/composer/composer.json`
             }
         ],node_id,ssh_connection);
 
         await node_execute_command(`rm -rf composer.phar && wget https://getcomposer.org/composer.phar &&
         chmod +x composer.phar && php composer.phar update`, ssh_connection,{
-            cwd:`${fx.remote_node_dir(node_id)}/composer`
+            cwd:`${fx.remoteNodeDir(node_id)}/composer`
         });
         resolve();
     });
@@ -468,7 +468,7 @@ var updateCronjob = exports.updateCronjob = function(node_id,ssh_connection){
         let options = {
             node_id: node_id,
             node: node,
-            remote_node_dir: fx.remote_node_dir(node_id)
+            remoteNodeDir: fx.remoteNodeDir(node_id)
         };
 
         let crontab = fx._.generateCrontab(options);
@@ -480,12 +480,12 @@ var updateCronjob = exports.updateCronjob = function(node_id,ssh_connection){
         await node_upload_files([
             {
                 local: tmp_file,
-                remote:`${fx.remote_node_dir(node_id)}/.crontab`
+                remote:`${fx.remoteNodeDir(node_id)}/.crontab`
             }
         ],node_id,ssh_connection);
 
         await node_execute_command(`echo "" >> .crontab && crontab .crontab`, ssh_connection,{
-            cwd:`${fx.remote_node_dir(node_id)}`
+            cwd:`${fx.remoteNodeDir(node_id)}`
         });
 
         fs.unlinkSync(tmp_file);
@@ -529,7 +529,7 @@ var update_google_credentials = exports.update_google_credentials = function(nod
         await node_upload_files([
             {
                 local: credentials_path,
-                remote: fx.remote_node_dir(node_id).concat(credentials_rel_path)
+                remote: fx.remoteNodeDir(node_id).concat(credentials_rel_path)
             }
         ],node_id,ssh_connection);
 
@@ -557,7 +557,7 @@ var update_google_token = exports.update_google_token = function(node_id,ssh_con
             await node_upload_files([
                 {
                     local: token_path,
-                    remote: fx.remote_node_dir(node_id).concat(token_rel_path)
+                    remote: fx.remoteNodeDir(node_id).concat(token_rel_path)
                 }
             ],node_id,ssh_connection);
         
@@ -595,7 +595,7 @@ var updateHtaccess = exports.updateHtaccess = function(node_id,ssh_connection){
         await node_upload_files([
             {
                 local: tmp_file,
-                remote:`${fx.remote_node_dir(node_id)}/.htaccess`
+                remote:`${fx.remoteNodeDir(node_id)}/.htaccess`
             }
         ],node_id,ssh_connection);
 
@@ -611,10 +611,10 @@ var update_nodejs = exports.update_nodejs = function(node_id,ssh_connection){
     return new Promise(async resolve=>{
         let document_root = fx.document_root();
 
-        await node_upload_file(path.join(document_root,'/nodejs/package.json'), `${fx.remote_node_dir(node_id)}/nodejs/package.json`, node_id ,ssh_connection);
+        await node_upload_file(path.join(document_root,'/nodejs/package.json'), `${fx.remoteNodeDir(node_id)}/nodejs/package.json`, node_id ,ssh_connection);
 
         await node_execute_command(`npm update`,ssh_connection,{
-            cwd:`${fx.remote_node_dir(node_id)}/nodejs`
+            cwd:`${fx.remoteNodeDir(node_id)}/nodejs`
         });
         resolve();
     });    
@@ -624,8 +624,8 @@ var update_nodejs = exports.update_nodejs = function(node_id,ssh_connection){
 
 var repairWorkspace = exports.repairWorkspace = async function(nodeId, sshConnection){
 
-    let remoteNodeDir = fx.remote_node_dir(nodeId);
-    let remoteDir = fx.remote_dir(nodeId); 
+    let remoteNodeDir = fx.remoteNodeDir(nodeId);
+    let remoteDir = fx.remoteDir(nodeId); 
 
     await node_execute_command(`mv specs ${remoteDir}/specs`,sshConnection,{
         cwd: remoteNodeDir

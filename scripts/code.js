@@ -27,7 +27,7 @@ const configPath = path.join(sshPath,"config");
         HostName = rootIp;
         User = root.username;
         remoteHomeDir = '/root';
-        defaultRemoteDir = '/';
+        defaultRemoteDir =  argv._[1] || '/';
     }else{
         if (argv["root"]){
             let node = fx.node(argv._[0]);
@@ -35,14 +35,14 @@ const configPath = path.join(sshPath,"config");
             HostName = node.host;
             User = root.username;
             remoteHomeDir = '/root';
-            defaultRemoteDir = '/root';
+            defaultRemoteDir = argv._[1] || '/root';
         }else{
             let nodeId = argv._[0];
             let node = fx.node(nodeId);
             HostName = node.host;
             User = node.ssh.username;
-            remoteHomeDir = fx.remote_dir(nodeId);
-            defaultRemoteDir = remoteHomeDir+"/public_html";
+            remoteHomeDir = fx.remoteDir(nodeId);
+            defaultRemoteDir =  argv._[1] || remoteHomeDir+"/public_html";
         }
     }
 
@@ -62,7 +62,7 @@ const configPath = path.join(sshPath,"config");
             }else{
                 let nodeId = argv._[0];
                 sshConnection = await ssh.node_ssh_connection(nodeId);
-                remoteHomeDir = fx.remote_dir(nodeId);
+                remoteHomeDir = fx.remoteDir(nodeId);
             }
         }
 

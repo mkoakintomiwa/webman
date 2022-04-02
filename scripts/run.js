@@ -430,8 +430,8 @@ function run_command(context_id){
 
         if (!rootRun && !isDevMode){
             customVariables = Object.assign(customVariables,{
-                remote_portal_dir: fx.remote_node_dir(context_id),
-                remote_public_html: fx.remote_node_dir(context_id)
+                remote_portal_dir: fx.remoteNodeDir(context_id),
+                remote_public_html: fx.remoteNodeDir(context_id)
             });
         }
 

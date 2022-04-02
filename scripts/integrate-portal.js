@@ -76,7 +76,7 @@ var strict_skip = argv.skip?true:false;
         console.log(chalk(`Download portal content from Github repository`));
         console.log("");
 
-        var githib_command = `cd ${fx.remote_node_dir(node_id)} && git clone https://mkoakintomiwa:%40Awanibadan1@github.com/mkoakintomiwa/portal.git portal_from_github && mv portal_from_github/* . -f && rm -r portal_from_github -f && rm -rf index.html`
+        var githib_command = `cd ${fx.remoteNodeDir(node_id)} && git clone https://mkoakintomiwa:%40Awanibadan1@github.com/mkoakintomiwa/portal.git portal_from_github && mv portal_from_github/* . -f && rm -r portal_from_github -f && rm -rf index.html`
         console.log(`${chalk.greenBright(`Run command:`)} ${chalk.cyanBright(githib_command)}`);
 
         //await fx.copy_to_clipboard(githib_command);
@@ -108,7 +108,7 @@ var strict_skip = argv.skip?true:false;
 
     //     await new_prompt("Installing cron job @ post_daily_notes.php","Enter")
 
-    //     //await ssh.create_cron_job([["*/5","*","*","*","*"],`php ${fx.remote_portal_dir(node_id)}/php/post_daily_notes.php --debug >> ${fx.remote_node_dir(node_id)}/php/cron-log`],node_id);
+    //     //await ssh.create_cron_job([["*/5","*","*","*","*"],`php ${fx.remote_portal_dir(node_id)}/php/post_daily_notes.php --debug >> ${fx.remoteNodeDir(node_id)}/php/cron-log`],node_id);
     // };
     
 

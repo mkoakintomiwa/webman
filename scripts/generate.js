@@ -29,7 +29,7 @@ let _project_root = fx.project_root();
                     ssh_connection = x;
                 });
 
-                await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remote_node_dir(node_id).concat("/settings.json"),node_id,ssh_connection);
+                await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remoteNodeDir(node_id).concat("/settings.json"),node_id,ssh_connection);
 
                 let root_ssh_connection = await ssh.node_root_ssh_connection(node_id);
 

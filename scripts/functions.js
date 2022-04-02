@@ -41,17 +41,17 @@ var portal_properties = exports.portal_properties = function(portal_id){
     return variables.portal_properties.portalProperties(portal_id);
 }
 
-var remote_dir = exports.remote_dir = function(node_id){
+var remoteDir = exports.remoteDir = function(node_id){
 	return `/home/${node(node_id).ssh.username}`;
 }
 
-var remote_public_html = exports.remote_public_html = function(node_id){
-	return `${remote_dir(node_id)}/public_html`;
+var remotePublicHtml = exports.remotePublicHtml = function(node_id){
+	return `${remoteDir(node_id)}/public_html`;
 }
 
 
-var remote_node_dir = exports.remote_node_dir = function(node_id){
-	return `${remote_public_html(node_id)}${node(node_id).rel_dirname}`;
+var remoteNodeDir = exports.remoteNodeDir = function(node_id){
+	return `${remotePublicHtml(node_id)}${node(node_id).rel_dirname}`;
 }
 
 
@@ -1646,6 +1646,11 @@ var currentGitToken = exports.currentGitToken = async function(){
 	return {
 		portalBeta: process.env.ICITIFY_GIT_TOKEN
 	}
+}
+
+
+var percentageChunk = exports.percentageChunk = function(chunk){
+	return round(parseFloat(chunk.toString().replace("%","")),2)
 }
 
 let project_functions_path = path.join(project_specific_scripts_path(),"functions.js");

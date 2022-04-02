@@ -194,7 +194,7 @@ switch (application_type){
         
                                 let _file_name = fx.forward_slash(_filename);
 
-                                await ssh.node_upload_file(_file_name,`${fx.remote_node_dir(node_id)}/${_file_name}`,node_id,ssh_connection).then(r=>{
+                                await ssh.node_upload_file(_file_name,`${fx.remoteNodeDir(node_id)}/${_file_name}`,node_id,ssh_connection).then(r=>{
                                     fx.println();
                                     console.log(`${chalk.cyanBright(_node.name)} * ${chalk.cyanBright(`${i}/${rows.length}`)} * ${chalk.cyanBright(`${fx.round((i/rows.length),4)*100}%`)}`);
                                     ssh_connection.dispose();

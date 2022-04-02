@@ -19,7 +19,7 @@ let node_ids = fx.arg_node_ids(argv);
         let zip_file_path = `${document_root}/${zip_relative_file_path}`;
         let tmp_file = fx.new_tmp_file("zip",10);
 
-    let remote_directory = `${fx.remote_node_dir(node_id)}/${fx.forward_slash(directory_relative_path)}`; 
+    let remote_directory = `${fx.remoteNodeDir(node_id)}/${fx.forward_slash(directory_relative_path)}`; 
 
         fx.println(`\n\n> Zipping directory '${directory_path}'`);
         await fx.zipDirectory(directory_path,tmp_file);

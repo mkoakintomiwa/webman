@@ -39,7 +39,7 @@ const node_id = argv["node-id"];
             var lastest_phpmyadmin = 'phpMyAdmin-5.1.0-all-languages';
 
             await ssh.node_execute_command(`mkdir -p phpmyadmin && cd phpmyadmin && rm -rf "${lastest_phpmyadmin}.zip" &&  rm -rf "${lastest_phpmyadmin}" && rm -rf "${phpmyadmin_auth_key}" && wget "https://files.phpmyadmin.net/phpMyAdmin/5.1.0/${lastest_phpmyadmin}.zip" --no-check-certificate && unzip -o "${lastest_phpmyadmin}.zip" && mv "${lastest_phpmyadmin}" "${phpmyadmin_auth_key}" && cd "${phpmyadmin_auth_key}" && mv config.sample.inc.php config.inc.php`,ssh_connection,{
-                cwd: fx.remote_node_dir(node_id)
+                cwd: fx.remoteNodeDir(node_id)
             });
 
 
@@ -52,9 +52,9 @@ const node_id = argv["node-id"];
 
             fs.writeFileSync(tmp_file,new_content);
 
-            await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remote_node_dir(node_id).concat(`/phpmyadmin/${phpmyadmin_auth_key}/config.inc.php`),node_id,ssh_connection);
+            await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/${phpmyadmin_auth_key}/config.inc.php`),node_id,ssh_connection);
 
-            await ssh.node_upload_file(fx.template_path("restricted.php"),fx.remote_node_dir(node_id).concat(`/phpmyadmin/index.php`),node_id,ssh_connection);
+            await ssh.node_upload_file(fx.template_path("restricted.php"),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/index.php`),node_id,ssh_connection);
 
         break;
 
@@ -81,7 +81,7 @@ const node_id = argv["node-id"];
             // }
 
             await ssh.node_execute_command(`mkdir -p file-manager && cd file-manager && rm -rf "file-manager.zip" &&  rm -rf "file-manager" && rm -rf "${file_manager_auth_key}" && mkdir "${file_manager_auth_key}" && cd "${file_manager_auth_key}" && wget "api.icitifysolution.com/wpanel/file-manager.zip" && unzip -o "file-manager.zip"`,ssh_connection,{
-                cwd: fx.remote_node_dir(node_id)
+                cwd: fx.remoteNodeDir(node_id)
             });
         break;
     }
