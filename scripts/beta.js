@@ -22,49 +22,20 @@ const context = argv._[0];
             let betaSSHConnection = await ssh.node_ssh_connection("beta");
             console.log(`Connected`);
 
-            // await ssh.execute_command(`rm -rf specs.zip && zip -r specs.zip specs && node /nodejs/scp --host ${betaNode.host} --username ${betaNode.ssh.username}  --password '${betaNode.ssh.password}' --local-file-path 'specs.zip' --remote-file-path '${fx.remoteNodeDir("beta")}/specs.zip' && rm -rf specs.zip`,nodeSSHConnection,{
-            //     cwd: fx.remoteNodeDir(nodeId)
-            // });
+            
 
-
-            // await ssh.execute_command(`rm -rf specs.tar && tar cvf specs.tar specs && scp specs.tar ${betaNode.ssh.username}@${betaNode.host}:${fx.remoteNodeDir("beta")}/specs.tar && rm -rf specs.tar`,nodeSSHConnection,{
-            //     cwd: fx.remoteNodeDir(nodeId)
+            if (!argv["x"]){
                 
-            // });
+                console.log(chalk.cyanBright("Archiving specs directory"));
+                await nodeSSHConnection.exec(`rm -rf specs.zip && zip -r ${fx.remoteDir(nodeId)}/specs.zip specs/*`,[],{ 
+                    cwd: fx.remoteNodeDir(nodeId)
+                });
 
 
-            console.log(chalk.cyanBright("Archiving specs directory"));
-            await nodeSSHConnection.exec(`rm -rf specs.zip && zip -r ${fx.remoteDir(nodeId)}/specs.zip specs/*`,[],{ 
-                cwd: fx.remoteNodeDir(nodeId)
-            });
-
-
-            console.log(chalk.cyanBright(`\nUploading specs.zip to ${betaNode.ssh.username}@${betaNode.host}`));
-            const bar = cliBar("specs.zip");
-            await nodeSSHConnection.exec(`node /nodejs/scp specs.zip ${betaNode.ssh.username}@${betaNode.host}:${fx.remoteDir("beta")}/specs.zip  -p '${betaNode.ssh.password}' && rm -rf specs.zip`,[],{ 
-                cwd: fx.remoteDir(nodeId), 
-                onStdout: chunk => {
-                    bar.update(fx.percentageChunk(chunk));
-                }
-            });
-
-            bar.stop();
-
-
-
-
-            await fx.shell_exec(`_ generate settings.json -n ${nodeId}`);
-
-
-            console.log(chalk.cyanBright(`\nUploading database dumps to ${betaNode.ssh.username}@${betaNode.host} \n`));
-
-            let dbIndex = 0;
-            for (let dbName of node.mysql.databases){
-
-                let bar = cliBar(`database-${dbIndex}.sql`);
-
-                await nodeSSHConnection.exec(`mysqldump ${dbName} > database-${dbIndex}.sql && node /nodejs/scp database-${dbIndex}.sql ${betaNode.ssh.username}@${betaNode.host}:${fx.remoteDir("beta")}/database-${dbIndex}.sql -p '${betaNode.ssh.password}' && rm -rf database-${dbIndex}.sql`,[],{
-                    cwd: fx.remoteDir(nodeId),
+                console.log(chalk.cyanBright(`\nUploading specs.zip to ${betaNode.ssh.username}@${betaNode.host}`));
+                const bar = cliBar("specs.zip");
+                await nodeSSHConnection.exec(`node /nodejs/scp specs.zip ${betaNode.ssh.username}@${betaNode.host}:${fx.remoteDir("beta")}/specs.zip  -p '${betaNode.ssh.password}' && rm -rf specs.zip`,[],{ 
+                    cwd: fx.remoteDir(nodeId), 
                     onStdout: chunk => {
                         bar.update(fx.percentageChunk(chunk));
                     }
@@ -72,16 +43,39 @@ const context = argv._[0];
 
                 bar.stop();
 
-                fx.println();
 
-                dbIndex++;
-    
+
+
+                await fx.shell_exec(`_ generate settings.json -n ${nodeId}`);
+
+
+                console.log(chalk.cyanBright(`\nUploading database dumps to ${betaNode.ssh.username}@${betaNode.host} \n`));
+
+                let dbIndex = 0;
+                for (let dbName of node.mysql.databases){
+
+                    let bar = cliBar(`database-${dbIndex}.sql`);
+
+                    await nodeSSHConnection.exec(`mysqldump ${dbName} > database-${dbIndex}.sql && node /nodejs/scp database-${dbIndex}.sql ${betaNode.ssh.username}@${betaNode.host}:${fx.remoteDir("beta")}/database-${dbIndex}.sql -p '${betaNode.ssh.password}' && rm -rf database-${dbIndex}.sql`,[],{
+                        cwd: fx.remoteDir(nodeId),
+                        onStdout: chunk => {
+                            bar.update(fx.percentageChunk(chunk));
+                        }
+                    });
+
+                    bar.stop();
+
+                    fx.println();
+
+                    dbIndex++;
+        
+                }
             }
 
 
             console.log(chalk.cyanBright("Extracting specs.zip"));
             await betaSSHConnection.exec(`rm -rf ${fx.remoteNodeDir("beta")}/specs && cd ${fx.remoteNodeDir("beta")} && unzip ${fx.remoteDir("beta")}/specs.zip && rm -rf ${fx.remoteDir("beta")}/specs.zip`,[],{
-                cwd: fx.remoteDir("beta")
+                cwd: fx.remoteNodeDir("beta")
             });
 
 
