@@ -12,6 +12,6 @@ set rustModules=webman trace-save unsynced update-sent
 
 
 if "%1" == "ts" (
-    rmdir /s /q "scripts" && mkdir "scripts"
+    rem rmdir /s /q "scripts" && mkdir "scripts"
     yarn tsc
 )
