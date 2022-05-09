@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const ssh = require("./ssh");
 const fs = require("fs");
 const path = require("path");
@@ -33,7 +33,7 @@ var strict_skip = argv.skip?true:false;
 
 
     if (!await will_you_skip(true,`Have you generated settings.json?`)){
-        await fx.shell_exec(`webman generate settings.json --node-id ${node_id}`);
+        await fx.shellExec(`webman generate settings.json --node-id ${node_id}`);
     }
 
     // await will_you_skip(true,`You have already installed .htaccess, will you like to skip`).then(p=>{
@@ -61,14 +61,14 @@ var strict_skip = argv.skip?true:false;
     if(!portal_properties.settings) portal_properties.settings = {}
 
     if (!await will_you_skip(strict_skip,`You have previously configured the server database, will you like to skip the process`)){
-        await fx.shell_exec(`webman mysql add user --node-id ${node_id}`);
+        await fx.shellExec(`webman mysql add user --node-id ${node_id}`);
 
-        await fx.shell_exec(`webman mysql add databases --node-id ${node_id}`);
+        await fx.shellExec(`webman mysql add databases --node-id ${node_id}`);
     }
 
 
     if (!await will_you_skip(strict_skip,`Will you like to skip the installation of ${chalk.magenta("phpMyAdmin")}`)){
-        await fx.shell_exec(`webman install phpmyadmin --node-id ${node_id}`);
+        await fx.shellExec(`webman install phpmyadmin --node-id ${node_id}`);
     }
 
     

@@ -3,7 +3,7 @@ const path = require("path");
 const { info_prompt,die } = require("./stdout");
 const chalk = require("chalk");
 const ssh = require("./ssh");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const argv = require("yargs").parseSync();
 
 
@@ -188,7 +188,7 @@ function run_command(context_id){
             case "custom":
 
                 if (argv.steps){
-                    fx.shell_exec(custom_command);
+                    fx.shellExec(custom_command);
                     await info_prompt(`Waiting for completion @${node.name}`,node_id,"Enter");
                 }else{
                     if (rootRun){
@@ -344,7 +344,7 @@ function run_command(context_id){
                     //_path = android_dir;
                 }
                 console.log(`Task > open "${_path}" in Visual Studio Code`)
-                await fx.shell_exec(`code "${_path}"`);
+                await fx.shellExec(`code "${_path}"`);
 
             break;
 
@@ -370,7 +370,7 @@ function run_command(context_id){
                     //_path = android_dir;
                 }
                 console.log(`Task > open "${_path}" in cmder`)
-                await fx.shell_exec(`cd "${_path}" && cmder`);
+                await fx.shellExec(`cd "${_path}" && cmder`);
 
             break;
 

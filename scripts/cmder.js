@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const fs = require("fs");
 const path = require("path");
 const { spawn, spawnSync, execSync } = require("child_process");
@@ -13,7 +13,7 @@ const cmder_vscode_init = path.join(cmder_mini,"vendor","bin","vscode_init.cmd")
 
 
 if (!argv._[0]){
-    fx.shell_exec(`"${cmder}"`);
+    fx.shellExec(`"${cmder}"`);
 }
 
 

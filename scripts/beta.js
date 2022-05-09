@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const ssh = require("./ssh");
 const path = require("path");
 const argv = require("yargs").parseSync();
@@ -46,7 +46,7 @@ const context = argv._[0];
 
 
 
-                await fx.shell_exec(`_ generate settings.json -n ${nodeId}`);
+                await fx.shellExec(`_ generate settings.json -n ${nodeId}`);
 
 
                 console.log(chalk.cyanBright(`\nUploading database dumps to ${betaNode.ssh.username}@${betaNode.host} \n`));

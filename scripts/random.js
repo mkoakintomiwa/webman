@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const argv = require("yargs").argv;
 
 var context = argv._[0];

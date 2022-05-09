@@ -1,5 +1,5 @@
 const fs = require("fs");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const argv = require("yargs").parseSync();
 const path = require("path")
 const ssh = require("./ssh");
@@ -90,20 +90,20 @@ let node_ids = fx.arg_node_ids(argv);
 
         
 
-        await fx.shell_exec(`_ set nodes.${node_id}.host ${new_host_ip}`);
-        await fx.shell_exec(`_ set nodes.${node_id}.ssh.username ${new_host_username}`);
-        await fx.shell_exec(`_ set nodes.${node_id}.ftp.user ${new_host_username}`);
+        await fx.shellExec(`_ set nodes.${node_id}.host ${new_host_ip}`);
+        await fx.shellExec(`_ set nodes.${node_id}.ssh.username ${new_host_username}`);
+        await fx.shellExec(`_ set nodes.${node_id}.ftp.user ${new_host_username}`);
 
 
-        await fx.shell_exec(`_ generate settings.json -n ${node_id}`);
+        await fx.shellExec(`_ generate settings.json -n ${node_id}`);
 
         await ssh.execute_command(`cd public_html && npm i ejs && cd updates && npm i && node run.js`,ssh_connection);
         
         if(!argv.d){
-            // await fx.shell_exec(`webman run update htaccess --node-id ${node_id}`).catch(e=>{});
-            // await fx.shell_exec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
+            // await fx.shellExec(`webman run update htaccess --node-id ${node_id}`).catch(e=>{});
+            // await fx.shellExec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
             
-            await fx.shell_exec(`_ cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
+            await fx.shellExec(`_ cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
         }
             
         console.log(`\nCheck IP Address: ${node.node_url}/ip-address`);

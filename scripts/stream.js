@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const yargv = require("yargs").argv;
-const fx = require("./functions");
+const fx = require("./lib/functions");
 
 let document_root = fx.document_root();
 
@@ -18,4 +18,4 @@ if (fs.existsSync(stream_file)){
 
 fs.writeFileSync(stream_file,fx.template_content("stream.php"));
 
-fx.shell_exec(`code ${stream_file}`);
+fx.shellExec(`code ${stream_file}`);

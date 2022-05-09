@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const ssh = require("./ssh");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const argv = require("yargs").argv;
 
 let context = argv._[0];

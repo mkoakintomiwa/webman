@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const argv = require("yargs").argv;
 const chalk = require("chalk");
 const db = require("./sqlite");
@@ -93,31 +93,31 @@ async function runNodes(){
             await runNodes();
         }else if (runContext === "use"){
             nodeID = _argv._[1];
-            await fx.shell_exec(`webman set test.node_id ${nodeID}`);
+            await fx.shellExec(`webman set test.node_id ${nodeID}`);
             fx.println();
             console.log("Node ID changed");
 
         }else if (["nodes"].includes(runContext)){
-            await fx.shell_exec(`webman get ${runContext}`);
+            await fx.shellExec(`webman get ${runContext}`);
         }else if( ["putty","fz","pma"].includes(runContext)){
             
-            await fx.shell_exec(`webman ${runContext} ${_nodeID} ${runArgs}`);
+            await fx.shellExec(`webman ${runContext} ${_nodeID} ${runArgs}`);
         
         }else if(["push"].includes(runContext)){
 
             if (_argv["all"]){
-                await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
+                await fx.shellExec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
             }else{
-                await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID} --test`);
+                await fx.shellExec(`webman ${runContext} ${runArgs} --node-id ${_nodeID} --test`);
             }
 
         } else if( ["generate","install","pull","push-dir"].includes(runContext)){
             
-            await fx.shell_exec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
+            await fx.shellExec(`webman ${runContext} ${runArgs} --node-id ${_nodeID}`);
         
         }else if( ["update","custom"].includes(runContext)){
             
-            await fx.shell_exec(`webman run ${runContext} ${runArgs} --node-id ${_nodeID}`);
+            await fx.shellExec(`webman run ${runContext} ${runArgs} --node-id ${_nodeID}`);
         
         }else if(runContext === "get"){
 
@@ -130,7 +130,7 @@ async function runNodes(){
             }
 
         }else if (runContext === "test"){
-            await fx.shell_exec(`webman set test.node_id ${_nodeID}`);
+            await fx.shellExec(`webman set test.node_id ${_nodeID}`);
         }else{
             let records = [];
         

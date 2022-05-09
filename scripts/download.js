@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const Downloader = require('nodejs-file-downloader');
 const cliProgress = require('cli-progress');
 const argv = require("yargs").argv;

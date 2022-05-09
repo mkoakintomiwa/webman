@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const path = require("path");
 const unirest = require("unirest");
 const fs = require("fs");

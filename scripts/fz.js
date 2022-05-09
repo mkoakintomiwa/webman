@@ -1,5 +1,5 @@
 const fs = require("fs");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const path = require("path");
 const argv = require("yargs").argv;
 const chalk = require("chalk");

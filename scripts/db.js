@@ -1,5 +1,5 @@
 const fs = require("fs");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const path = require("path");
 const argv = require("yargs").argv;
 const chalk = require("chalk");
@@ -60,7 +60,7 @@ const second_intent = argv._[2];
         case "open":
             const project_root = fx.project_root();
             const sqlbrowser = path.join(project_root,"DB Browser for SQLite","DB Browser for SQLite.exe");
-            fx.shell_exec(fx.hstart(`"${sqlbrowser}" "${path.join(document_root,".webman","webman.db")}"`));
+            fx.shellExec(fx.hstart(`"${sqlbrowser}" "${path.join(document_root,".webman","webman.db")}"`));
         break;
     }
     conn.close();

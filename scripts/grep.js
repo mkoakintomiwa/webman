@@ -1,5 +1,5 @@
 const fs = require("fs");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const glob = require("glob");
 const { info_prompt } = require("./stdout");
 const argv = require("yargs").argv;
@@ -55,7 +55,7 @@ let prepare = typeof argv["prepare"] != "undefined";
                     if (matches.length > 0){
                         let new_content = file_content.replace(regExp,replacement).replace(new RegExp("<newline>","g"),"\n");
                         fs.writeFileSync(file_path,new_content);
-                        await fx.shell_exec(`webman save "${file_path}"`);
+                        await fx.shellExec(`webman save "${file_path}"`);
                         console.log(file_path);
                     }
                 }

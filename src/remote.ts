@@ -16,34 +16,10 @@ program
     .version('0.0.1')
 
     .argument("<hostname>","SSH Hostname")
+    .argument("[home]", "default home")
     
-    .action(async (hostname)=>{
-
-        if (!fs.existsSync(sshPath)) fs.mkdirSync(sshPath);
-        if (!fs.existsSync(configPath)) fs.writeFileSync(configPath,"");
-        
-        let configContent = fs.readFileSync(configPath).toString();
-        const config = SSHConfig.parse(configContent);
-
-        let section = config.find({ Host: hostname });
-
-        let homeDir = "";
-
-        if (section){
-            for (const line of section.config) {
-                if (line.param === 'User') {
-                    let User = line.value;
-                    if (User === "root"){
-                        homeDir = "/root"
-                    }else{
-                        homeDir = `/home/${User}`
-                    }
-                    break
-                }
-            }
-        }
-
-        await fx.shellExec(`code --remote ssh-remote+${hostname} ${homeDir}`);    
+    .action(async (hostname,home)=>{
+        await fx.shellExec(`code --remote ssh-remote+${hostname} ${home || ""}`);    
     })
     
-    .parse(process.argv);
+.parse();

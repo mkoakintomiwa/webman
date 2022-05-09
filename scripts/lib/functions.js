@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.random_float = exports.git_full_address = exports.file_request_error_message = exports.file_request_success_message = exports.portal_http_upload = exports.portal_api_request = exports.require_portal_id = exports.match = exports.dotted_parameter = exports.modify_resource_icon = exports.sleep = exports.taskkil = exports.realArray = exports.real_array = exports.dollar_replace = exports.brackets_replace = exports.escape_sed = exports.escapeRegExp = exports.back_slash = exports.forward_slash = exports.unique_school_id = exports.copy_to_clipboard = exports.open_in_browser = exports.encoded_url = exports.file_copy_contents = exports.folderDialog = exports.filesDialog = exports.fileDialog = exports.shellExec = exports.echo_log_file = exports.shell_log_file = exports.log_file = exports.portal_dir = exports.settings = exports.empty_tmp_directory = exports.tmp_directory = exports.project_root = exports.document_root = exports.setDefaults = exports.setDefault = exports.writeFiles = exports.rmdir = exports.emptyDir = exports.copyFiles = exports.files_in_directory = exports.subdirectories = exports.time = exports.remoteNodeDir = exports.remotePublicHtml = exports.remoteDir = void 0;
-exports.readlineInterface = exports.setTerminalTitle = exports.argsCommandAppend = exports.escapeShell = exports.hex2bin = exports.bin2hex = exports.arg_node_ids = exports.zipDirectory = exports.copyProjectTemplateDirectory = exports.copyTemplateDirectory = exports.copyProjectTemplateFile = exports.copyTemplateFile = exports.template_content = exports.template_path = exports.new_tmp_file = exports.unique_characters_from_fs = exports.unique_digits_from_fs = exports.unique_from_fs = exports.random_digits = exports.random_characters = exports.round = exports.rigid_public_ip = exports.public_ip = exports.println = exports.relative_to_document_root = exports.hstart = exports.active_root_ips = exports.active_node_ids = exports.node_root = exports.root = exports.node = exports.node_ids = exports.spawn_process = exports.base64_decode = exports.base64_encode = exports.hftp_request = exports.project_ftp_mkdir = exports.ftp_mkdir = exports.ftp_put = exports.upload_project_file = exports.upload_project_files = exports.node_ftp_connection = exports.ftp_config = exports.upload_file = exports.upload_files = exports.ftp_connection = exports.hash = exports.writeFileSync = exports.writeConfig = exports.config = void 0;
-exports.percentageChunk = exports.webpackOptions = exports.n = exports.download = exports.project_specific_scripts_path = exports.saveReadlineInterfaceHistory = void 0;
+exports.argsCommandAppend = exports.escapeShell = exports.hex2bin = exports.bin2hex = exports.arg_node_ids = exports.zipDirectory = exports.copyProjectTemplateDirectory = exports.copyTemplateDirectory = exports.copyProjectTemplateFile = exports.copyTemplateFile = exports.template_content = exports.template_path = exports.new_tmp_file = exports.unique_characters_from_fs = exports.unique_digits_from_fs = exports.unique_from_fs = exports.random_digits = exports.random_characters = exports.round = exports.rigid_public_ip = exports.public_ip = exports.println = exports.relative_to_document_root = exports.hstart = exports.active_root_ips = exports.active_node_ids = exports.node_root = exports.root = exports.identityFile = exports.hostname = exports.node = exports.node_ids = exports.spawn_process = exports.base64_decode = exports.base64_encode = exports.hftp_request = exports.project_ftp_mkdir = exports.ftp_mkdir = exports.ftp_put = exports.upload_project_file = exports.upload_project_files = exports.node_ftp_connection = exports.ftp_config = exports.upload_file = exports.upload_files = exports.ftp_connection = exports.hash = exports.writeFileSync = exports.writeConfig = exports.config = void 0;
+exports.percentageChunk = exports.webpackOptions = exports.n = exports.download = exports.project_specific_scripts_path = exports.saveReadlineInterfaceHistory = exports.readlineInterface = exports.setTerminalTitle = void 0;
 const fs = require("fs");
+const os = require("os");
 const fsExtra = require("fs-extra");
 const path = require("path");
 const child_process_1 = require("child_process");
@@ -15,6 +16,7 @@ const LineManager_1 = require("./LineManager");
 const glob = require("glob");
 const chalk = require("chalk");
 const ncp_1 = require("ncp");
+const _ = require("lodash");
 require('dotenv').config();
 class log {
     static write(content) {
@@ -587,7 +589,18 @@ exports.random_float = random_float;
 function config(_document_root = null) {
     if (!_document_root)
         _document_root = document_root();
-    return JSON.parse(fs.readFileSync(path.join(_document_root, ".webman", "config.json")).toString());
+    let _config = {};
+    let main = JSON.parse(fs.readFileSync(path.join(_document_root, ".webman", "config.json")).toString());
+    if (main.extends) {
+        for (let rawConfigPath of main.extends) {
+            let configPath = path.resolve(rawConfigPath);
+            if (fs.existsSync(configPath)) {
+                _config = _.merge(JSON.parse(fs.readFileSync(configPath).toString()), _config);
+            }
+        }
+    }
+    _config = _.merge(main, _config);
+    return _config;
 }
 exports.config = config;
 function writeConfig(_config, _document_root = null) {
@@ -752,6 +765,16 @@ function node(node_id) {
     return config()["nodes"][node_id];
 }
 exports.node = node;
+function hostname(nodeId) {
+    let _node = node(nodeId);
+    return _node.hostname || (_node.ssh ? `${_node.ssh.username}_${_node.host}` : nodeId);
+}
+exports.hostname = hostname;
+function identityFile(nodeId) {
+    let _node = node(nodeId);
+    return _node.identityFile || path.join(os.homedir(), ".ssh", "id_rsa");
+}
+exports.identityFile = identityFile;
 function root(root_ip_address) {
     return config()["roots"][root_ip_address];
 }
@@ -763,7 +786,7 @@ exports.node_root = node_root;
 function active_node_ids() {
     let accumulator = [];
     for (let node_id of node_ids()) {
-        if (node(node_id).active)
+        if (node(node_id).active !== false)
             accumulator.push(node_id);
     }
     return accumulator;

@@ -1,5 +1,5 @@
 const fs = require("fs");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const path = require("path");
 const argv = require("yargs").argv;
 const chalk = require("chalk");
@@ -118,7 +118,7 @@ let first_file_location = _first_file_location();
                 break; 
             }
 
-            fx.shell_exec(`code "${first_file_location}"`);
+            fx.shellExec(`code "${first_file_location}"`);
             
         break;
         
@@ -142,7 +142,7 @@ let first_file_location = _first_file_location();
                 );
             }
 
-            await fx.shell_exec(`code "${_first_file_location(destination_dir)}"`);
+            await fx.shellExec(`code "${_first_file_location(destination_dir)}"`);
         break;
     }
 })();

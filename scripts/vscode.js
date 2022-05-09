@@ -1,5 +1,5 @@
 const fs = require("fs");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 
 let document_root = fx.document_root();
 let vscode_dir = `${document_root}/.vscode`;

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const yargv = require("yargs").argv;
-const fx = require("./functions");
+const fx = require("./lib/functions");
 
 let project_root = fx.project_root();
 let document_root = fx.document_root();
@@ -19,4 +19,4 @@ if (fs.existsSync(ajax_file)){
 
 fs.writeFileSync(ajax_file,fx.template_content("ajax.php"));
 
-fx.shell_exec(`code ${ajax_file}`);
+fx.shellExec(`code ${ajax_file}`);

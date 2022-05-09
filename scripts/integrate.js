@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 
 (async _=>{
     await fx.runProjectSpecificScript();

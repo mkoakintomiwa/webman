@@ -1,5 +1,5 @@
 const chokidar = require("chokidar");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const {spawn, spawnSync} = require("child_process");
 const px = require("path");
 const _path_ = require("path");

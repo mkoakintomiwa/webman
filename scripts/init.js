@@ -1,5 +1,5 @@
 const fs = require("fs");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const glob = require("glob");
 const { info_prompt,prompt_object } = require("./stdout");
 const argv = require("yargs").argv;
@@ -169,9 +169,9 @@ config.roots = {};
 
     fx.writeConfig(config,document_root);
 
-    await fx.shell_exec("webman vscode init");
+    await fx.shellExec("webman vscode init");
 
-    await fx.shell_exec("webman db prepare");
+    await fx.shellExec("webman db prepare");
 
     for (let node_id of Object.keys(config.nodes)){
 
@@ -182,11 +182,11 @@ config.roots = {};
 
         await info_prompt(`Make sure you enable "mysql" command without password: ${node.mysql.password} on root @ ${node.mysql.host}`,"MySQL","Enter");
 
-        await fx.shell_exec(`webman mysql add user --node-id "${node_id}"`);
+        await fx.shellExec(`webman mysql add user --node-id "${node_id}"`);
 
-        await fx.shell_exec(`webman mysql add databases --node-id "${node_id}"`);
+        await fx.shellExec(`webman mysql add databases --node-id "${node_id}"`);
 
-        await fx.shell_exec(`webman mysql add remote-host --node-id "${node_id}"`);
+        await fx.shellExec(`webman mysql add remote-host --node-id "${node_id}"`);
     }
 
 })();

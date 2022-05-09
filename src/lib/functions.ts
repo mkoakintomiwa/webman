@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as os from "os"
 import * as fsExtra from "fs-extra";
 import * as path from "path";
 import {spawn} from "child_process";
@@ -10,6 +11,7 @@ import LineManager from "./LineManager";
 import * as glob from "glob";
 import * as chalk from "chalk";
 import { ncp } from "ncp";
+import * as _ from "lodash"
 require('dotenv').config();
 
 
@@ -672,7 +674,19 @@ export function random_float(min,max,precision=2){
 
 export function config(_document_root=null){
 	if (!_document_root) _document_root = document_root();
-    return JSON.parse(fs.readFileSync(path.join(_document_root,".webman","config.json")).toString())
+    let _config: any = {};
+	let main = JSON.parse(fs.readFileSync(path.join(_document_root,".webman","config.json")).toString());
+
+	if (main.extends){
+		for(let rawConfigPath of main.extends){
+			let configPath = path.resolve(rawConfigPath);
+			if (fs.existsSync(configPath)){
+				_config = _.merge(JSON.parse(fs.readFileSync(configPath).toString()),_config);
+			}
+		}
+	}
+	_config = _.merge(main,_config);
+	return _config;
 }
 
 
@@ -878,9 +892,20 @@ export function node_ids(){
 	return Object.keys(config()["nodes"]);
 }
 
-export function node(node_id){
+export function node(node_id: string){
 	if (!node_id)  node_id = node_ids()[0]; 
 	return config()["nodes"][node_id];
+}
+
+export function hostname(nodeId: string){
+	let _node = node(nodeId);
+	return _node.hostname || (_node.ssh?`${_node.ssh.username}_${_node.host}`:nodeId);
+}
+
+
+export function identityFile(nodeId: string){
+	let _node = node(nodeId);
+	return _node.identityFile || path.join(os.homedir(),".ssh","id_rsa")
 }
 
 
@@ -898,7 +923,7 @@ export function active_node_ids(){
 	let accumulator = [];
 
 	for (let node_id of node_ids()){
-		if (node(node_id).active) accumulator.push(node_id);
+		if (node(node_id).active !== false) accumulator.push(node_id);
 	}
 	return accumulator;
 }

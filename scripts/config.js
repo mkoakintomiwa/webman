@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const { info_prompt } = require("./stdout");
 const { randomBytes } = require("crypto");
 
