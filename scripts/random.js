@@ -1,5 +1,6 @@
 const fx = require("./lib/functions");
 const argv = require("yargs").argv;
+const crypto = require("crypto");
 
 var context = argv._[0];
 
@@ -17,6 +18,10 @@ switch (context){
 
     case "hex":
         content = fx.hash(fx.random_characters(length));
+    break;
+
+    case "bytes":
+        content = crypto.randomBytes(length).toString("hex");
     break;
 }
 
