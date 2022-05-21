@@ -8,5 +8,4 @@ var req = unirest('GET', `https://api.icitifysolution.com/password-hash?password
   .end(function (res) { 
     if (res.error) throw new Error(res.error); 
     console.log(res.raw_body);
-    fx.copy_to_clipboard(res.raw_body);
-  });
+});
