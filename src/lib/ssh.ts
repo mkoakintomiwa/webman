@@ -827,7 +827,7 @@ export function node_open_phpmyadmin(node_id){
     var _node = fx.node(node_id);
     var _mysql = _node.mysql;
     
-    return fx.open_in_browser(`${_node.node_url}/phpmyadmin/${_mysql.phpmyadmin_auth_key}`,"chrome");
+    return fx.open_in_browser(`${_node.nodeUrl}/phpmyadmin/${_mysql.phpmyadminAuthKey}`,"chrome");
 };
 
 
@@ -836,5 +836,5 @@ export function node_root_open_phpmyadmin(node_id){
     var _node = fx.node(node_id);
     var _mysql = _node.mysql;
     
-    return fx.open_in_browser(`${_node.node_url}/phpmyadmin/${root.mysql.phpmyadmin_auth_key}`,"chrome");
+    return fx.open_in_browser(`${_node.nodeUrl}/phpmyadmin/${root.mysql.phpmyadminAuthKey}`,"chrome");
 };

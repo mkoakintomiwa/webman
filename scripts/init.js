@@ -28,7 +28,7 @@ config.roots = {};
             });
 
             await info_prompt("Domain Name","Node",node_id).then(x=>{
-                node.domain_name = x;
+                node.domainName = x;
             });
 
 
@@ -36,14 +36,14 @@ config.roots = {};
                 node.host = x;
             });
 
-            node.base_url = `https://${node.domain_name}`;
+            node.baseUrl = `https://${node.domainName}`;
 
-            await info_prompt("rel_dirname","Node","").then(x=>{
-                node.rel_dirname = x;
+            await info_prompt("relDirname","Node","").then(x=>{
+                node.relDirname = x;
             });
 
             
-            node.node_url = `${node.base_url}${node.rel_dirname}`;
+            node.nodeUrl = `${node.baseUrl}${node.relDirname}`;
 
             
             await info_prompt("handshake_auth_key","Node",fx.hash(fx.random_characters(32))).then(x=>{

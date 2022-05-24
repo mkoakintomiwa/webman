@@ -153,7 +153,7 @@ type ToastOptions = {
 
 declare var portal_url: string;
 
-declare var rel_dirname: string;
+declare var relDirname: string;
 
 declare var ajax: string;
 

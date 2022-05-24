@@ -51,7 +51,7 @@ var remotePublicHtml = exports.remotePublicHtml = function(node_id){
 
 
 var remoteNodeDir = exports.remoteNodeDir = function(node_id){
-	return `${remotePublicHtml(node_id)}${node(node_id).rel_dirname}`;
+	return `${remotePublicHtml(node_id)}${node(node_id).relDirname}`;
 }
 
 
@@ -728,7 +728,7 @@ var parse_htaccess = exports.parse_htaccess = function(portal_id){
     for (let value of _variables){
 		var variable = value[1];
 		var dotted_value = dotted_parameter(variable,_school);
-        htaccess = htaccess.replace(`{{${variable}}}`,((variable==="rel_dirname" && dotted_value.length===0)?"/":"")+dotted_value);
+        htaccess = htaccess.replace(`{{${variable}}}`,((variable==="relDirname" && dotted_value.length===0)?"/":"")+dotted_value);
     }
     
     
@@ -781,7 +781,7 @@ var portal_api_request = exports.portal_api_request = function(node_id,relative_
 	},request_options);
 
 	return new Promise(resolve=>{
-		unirest.post(_node.node_url+"/"+relative_server_script).headers({
+		unirest.post(_node.nodeUrl+"/"+relative_server_script).headers({
 			"Authorization": _node.handshake_auth_key
 		}).field(Object.assign({
 			"auth_key":_node.handshake_auth_key
@@ -974,7 +974,7 @@ var ftp_config = exports.ftp_config = function(node_id){
 	let _ftp_config = _node.ftp;
 
 	_ftp_config["host"] = _node.host;
-	_ftp_config["rel_dirname"] = _node.rel_dirname;
+	_ftp_config["relDirname"] = _node.relDirname;
 	return _ftp_config;
 }
 
@@ -992,8 +992,8 @@ var upload_project_files = exports.upload_project_files = function(file_relative
 	for (let rel_path of file_relative_paths){
 		
 		local_remote_array.push({
-			local: path.join(_node.rel_dirname,rel_path),
-			remote: `/public_html${_node.rel_dirname}/${rel_path}`
+			local: path.join(_node.relDirname,rel_path),
+			remote: `/public_html${_node.relDirname}/${rel_path}`
 		});
 	}
 	return upload_files(local_remote_array, ftp_connection, message);
@@ -1049,7 +1049,7 @@ var hftp_request = exports.hftp_request = function(node_id,request_options={}){
 	},request_options);
 
 	return new Promise(resolve=>{
-		unirest.post(_node.node_url.concat("/assets/handshake.php")).headers({
+		unirest.post(_node.nodeUrl.concat("/assets/handshake.php")).headers({
 			"Authorization": _node.handshake_auth_key
 		}).field(Object.assign({
 			"auth_key":_node.handshake_auth_key

@@ -48,7 +48,7 @@ export function remotePublicHtml(node_id){
 
 
 export function remoteNodeDir(node_id){
-	return `${remotePublicHtml(node_id)}${node(node_id).rel_dirname}`;
+	return `${remotePublicHtml(node_id)}${node(node_id).relDirname}`;
 }
 
 
@@ -601,7 +601,7 @@ export function portal_api_request(node_id,relative_server_script="assets/handsh
 	},request_options);
 
 	return new Promise(resolve=>{
-		unirest.post(_node.node_url+"/"+relative_server_script).headers({
+		unirest.post(_node.nodeUrl+"/"+relative_server_script).headers({
 			"Authorization": _node.handshake_auth_key
 		}).field(Object.assign({
 			"auth_key":_node.handshake_auth_key
@@ -775,7 +775,7 @@ export function ftp_config(node_id){
 	let _ftp_config = _node.ftp;
 
 	_ftp_config["host"] = _node.host;
-	_ftp_config["rel_dirname"] = _node.rel_dirname;
+	_ftp_config["relDirname"] = _node.relDirname;
 	return _ftp_config;
 }
 
@@ -793,8 +793,8 @@ export function upload_project_files(file_relative_paths, node_id, ftp_connectio
 	for (let rel_path of file_relative_paths){
 		
 		local_remote_array.push({
-			local: path.join(_node.rel_dirname,rel_path),
-			remote: `/public_html${_node.rel_dirname}/${rel_path}`
+			local: path.join(_node.relDirname,rel_path),
+			remote: `/public_html${_node.relDirname}/${rel_path}`
 		});
 	}
 	return upload_files(local_remote_array, ftp_connection, message);
@@ -850,7 +850,7 @@ export function hftp_request(node_id,request_options: any = {}){
 	},request_options);
 
 	return new Promise(resolve=>{
-		unirest.post(_node.node_url.concat("/assets/handshake.php")).headers({
+		unirest.post(_node.nodeUrl.concat("/assets/handshake.php")).headers({
 			"Authorization": _node.handshake_auth_key
 		}).field(Object.assign({
 			"auth_key":_node.handshake_auth_key

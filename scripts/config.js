@@ -12,14 +12,14 @@ var config = JSON.parse(fs.readFileSync(config_path).toString());
 const subject = "hftp";
 
 (async _=>{
-    await info_prompt("Domain name: ",subject,config.domain_name||"https://google.com").then(val=>{
-        config.domain_name = val;
+    await info_prompt("Domain name: ",subject,config.domainName||"https://google.com").then(val=>{
+        config.domainName = val;
     });
     rewrite_config();
 
 
-    await info_prompt("rel_dirname: ",subject,config.rel_dirname||"").then(val=>{
-        config.rel_dirname = val;
+    await info_prompt("relDirname: ",subject,config.relDirname||"").then(val=>{
+        config.relDirname = val;
     });
     rewrite_config();
 
@@ -71,8 +71,8 @@ const subject = "hftp";
     });
 
 
-    await info_prompt("settings.rel_dirname",subject,settings.rel_dirname||config.rel_dirname).then(p=>{
-        settings.rel_dirname = p;
+    await info_prompt("settings.relDirname",subject,settings.relDirname||config.relDirname).then(p=>{
+        settings.relDirname = p;
     });
 
     await info_prompt("settings.site_port",subject,settings.site_port||config.site_port).then(p=>{
@@ -107,8 +107,8 @@ const subject = "hftp";
 
     fs.writeFileSync(path.join(fx.document_root(),".hftp","settings.json"),JSON.stringify(config.settings,null,4));
     
-    var remote_assets_dir = `/public_html${config.rel_dirname}/assets`;
-    var remote_hftp_dir = `/public_html${config.rel_dirname}/.hftp`;
+    var remote_assets_dir = `/public_html${config.relDirname}/assets`;
+    var remote_hftp_dir = `/public_html${config.relDirname}/.hftp`;
 
     console.log("");
     

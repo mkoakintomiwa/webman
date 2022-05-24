@@ -42,7 +42,7 @@ let node_ids = fx.arg_node_ids(argv);
         });
 
 
-        await ssh.execute_command(`wpanel account create -u ${new_host_username} -p ${node.ssh.password} -d ${node.domain_name}`,ssh_root_connection);
+        await ssh.execute_command(`wpanel account create -u ${new_host_username} -p ${node.ssh.password} -d ${node.domainName}`,ssh_root_connection);
 
 
         let ssh_connection = await ssh.ssh_connection({
@@ -106,9 +106,9 @@ let node_ids = fx.arg_node_ids(argv);
             await fx.shellExec(`_ cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
         }
             
-        console.log(`\nCheck IP Address: ${node.node_url}/ip-address`);
+        console.log(`\nCheck IP Address: ${node.nodeUrl}/ip-address`);
 
-        console.log(`\nNode URL: ${node.node_url}\n\n`);
+        console.log(`\nNode URL: ${node.nodeUrl}\n\n`);
         
 
         ssh_connection.dispose();

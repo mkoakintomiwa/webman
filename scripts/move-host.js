@@ -42,7 +42,7 @@ let node_ids = fx.arg_node_ids(argv);
         });
 
 
-        await ssh.execute_command(`wpanel account create -u ${new_host_username} -p ${node.ssh.password} -d ${node.domain_name}`,ssh_root_connection);
+        await ssh.execute_command(`wpanel account create -u ${new_host_username} -p ${node.ssh.password} -d ${node.domainName}`,ssh_root_connection);
 
 
         let ssh_connection = await ssh.ssh_connection({
@@ -97,13 +97,13 @@ let node_ids = fx.arg_node_ids(argv);
             await fx.shellExec(`_ run update cronjob --node-id ${node_id}`).catch(e=>{});
         }
 
-        let response =  await axios.get(`${node.node_url}/ip-address`);
+        let response =  await axios.get(`${node.nodeUrl}/ip-address`);
 
         if (response.status === 200){
-            console.log(`\nIP Address: ${node.node_url}`);
+            console.log(`\nIP Address: ${node.nodeUrl}`);
         }
 
-        console.log(`\nNode URL: ${node.node_url}\n\n`);
+        console.log(`\nNode URL: ${node.nodeUrl}\n\n`);
         
 
         ssh_connection.dispose();

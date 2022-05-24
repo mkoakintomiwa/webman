@@ -271,7 +271,7 @@ var strict_skip = argv.skip?true:false;
 
         await new Promise(resolve=>{
             var spinner = preloader.spinner("Executing primary queries %s");
-            unirest.post(node.node_url+'/php/execute_primary_queries.php').field({
+            unirest.post(node.nodeUrl+'/php/execute_primary_queries.php').field({
                 users:JSON.stringify(users),
                 branches:JSON.stringify(school_branches_properties),
                 portal_properties:JSON.stringify(portal_properties)
@@ -283,7 +283,7 @@ var strict_skip = argv.skip?true:false;
         });
 
         if( (await new_prompt("Will you like to visit the portal?","Y/N")).trim().toLowerCase()==="y"){
-            await fx.open_in_browser(node.node_url);
+            await fx.open_in_browser(node.nodeUrl);
         }
     }
 

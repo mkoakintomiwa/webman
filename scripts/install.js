@@ -17,7 +17,7 @@ const node_id = argv["node-id"];
     switch(context){
         case "phpmyadmin":
 
-            var phpmyadmin_auth_key
+            var phpmyadminAuthKey
             var brackets_properties
             var mysql
 
@@ -28,7 +28,7 @@ const node_id = argv["node-id"];
             }
 
 
-            phpmyadmin_auth_key = mysql.phpmyadmin_auth_key;
+            phpmyadminAuthKey = mysql.phpmyadminAuthKey;
 
             brackets_properties = {
                 host: mysql.host || "localhost",
@@ -38,7 +38,7 @@ const node_id = argv["node-id"];
 
             var lastest_phpmyadmin = 'phpMyAdmin-5.1.0-all-languages';
 
-            await ssh.node_execute_command(`mkdir -p phpmyadmin && cd phpmyadmin && rm -rf "${lastest_phpmyadmin}.zip" &&  rm -rf "${lastest_phpmyadmin}" && rm -rf "${phpmyadmin_auth_key}" && wget "https://files.phpmyadmin.net/phpMyAdmin/5.1.0/${lastest_phpmyadmin}.zip" --no-check-certificate && unzip -o "${lastest_phpmyadmin}.zip" && mv "${lastest_phpmyadmin}" "${phpmyadmin_auth_key}" && cd "${phpmyadmin_auth_key}" && mv config.sample.inc.php config.inc.php`,ssh_connection,{
+            await ssh.node_execute_command(`mkdir -p phpmyadmin && cd phpmyadmin && rm -rf "${lastest_phpmyadmin}.zip" &&  rm -rf "${lastest_phpmyadmin}" && rm -rf "${phpmyadminAuthKey}" && wget "https://files.phpmyadmin.net/phpMyAdmin/5.1.0/${lastest_phpmyadmin}.zip" --no-check-certificate && unzip -o "${lastest_phpmyadmin}.zip" && mv "${lastest_phpmyadmin}" "${phpmyadminAuthKey}" && cd "${phpmyadminAuthKey}" && mv config.sample.inc.php config.inc.php`,ssh_connection,{
                 cwd: fx.remoteNodeDir(node_id)
             });
 
@@ -52,7 +52,7 @@ const node_id = argv["node-id"];
 
             fs.writeFileSync(tmp_file,new_content);
 
-            await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/${phpmyadmin_auth_key}/config.inc.php`),node_id,ssh_connection);
+            await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/${phpmyadminAuthKey}/config.inc.php`),node_id,ssh_connection);
 
             await ssh.node_upload_file(fx.template_path("restricted.php"),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/index.php`),node_id,ssh_connection);
 

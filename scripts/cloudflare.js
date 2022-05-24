@@ -16,7 +16,7 @@ let node_id = fx.arg_node_ids(argv)[0];
 
 let node = fx.node(node_id);
 
-var parsed = psl.parse(node.domain_name);
+var parsed = psl.parse(node.domainName);
 
 // @ts-ignore
 let rootDomainName = parsed.domain;
@@ -84,7 +84,7 @@ if (cloudflare){
                             headers: cloudflareHeaders,
                             data: JSON.stringify({
                                 "type":"A",
-                                "name": node.domain_name,
+                                "name": node.domainName,
                                 "content":argv["h"],
                                 "ttl": 1,
                                 "proxied": true
@@ -165,7 +165,7 @@ if (cloudflare){
     async function getDNSRecord(){
 
         for (let record of await dnsARecords()){
-            if (record.name === node.domain_name){
+            if (record.name === node.domainName){
                 return record;
             }
         }
