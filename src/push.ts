@@ -36,7 +36,23 @@ program
 
             console.log(`\nPublic key successfully uploaded\n`);
         }else if (flags.rootIp){
+            let rootIp = flags.rootIp;
+            
+            let sshConnection = await ssh.root_ssh_connection(rootIp);
 
+            let publicKeyPath = path.join(os.homedir(),".ssh","id_rsa.pub");
+
+            let remoteHomeDir = `/root`;
+
+            await ssh.upload_file(publicKeyPath,`${remoteHomeDir}/authorized_keys.chunk`,sshConnection);
+
+            await ssh.execute_command(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`,sshConnection,{
+                cwd: remoteHomeDir
+            });
+
+            sshConnection.dispose();
+
+            console.log(`\nPublic key successfully uploaded\n`);
         }
     });
 
