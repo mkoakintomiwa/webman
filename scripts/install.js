@@ -12,7 +12,7 @@ const node_id = argv["node-id"];
     var root = fx.node_root(node_id);
     var node = fx.node(node_id);
 
-    var ssh_connection = await ssh.node_ssh_connection(node_id);
+    var ssh_connection = await ssh.nodeSSHConnection(node_id);
 
     switch(context){
         case "phpmyadmin":
@@ -46,13 +46,13 @@ const node_id = argv["node-id"];
             let template_rel_path = 'phpmyadmin/config.inc.php';
             let template_content = fx.template_content(template_rel_path);
             
-            let tmp_file = fx.new_tmp_file("php");
+            let tmp_file = fx.newTmpFile("php");
 
             let new_content = fx.brackets_replace(template_content, brackets_properties);
 
             fs.writeFileSync(tmp_file,new_content);
 
-            await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/${phpmyadminAuthKey}/config.inc.php`),node_id,ssh_connection);
+            await ssh.node_upload_file(fx.relativeToDocumentRoot(tmp_file),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/${phpmyadminAuthKey}/config.inc.php`),node_id,ssh_connection);
 
             await ssh.node_upload_file(fx.template_path("restricted.php"),fx.remoteNodeDir(node_id).concat(`/phpmyadmin/index.php`),node_id,ssh_connection);
 

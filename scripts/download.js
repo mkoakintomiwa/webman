@@ -11,7 +11,7 @@ var downloaded_file = path.join(document_root,rel_path);
 var download_directory = path.dirname(downloaded_file);
 var downloaded_filename = path.basename(downloaded_file);
 
-var file_base_url = fx.node(fx.active_node_ids()[0]).nodeUrl;
+var file_base_url = fx.node(fx.activeNodeIds()[0]).nodeUrl;
 
 if (argv["node-id"]) file_base_url = fx.node(argv["node-id"]).nodeUrl;
 

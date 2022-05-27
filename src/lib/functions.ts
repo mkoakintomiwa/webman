@@ -892,9 +892,9 @@ export function node_ids(){
 	return Object.keys(config()["nodes"]);
 }
 
-export function node(node_id: string){
-	if (!node_id)  node_id = node_ids()[0]; 
-	return config()["nodes"][node_id];
+export function node(nodeId: string){
+	if (!nodeId)  nodeId = node_ids()[0]; 
+	return config()["nodes"][nodeId];
 }
 
 export function hostname(nodeId: string){
@@ -919,7 +919,7 @@ export function node_root(node_id=null){
 }
 
 
-export function active_node_ids(){
+export function activeNodeIds(){
 	let accumulator = [];
 
 	for (let node_id of node_ids()){
@@ -932,7 +932,7 @@ export function active_node_ids(){
 export function active_root_ips(){
 	let accumulator = [];
 
-	for (let node_id of active_node_ids()){
+	for (let node_id of activeNodeIds()){
 		let _node = node(node_id);
 		if (_node.active && !accumulator.includes(_node.host)) accumulator.push(_node.host);
 	}
@@ -945,7 +945,7 @@ export function hstart(command){
 }
 
 
-export function relative_to_document_root(absolute_path){
+export function relativeToDocumentRoot(absolute_path){
 	return path.relative(document_root(),absolute_path);
 }
 
@@ -958,11 +958,11 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 
 	let _config = config();
 
-	let _active_node_ids;
+	let _activeNodeIds;
 	if (node_id){
-		_active_node_ids = [node_id];
+		_activeNodeIds = [node_id];
 	}else{
-		_active_node_ids = active_node_ids();
+		_activeNodeIds = activeNodeIds();
 	}
 
 	let filename = relative_path;
@@ -974,7 +974,7 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 			console.log("settings.json ignored");
 			println();
 		}else{
-			for (let node_id of _active_node_ids){
+			for (let node_id of _activeNodeIds){
 			
 				if (filename==="update.php"){
 	
@@ -1123,7 +1123,7 @@ export function unique_characters_from_fs(directory_path, length=7){
 }
 
 
-export function new_tmp_file(file_extension="",length=7){
+export function newTmpFile(file_extension="",length=7){
 	let _document_root = document_root();
 	if (file_extension.length>0) file_extension = ".".concat(file_extension)
 
@@ -1210,7 +1210,7 @@ export function arg_node_ids(argv){
 	}else if (argv["node-ids"]){
 		_node_ids = real_array(argv["node-ids"].split(","),true);
 	}else{
-		_node_ids = active_node_ids();
+		_node_ids = activeNodeIds();
 	}
 
 	return _node_ids;

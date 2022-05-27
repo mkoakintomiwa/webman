@@ -18,7 +18,7 @@ program
         switch(action){
             case "generate":
                 const config = SSHConfig.parse('');
-                let activeNodeIds = fx.active_node_ids();
+                let activeNodeIds = fx.activeNodeIds();
  
                 for (let nodeId of activeNodeIds){
                     let node = fx.node(nodeId);

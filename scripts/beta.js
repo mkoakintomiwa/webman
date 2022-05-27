@@ -15,11 +15,11 @@ const context = argv._[0];
             let betaNode = fx.node("beta");
             
             console.log(chalk.magentaBright(`Connecting to ${node.name}`));
-            let nodeSSHConnection = await ssh.node_ssh_connection(nodeId);
+            let nodeSSHConnection = await ssh.nodeSSHConnection(nodeId);
             console.log(`Connected`);
             
             console.log(chalk.magentaBright(`Connecting to ${betaNode.name}`));
-            let betaSSHConnection = await ssh.node_ssh_connection("beta");
+            let betaSSHConnection = await ssh.nodeSSHConnection("beta");
             console.log(`Connected`);
 
             

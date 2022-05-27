@@ -80,7 +80,7 @@ function run_command(context_id){
             if (rootRun){
                 root_ssh_connection = await ssh.root_ssh_connection(root_ip);
             }else{
-                ssh_connection = await ssh.node_ssh_connection(node_id);
+                ssh_connection = await ssh.nodeSSHConnection(node_id);
             }
         }        
 
@@ -419,7 +419,7 @@ function run_command(context_id){
         run_through = argv["node-id"].toString().split(",");
     }else{
         if (!argv.steps) await info_prompt("Note: Node ID was not passed","general run","Enter");
-        run_through = fx.active_node_ids();  
+        run_through = fx.activeNodeIds();  
     }
     
     for (let context_id of run_through){

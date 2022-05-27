@@ -183,7 +183,7 @@ var ssh_connection = exports.ssh_connection = async function(_options={}){
 /**
  * @return {Promise<NodeSSH>}
  */
-var node_ssh_connection = exports.node_ssh_connection = function(node_id,_options={}){
+var nodeSSHConnection = exports.nodeSSHConnection = function(node_id,_options={}){
     return ssh_connection(node_ssh_options(node_id,_options));
 }
 
@@ -192,7 +192,7 @@ var root_ssh_connection = exports.root_ssh_connection = function(root_ip,_option
 }
 
 
-var node_root_ssh_connection = exports.node_root_ssh_connection = function(node_id,_options={}){
+var nodeRootSSHConnection = exports.nodeRootSSHConnection = function(node_id,_options={}){
     return ssh_connection(node_root_ssh_options(node_id,_options));
 }
 
@@ -300,18 +300,18 @@ var node_get_file = exports.node_get_file = function(relative_path,node_id,ssh_c
 
 
 
-var node_execute_command = exports.node_execute_command = function(command,node_ssh_connection,_options={}){
+var node_execute_command = exports.node_execute_command = function(command,nodeSSHConnection,_options={}){
     let node_id = _options.node_id || "";
     let options = fx.setDefaults({
         cwd: fx.remoteNodeDir(node_id)
     },_options);
-    return execute_command(command,node_ssh_connection,options);
+    return execute_command(command,nodeSSHConnection,options);
 }
 
 
 
-var node_root_execute_command = exports.node_root_execute_command = function(command,node_root_ssh_connection,_options){
-    return execute_command(command,node_root_ssh_connection,_options);
+var node_root_execute_command = exports.node_root_execute_command = function(command,nodeRootSSHConnection,_options){
+    return execute_command(command,nodeRootSSHConnection,_options);
 }
 
 
@@ -473,7 +473,7 @@ var updateCronjob = exports.updateCronjob = function(node_id,ssh_connection){
 
         let crontab = fx._.generateCrontab(options);
 
-        let tmp_file = fx.new_tmp_file();
+        let tmp_file = fx.newTmpFile();
 
         fs.writeFileSync(tmp_file,crontab);
 
@@ -588,7 +588,7 @@ var updateHtaccess = exports.updateHtaccess = function(node_id,ssh_connection){
 
         let htaccess = fx._.generateHtaccess(options);
 
-        let tmp_file = fx.new_tmp_file();
+        let tmp_file = fx.newTmpFile();
 
         fs.writeFileSync(tmp_file,htaccess);
 

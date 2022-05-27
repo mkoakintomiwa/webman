@@ -7,7 +7,7 @@ var config = fx.config();
 var application_type = config.application_type || "web";
 
 var absolute_path = argv._[0];
-var relative_path = fx.relative_to_document_root(absolute_path);
+var relative_path = fx.relativeToDocumentRoot(absolute_path);
 
 var is_source_file = false;
 var is_specs_file = false;

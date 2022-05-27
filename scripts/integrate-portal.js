@@ -23,7 +23,7 @@ var strict_skip = argv.skip?true:false;
 
     var node_id = argv._[0];
     
-    var ssh_connection = await ssh.node_ssh_connection(node_id);
+    var ssh_connection = await ssh.nodeSSHConnection(node_id);
 
     var node = fx.node(node_id);
 

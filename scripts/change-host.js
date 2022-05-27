@@ -28,8 +28,8 @@ let node_ids = fx.arg_node_ids(argv);
 
         console.log("Connecting to servers...");
         
-        let node_ssh_connection = await ssh.node_ssh_connection(node_id);
-        let node_root_ssh_connection = await ssh.node_root_ssh_connection(node_id);
+        let nodeSSHConnection = await ssh.nodeSSHConnection(node_id);
+        let nodeRootSSHConnection = await ssh.nodeRootSSHConnection(node_id);
 
         let config = fx.config();
         // @ts-ignore
@@ -54,11 +54,11 @@ let node_ids = fx.arg_node_ids(argv);
 
         if (!argv.d){
 
-            await ssh.execute_command(`cd public_html/specs && rm -rf ${node_id}.zip && zip -r ${node_id}.zip .`,node_ssh_connection);
+            await ssh.execute_command(`cd public_html/specs && rm -rf ${node_id}.zip && zip -r ${node_id}.zip .`,nodeSSHConnection);
 
-            await ssh.execute_command(`cd public_html/specs &&  node /nodejs/scp --host ${new_host_ip} --username ${new_host_username}  --password '${node.ssh.password}' --local-file-path '${node_id}.zip' --remote-file-path '/home/${new_host_username}/public_html/${node_id}.zip'`,node_ssh_connection);
+            await ssh.execute_command(`cd public_html/specs &&  node /nodejs/scp --host ${new_host_ip} --username ${new_host_username}  --password '${node.ssh.password}' --local-file-path '${node_id}.zip' --remote-file-path '/home/${new_host_username}/public_html/${node_id}.zip'`,nodeSSHConnection);
 
-            await ssh.execute_command(`cd public_html/specs && rm -rf ${node_id}.zip`,node_ssh_connection);
+            await ssh.execute_command(`cd public_html/specs && rm -rf ${node_id}.zip`,nodeSSHConnection);
 
         } 
 
@@ -66,7 +66,7 @@ let node_ids = fx.arg_node_ids(argv);
 
         for (let db_name of node.mysql.databases){
             
-            await ssh.execute_command(`cd /home/${node.ssh.username} && mysqldump -u root ${db_name} > ${db_name}.sql && node /nodejs/scp --host ${new_host_ip} --username ${new_host_username}  --password '${node.ssh.password}' --local-file-path '${db_name}.sql' --remote-file-path '/home/${new_host_username}/${db_name}.sql'`,node_root_ssh_connection);
+            await ssh.execute_command(`cd /home/${node.ssh.username} && mysqldump -u root ${db_name} > ${db_name}.sql && node /nodejs/scp --host ${new_host_ip} --username ${new_host_username}  --password '${node.ssh.password}' --local-file-path '${db_name}.sql' --remote-file-path '/home/${new_host_username}/${db_name}.sql'`,nodeRootSSHConnection);
 
             let command = `mysql --execute "DROP DATABASE IF EXISTS ${db_name}; CREATE DATABASE IF NOT EXISTS ${db_name}; GRANT ALL ON ${db_name}.* TO '${node.mysql.username}'@'localhost';flush privileges;"`;
             
@@ -113,8 +113,8 @@ let node_ids = fx.arg_node_ids(argv);
 
         ssh_connection.dispose();
         ssh_root_connection.dispose();
-        node_ssh_connection.dispose();
-        node_root_ssh_connection.dispose();
+        nodeSSHConnection.dispose();
+        nodeRootSSHConnection.dispose();
 
 
     }

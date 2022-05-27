@@ -103,7 +103,7 @@ let webpackBundler = null;
             filesWatcher = chokidar.watch(path.join(_document_root,"src"));
     
             filesWatcher.on("change",async function(_path,stats){
-                let appLocation = path.dirname(fx.relative_to_document_root(_path).replace("src",""));
+                let appLocation = path.dirname(fx.relativeToDocumentRoot(_path).replace("src",""));
                 await fx.compileApp(appLocation);
                 fx.println(`${chalk.magentaBright("Event:")} ${chalk.cyanBright(`${appLocation.replace(/^\\/,"")} successfully compiled`)}`);
             });

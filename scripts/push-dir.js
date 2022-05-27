@@ -17,7 +17,7 @@ let node_ids = fx.arg_node_ids(argv);
         let zip_file_name = `${path.basename(directory_relative_path)}.zip`;
         let zip_relative_file_path = `${directory_relative_path}/${zip_file_name}`
         let zip_file_path = `${document_root}/${zip_relative_file_path}`;
-        let tmp_file = fx.new_tmp_file("zip",10);
+        let tmp_file = fx.newTmpFile("zip",10);
 
     let remote_directory = `${fx.remoteNodeDir(node_id)}/${fx.forward_slash(directory_relative_path)}`; 
 
@@ -29,7 +29,7 @@ let node_ids = fx.arg_node_ids(argv);
 
         fx.println("\n\n> Connecting to remote server");
         let ssh_connection;
-        await ssh.node_ssh_connection(node_id).then(x=>{
+        await ssh.nodeSSHConnection(node_id).then(x=>{
             ssh_connection = x;
         });
 

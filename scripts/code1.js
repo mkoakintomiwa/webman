@@ -61,7 +61,7 @@ const configPath = path.join(sshPath,"config");
                 remoteHomeDir = '/root';
             }else{
                 let nodeId = argv._[0];
-                sshConnection = await ssh.node_ssh_connection(nodeId);
+                sshConnection = await ssh.nodeSSHConnection(nodeId);
                 remoteHomeDir = fx.remoteDir(nodeId);
             }
         }

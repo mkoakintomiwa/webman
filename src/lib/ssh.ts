@@ -183,7 +183,7 @@ var ssh_connection = exports.ssh_connection = async function(_options={}){
 /**
  * @return {Promise<NodeSSH>}
  */
-export function node_ssh_connection(node_id,_options={}){
+export function nodeSSHConnection(node_id,_options={}){
     return ssh_connection(node_ssh_options(node_id,_options));
 }
 
@@ -192,7 +192,7 @@ export function root_ssh_connection(root_ip,_options={}){
 }
 
 
-export function node_root_ssh_connection(node_id,_options={}){
+export function nodeRootSSHConnection(node_id,_options={}){
     return ssh_connection(node_root_ssh_options(node_id,_options));
 }
 
@@ -300,18 +300,18 @@ export function node_get_file(relative_path,node_id,ssh_connection){
 
 
 
-export function node_execute_command(command,node_ssh_connection,_options: any={}){
+export function node_execute_command(command,nodeSSHConnection,_options: any={}){
     let node_id = _options.node_id || "";
     let options = fx.setDefaults({
         cwd: fx.remoteNodeDir(node_id)
     },_options);
-    return execute_command(command,node_ssh_connection,options);
+    return execute_command(command,nodeSSHConnection,options);
 }
 
 
 
-export function node_root_execute_command(command,node_root_ssh_connection,_options){
-    return execute_command(command,node_root_ssh_connection,_options);
+export function node_root_execute_command(command,nodeRootSSHConnection,_options){
+    return execute_command(command,nodeRootSSHConnection,_options);
 }
 
 
@@ -473,7 +473,7 @@ export function updateCronjob(node_id,ssh_connection){
 
         let crontab = fx._.generateCrontab(options);
 
-        let tmp_file = fx.new_tmp_file();
+        let tmp_file = fx.newTmpFile();
 
         fs.writeFileSync(tmp_file,crontab);
 
@@ -588,7 +588,7 @@ export function updateHtaccess(node_id,ssh_connection){
 
         let htaccess = fx._.generateHtaccess(options);
 
-        let tmp_file = fx.new_tmp_file();
+        let tmp_file = fx.newTmpFile();
 
         fs.writeFileSync(tmp_file,htaccess);
 

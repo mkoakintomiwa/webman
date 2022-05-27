@@ -46,7 +46,7 @@ fx.println();
                     var _mysql = _node.mysql;
                     var db_user = _mysql.username;
 
-                    await ssh.node_root_ssh_connection(_node_id).then(x=>{
+                    await ssh.nodeRootSSHConnection(_node_id).then(x=>{
                         ssh_connection = x;
                     });
 
@@ -70,7 +70,7 @@ fx.println();
 
                     _node = fx.node(node_id);
 
-                    await ssh.node_root_ssh_connection(node_id).then(x=>{
+                    await ssh.nodeRootSSHConnection(node_id).then(x=>{
                         ssh_connection = x;
                     });
 
@@ -94,7 +94,7 @@ fx.println();
 
 
                         var ssh_connection;
-                        await ssh.node_root_ssh_connection(node_id).then(x=>{
+                        await ssh.nodeRootSSHConnection(node_id).then(x=>{
                             ssh_connection = x;
                         });
 
@@ -132,7 +132,7 @@ fx.println();
             var db_name = first_intent;
             var node_id = argv["node"];
             var ssh_connection;
-            await ssh.node_root_ssh_connection(node_id).then(x=>{
+            await ssh.nodeRootSSHConnection(node_id).then(x=>{
                 ssh_connection = x;
             });
 
@@ -146,7 +146,7 @@ fx.println();
         case "change":
             switch(first_intent){
                 case "password":
-                    await ssh.node_root_ssh_connection($node_id).then(x=>{
+                    await ssh.nodeRootSSHConnection($node_id).then(x=>{
                         ssh_connection = x;
                     });
                     

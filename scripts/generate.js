@@ -19,28 +19,28 @@ let _project_root = fx.project_root();
             for (let node_id of node_ids){
                 let node = fx.node(node_id);
     
-                let tmp_file = fx.new_tmp_file("json");
+                let tmp_file = fx.newTmpFile("json");
     
                 fs.writeFileSync(tmp_file,JSON.stringify(node,null,4));
     
                 let ssh_connection;
 
-                await ssh.node_ssh_connection(node_id).then(x=>{
+                await ssh.nodeSSHConnection(node_id).then(x=>{
                     ssh_connection = x;
                 });
 
-                await ssh.node_upload_file(fx.relative_to_document_root(tmp_file),fx.remoteNodeDir(node_id).concat("/settings.json"),node_id,ssh_connection);
+                await ssh.node_upload_file(fx.relativeToDocumentRoot(tmp_file),fx.remoteNodeDir(node_id).concat("/settings.json"),node_id,ssh_connection);
 
-                let root_ssh_connection = await ssh.node_root_ssh_connection(node_id);
+                let root_ssh_connection = await ssh.nodeRootSSHConnection(node_id);
 
-                let cnf_tmp = fx.new_tmp_file("json");
+                let cnf_tmp = fx.newTmpFile("json");
 
                 fs.writeFileSync(cnf_tmp,`[client]
 user = ${node.mysql.username}
 password = ${node.mysql.password}
 `);
 
-                await ssh.node_upload_file(fx.relative_to_document_root(cnf_tmp),`/home/${node.ssh.username}/.my.cnf`,node_id,root_ssh_connection);
+                await ssh.node_upload_file(fx.relativeToDocumentRoot(cnf_tmp),`/home/${node.ssh.username}/.my.cnf`,node_id,root_ssh_connection);
 
                 ssh_connection.dispose();
                 root_ssh_connection.dispose();

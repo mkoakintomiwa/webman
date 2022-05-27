@@ -1,10 +1,14 @@
+import * as fs from "fs"
 import * as fx from "./lib/functions"
 import * as ssh from "./lib/ssh"
 import * as path from "path"
 import * as os from "os"
 import { Command } from "commander";
+const chalk = require("chalk");
 
 let program = new Command();
+
+const documentRoot = fx.document_root();
 
 program
     .name("webman push")
@@ -13,14 +17,14 @@ program
 program
     .command("public-key")
     .name("public-key")
-    .description("upload public to nodes using username and password")
+    .description("upload public key to nodes using username and password")
     .argument("[nodeId]","NodeId to push receive public key")
     .option("-z,--root-ip <root-ip-address>","IP Address of root in config")
     .action(async(nodeId,flags)=>{
         if (nodeId){
             let node = fx.node(nodeId);
             
-            let sshConnection = await ssh.node_ssh_connection(nodeId);
+            let sshConnection = await ssh.nodeSSHConnection(nodeId);
 
             let publicKeyPath = path.join(os.homedir(),".ssh","id_rsa.pub");
 
@@ -56,4 +60,80 @@ program
         }
     });
 
+
+program
+    .command("config")
+    .name("config")
+    .description("upload config to nodes")
+    .argument("[nodeId]","NodeId to push receive public key")
+    .option("--remote","Upload whole config to all remotes in configRemotes using ssh")
+    .option("-a,--all","Upload config to all nodes")
+    .action(async (nodeId, flags)=>{
+        let config = fx.config();
+
+        if (nodeId){
+            pushConfig(nodeId);
+        }
+
+        if (flags.all){
+            let nodeIds = fx.activeNodeIds();
+
+            fx.println();
+
+            for (let nodeId of nodeIds){
+                let node = fx.node(nodeId);
+                console.log(chalk.cyanBright(`----------------------------  ${node.name|| ""} (${nodeId})  --------------------`))
+                await pushConfig(nodeId);
+                console.log(`\n\n`)
+            }
+        }
+
+        if (flags.remote){
+            for (let remote of config.remotes){
+                console.log(chalk.magentaBright(`\nPushing to ${remote}\n`))
+                await fx.shellExec(`scp ${documentRoot}/.webman/config.json ${remote}`);
+            }
+        }
+        
+    });
+
 program.parse();
+
+
+
+async function pushConfig(nodeId: string){
+    let config = fx.config();
+
+    let node = fx.node(nodeId);
+
+    let tmpFile = fx.newTmpFile("json");
+
+    node = Object.assign({ nodeId }, node);
+
+    fs.writeFileSync(tmpFile,JSON.stringify(node,null,4));
+
+    let sshConnection;
+
+    await ssh.nodeSSHConnection(nodeId).then(x=>{
+        sshConnection = x;
+    });
+
+    await ssh.node_upload_file(fx.relativeToDocumentRoot(tmpFile),fx.remoteNodeDir(nodeId).concat("/" + (config.nodeConfigName || "webman.config.json") ),nodeId,sshConnection);
+
+    let rootSSHConnection = await ssh.nodeRootSSHConnection(nodeId);
+
+    let cnfTmp = fx.newTmpFile("json");
+
+    fs.writeFileSync(cnfTmp,`[client]
+user = ${node.mysql.username}
+password = ${node.mysql.password}
+`);
+
+    await ssh.node_upload_file(fx.relativeToDocumentRoot(cnfTmp),`/home/${node.ssh.username}/.my.cnf`,nodeId,rootSSHConnection);
+
+    sshConnection.dispose();
+    rootSSHConnection.dispose();
+
+    fs.unlinkSync(tmpFile);
+    fs.unlinkSync(cnfTmp);
+}

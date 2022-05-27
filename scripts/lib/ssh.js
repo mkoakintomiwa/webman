@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.node_root_open_phpmyadmin = exports.node_open_phpmyadmin = exports.node_open_heidisql = exports.open_heidisql = exports.root_open_putty = exports.node_root_open_putty = exports.node_open_putty = exports.open_putty = exports.node_root_open_filezilla = exports.node_open_filezilla = exports.open_filezilla = exports.updateGitRemoteOrigin = exports.update_nodejs = exports.updateHtaccess = exports.update_google_token = exports.update_google_credentials = exports.updateCronjob = exports.update_composer = exports.create_cron_job = exports.build_delete_cron_job_command = exports.build_cron_job_command = exports.cron_command_from_array = exports.upload_project_file = exports.upload_project_files = exports.node_upload_file = exports.node_upload_files = exports.node_root_execute_command = exports.node_execute_command = exports.node_get_file = exports.get_file = exports.put_directory = exports.upload_file = exports.upload_files = exports.execute_command = exports.node_root_ssh_connection = exports.root_ssh_connection = exports.node_ssh_connection = exports.interactive_shell = exports.root_ssh_options = exports.node_root_ssh_options = exports.node_ssh_options = exports.ssh_options = void 0;
+exports.node_root_open_phpmyadmin = exports.node_open_phpmyadmin = exports.node_open_heidisql = exports.open_heidisql = exports.root_open_putty = exports.node_root_open_putty = exports.node_open_putty = exports.open_putty = exports.node_root_open_filezilla = exports.node_open_filezilla = exports.open_filezilla = exports.updateGitRemoteOrigin = exports.update_nodejs = exports.updateHtaccess = exports.update_google_token = exports.update_google_credentials = exports.updateCronjob = exports.update_composer = exports.create_cron_job = exports.build_delete_cron_job_command = exports.build_cron_job_command = exports.cron_command_from_array = exports.upload_project_file = exports.upload_project_files = exports.node_upload_file = exports.node_upload_files = exports.node_root_execute_command = exports.node_execute_command = exports.node_get_file = exports.get_file = exports.put_directory = exports.upload_file = exports.upload_files = exports.execute_command = exports.nodeRootSSHConnection = exports.root_ssh_connection = exports.nodeSSHConnection = exports.interactive_shell = exports.root_ssh_options = exports.node_root_ssh_options = exports.node_ssh_options = exports.ssh_options = void 0;
 const fx = require("./functions");
 const { escape_sed, portal_properties_dir, remote_public_html } = require("./functions");
 const chalk = require('chalk');
@@ -163,18 +163,18 @@ var ssh_connection = exports.ssh_connection = async function (_options = {}) {
 /**
  * @return {Promise<NodeSSH>}
  */
-function node_ssh_connection(node_id, _options = {}) {
+function nodeSSHConnection(node_id, _options = {}) {
     return ssh_connection(node_ssh_options(node_id, _options));
 }
-exports.node_ssh_connection = node_ssh_connection;
+exports.nodeSSHConnection = nodeSSHConnection;
 function root_ssh_connection(root_ip, _options = {}) {
     return ssh_connection(root_ssh_options(root_ip, _options));
 }
 exports.root_ssh_connection = root_ssh_connection;
-function node_root_ssh_connection(node_id, _options = {}) {
+function nodeRootSSHConnection(node_id, _options = {}) {
     return ssh_connection(node_root_ssh_options(node_id, _options));
 }
-exports.node_root_ssh_connection = node_root_ssh_connection;
+exports.nodeRootSSHConnection = nodeRootSSHConnection;
 function execute_command(command, ssh_connection, _options = {}) {
     var options = fx.setDefaults({
         cwd: null
@@ -263,16 +263,16 @@ function node_get_file(relative_path, node_id, ssh_connection) {
     return get_file(local_file, remote_file, ssh_connection);
 }
 exports.node_get_file = node_get_file;
-function node_execute_command(command, node_ssh_connection, _options = {}) {
+function node_execute_command(command, nodeSSHConnection, _options = {}) {
     let node_id = _options.node_id || "";
     let options = fx.setDefaults({
         cwd: fx.remoteNodeDir(node_id)
     }, _options);
-    return execute_command(command, node_ssh_connection, options);
+    return execute_command(command, nodeSSHConnection, options);
 }
 exports.node_execute_command = node_execute_command;
-function node_root_execute_command(command, node_root_ssh_connection, _options) {
-    return execute_command(command, node_root_ssh_connection, _options);
+function node_root_execute_command(command, nodeRootSSHConnection, _options) {
+    return execute_command(command, nodeRootSSHConnection, _options);
 }
 exports.node_root_execute_command = node_root_execute_command;
 function node_upload_files(local_remote_files_array, node_id, ssh_connection, _options = {}) {
@@ -391,7 +391,7 @@ function updateCronjob(node_id, ssh_connection) {
             remoteNodeDir: fx.remoteNodeDir(node_id)
         };
         let crontab = fx._.generateCrontab(options);
-        let tmp_file = fx.new_tmp_file();
+        let tmp_file = fx.newTmpFile();
         fs.writeFileSync(tmp_file, crontab);
         await node_upload_files([
             {
@@ -469,7 +469,7 @@ function updateHtaccess(node_id, ssh_connection) {
             libDir: path.join(fx.project_root(), "scripts")
         };
         let htaccess = fx._.generateHtaccess(options);
-        let tmp_file = fx.new_tmp_file();
+        let tmp_file = fx.newTmpFile();
         fs.writeFileSync(tmp_file, htaccess);
         await node_upload_files([
             {

@@ -1107,7 +1107,7 @@ var node_root = exports.node_root = function(node_id=null){
 }
 
 
-var active_node_ids = exports.active_node_ids = function(){
+var activeNodeIds = exports.activeNodeIds = function(){
 	let accumulator = [];
 
 	for (let node_id of node_ids()){
@@ -1120,7 +1120,7 @@ var active_node_ids = exports.active_node_ids = function(){
 var active_root_ips = exports.active_root_ips = function(){
 	let accumulator = [];
 
-	for (let node_id of active_node_ids()){
+	for (let node_id of activeNodeIds()){
 		let _node = node(node_id);
 		if (_node.active && !accumulator.includes(_node.host)) accumulator.push(_node.host);
 	}
@@ -1133,7 +1133,7 @@ var hstart = exports.hstart = function(command){
 }
 
 
-var relative_to_document_root = exports.relative_to_document_root = function(absolute_path){
+var relativeToDocumentRoot = exports.relativeToDocumentRoot = function(absolute_path){
 	return path.relative(document_root(),absolute_path);
 }
 
@@ -1146,11 +1146,11 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 
 	let _config = config();
 
-	let _active_node_ids;
+	let _activeNodeIds;
 	if (node_id){
-		_active_node_ids = [node_id];
+		_activeNodeIds = [node_id];
 	}else{
-		_active_node_ids = active_node_ids();
+		_activeNodeIds = activeNodeIds();
 	}
 
 	let filename = relative_path;
@@ -1162,7 +1162,7 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 			console.log("settings.json ignored");
 			println();
 		}else{
-			for (let node_id of _active_node_ids){
+			for (let node_id of _activeNodeIds){
 			
 				if (filename==="update.php"){
 	
@@ -1311,7 +1311,7 @@ var unique_characters_from_fs = exports.unique_characters_from_fs = function(dir
 }
 
 
-var new_tmp_file = exports.new_tmp_file = function(file_extension="",length=7){
+var newTmpFile = exports.newTmpFile = function(file_extension="",length=7){
 	let _document_root = document_root();
 	if (file_extension.length>0) file_extension = ".".concat(file_extension)
 
@@ -1398,7 +1398,7 @@ var arg_node_ids = exports.arg_node_ids = function(argv){
 	}else if (argv["node-ids"]){
 		_node_ids = real_array(argv["node-ids"].split(","),true);
 	}else{
-		_node_ids = active_node_ids();
+		_node_ids = activeNodeIds();
 	}
 
 	return _node_ids;
