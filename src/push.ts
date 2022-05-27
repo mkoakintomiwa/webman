@@ -102,6 +102,7 @@ program.parse();
 
 
 async function pushConfig(nodeId: string){
+    
     let config = fx.config();
 
     let node = fx.node(nodeId);
