@@ -26,23 +26,24 @@ const context = argv._[0];
 
             if (!argv["x"]){
                 
-                console.log(chalk.cyanBright("Archiving specs directory"));
-                await nodeSSHConnection.exec(`rm -rf specs.zip && zip -r ${fx.remoteDir(nodeId)}/specs.zip specs/*`,[],{ 
-                    cwd: fx.remoteNodeDir(nodeId)
-                });
+                if (!argv["db-only"]){
+                    console.log(chalk.cyanBright("Archiving specs directory"));
+                    await nodeSSHConnection.exec(`rm -rf specs.zip && zip -r ${fx.remoteDir(nodeId)}/specs.zip specs/*`,[],{ 
+                        cwd: fx.remoteNodeDir(nodeId)
+                    });
 
 
-                console.log(chalk.cyanBright(`\nUploading specs.zip to ${betaNode.ssh.username}@${betaNode.host}`));
-                const bar = cliBar("specs.zip");
-                await nodeSSHConnection.exec(`node /nodejs/scp specs.zip ${betaNode.ssh.username}@${betaNode.host}:${fx.remoteDir("beta")}/specs.zip  -p '${betaNode.ssh.password}' && rm -rf specs.zip`,[],{ 
-                    cwd: fx.remoteDir(nodeId), 
-                    onStdout: chunk => {
-                        bar.update(fx.percentageChunk(chunk));
-                    }
-                });
+                    console.log(chalk.cyanBright(`\nUploading specs.zip to ${betaNode.ssh.username}@${betaNode.host}`));
+                    const bar = cliBar("specs.zip");
+                    await nodeSSHConnection.exec(`node /nodejs/scp specs.zip ${betaNode.ssh.username}@${betaNode.host}:${fx.remoteDir("beta")}/specs.zip  -p '${betaNode.ssh.password}' && rm -rf specs.zip`,[],{ 
+                        cwd: fx.remoteDir(nodeId), 
+                        onStdout: chunk => {
+                            bar.update(fx.percentageChunk(chunk));
+                        }
+                    });
 
-                bar.stop();
-
+                    bar.stop();
+                }
 
 
 
@@ -72,11 +73,12 @@ const context = argv._[0];
                 }
             }
 
-
-            console.log(chalk.cyanBright("Extracting specs.zip"));
-            await betaSSHConnection.exec(`rm -rf ${fx.remoteNodeDir("beta")}/specs && cd ${fx.remoteNodeDir("beta")} && unzip ${fx.remoteDir("beta")}/specs.zip && rm -rf ${fx.remoteDir("beta")}/specs.zip`,[],{
-                cwd: fx.remoteNodeDir("beta")
-            });
+            if (!argv["db-only"]){
+                console.log(chalk.cyanBright("Extracting specs.zip"));
+                await betaSSHConnection.exec(`rm -rf ${fx.remoteNodeDir("beta")}/specs && cd ${fx.remoteNodeDir("beta")} && unzip ${fx.remoteDir("beta")}/specs.zip && rm -rf ${fx.remoteDir("beta")}/specs.zip`,[],{
+                    cwd: fx.remoteNodeDir("beta")
+                });
+            }
 
 
             dbIndex = 0;
