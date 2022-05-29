@@ -5,7 +5,13 @@ fn main() {
 
     let script = std::env::args().nth(1).unwrap_or("nodes --run ".to_string());
     let argc = std::env::args().len();
-    let mut command = format!("{} {}",format!("{}/node/node.exe",document_root),format!("{}/scripts/{}",document_root,script));
+    
+    let node_path = match std::env::consts::OS {
+        "windows" => format!("{}/node/node.exe",document_root),
+        _ => format!("{}/node",document_root)
+    };
+    
+    let mut command = format!("{} {}", node_path ,format!("{}/scripts/{}",document_root,script));
 
     if argc>2{
         for i in 2..argc{

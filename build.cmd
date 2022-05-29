@@ -5,8 +5,9 @@ set rustModules=webman trace-save unsynced update-sent
     if "%%m" == "%1" (
         pushd "rs/%1"
         cargo build --release
-        copy "target\release\%1.exe" "../../bin" /y
         popd
+        mkdir -p "bin"
+        copy "target\release\%1.exe" "bin" /y
     )
 ))
 
