@@ -12,8 +12,6 @@ let nodeID = null;
 
 let historyName = "nodes-session";
 
-const rl = fx.readlineInterface(historyName);
-
 let connection;
 
 let dbTransactions = `BEGIN TRANSACTION;`;
@@ -54,6 +52,8 @@ if (argv["run"]){
 
 
 async function runNodes(){
+
+    const rl = fx.readlineInterface(historyName);
 
     let command = "";
     
