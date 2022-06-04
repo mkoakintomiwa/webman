@@ -6,7 +6,9 @@ set rustModules=webman trace-save unsynced update-sent
         pushd "rs/%1"
         cargo build --release
         popd
-        mkdir -p "bin"
+        IF NOT exist "bin" (
+            mkdir "bin"
+        )
         copy "target\release\%1.exe" "bin" /y
     )
 ))
