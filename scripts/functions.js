@@ -8,6 +8,7 @@ const readline = require('readline');
 const { transpile_react, transpile_typescript, transpile_sass } = require("./transpilers");
 const LineManager = require("./LineManager");
 require('dotenv').config();
+const os = require("os");
 
 
 class log{
@@ -393,7 +394,14 @@ var open_in_browser = exports.open_in_browser = function(url,browser='chrome',_o
 		command = `electron %portal%/nodejs/browser "${url}"`;
 		if (options.nodeIntegration) command+=` --node-integration="true" `
 	}else{
-		command = `start ${browser} "${url}"`;
+		switch(os.platform()){
+			case "win32":
+				command = `start ${browser} "${url}"`;
+			break
+
+			case "darwin":
+				command = `open -a "Google Chrome.app" "${url}"`
+		}
 	}
 	return shell_exec(command);
 }
