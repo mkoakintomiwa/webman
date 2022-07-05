@@ -283,7 +283,7 @@ var strict_skip = argv.skip?true:false;
         });
 
         if( (await new_prompt("Will you like to visit the portal?","Y/N")).trim().toLowerCase()==="y"){
-            await fx.open_in_browser(node.nodeUrl);
+            await fx.openInBrowser(node.nodeUrl);
         }
     }
 

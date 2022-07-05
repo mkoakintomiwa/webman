@@ -1,4 +1,4 @@
-const { open_in_browser, node } = require("../functions");
+const { openInBrowser, node } = require("../functions");
 const yargv = require("yargs").argv;
 
 /**
@@ -16,5 +16,5 @@ var opener = exports.opener = async function(sub_address,browser="chrome"){
     }else{
         port = 2083;
     }
-    open_in_browser(`https://${_node.host}:${port}${sub_address}u=${ssh.username}&p=${ssh.password}`,browser);
+    openInBrowser(`https://${_node.host}:${port}${sub_address}u=${ssh.username}&p=${ssh.password}`,browser);
 };

@@ -418,7 +418,7 @@ export function create_cron_job(command_array,portal_id){
             
             stdout.info_console("Redirect",cron_job_url);
 
-            fx.open_in_browser(cron_job_url).then(_=>{
+            fx.openInBrowser(cron_job_url).then(_=>{
                 resolve();
             });
         });
@@ -827,7 +827,7 @@ export function node_open_phpmyadmin(node_id){
     var _node = fx.node(node_id);
     var _mysql = _node.mysql;
     
-    return fx.open_in_browser(`${_node.nodeUrl}/phpmyadmin/${_mysql.phpmyadminAuthKey}`,"chrome");
+    return fx.openInBrowser(`${_node.nodeUrl}/phpmyadmin/${_mysql.phpmyadminAuthKey}`,"chrome");
 };
 
 
@@ -836,5 +836,5 @@ export function node_root_open_phpmyadmin(node_id){
     var _node = fx.node(node_id);
     var _mysql = _node.mysql;
     
-    return fx.open_in_browser(`${_node.nodeUrl}/phpmyadmin/${root.mysql.phpmyadminAuthKey}`,"chrome");
+    return fx.openInBrowser(`${_node.nodeUrl}/phpmyadmin/${root.mysql.phpmyadminAuthKey}`,"chrome");
 };

@@ -384,7 +384,7 @@ var encoded_url = exports.encoded_url = function(main_link,queryStringObject={})
 
 
 
-var open_in_browser = exports.open_in_browser = function(url,browser='chrome',_options={}){
+var openInBrowser = exports.openInBrowser = function(url,browser='chrome',_options={}){
 	var options = setDefaults({
 		nodeIntegration:false
 	},_options);

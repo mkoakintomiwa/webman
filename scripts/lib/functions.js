@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.random_float = exports.git_full_address = exports.file_request_error_message = exports.file_request_success_message = exports.portal_http_upload = exports.portal_api_request = exports.require_portal_id = exports.match = exports.dotted_parameter = exports.modify_resource_icon = exports.sleep = exports.taskkil = exports.realArray = exports.real_array = exports.dollar_replace = exports.brackets_replace = exports.escape_sed = exports.escapeRegExp = exports.back_slash = exports.forward_slash = exports.unique_school_id = exports.copy_to_clipboard = exports.open_in_browser = exports.encoded_url = exports.file_copy_contents = exports.folderDialog = exports.filesDialog = exports.fileDialog = exports.shellExec = exports.echo_log_file = exports.shell_log_file = exports.log_file = exports.portal_dir = exports.settings = exports.empty_tmp_directory = exports.tmp_directory = exports.project_root = exports.document_root = exports.setDefaults = exports.setDefault = exports.writeFiles = exports.rmdir = exports.emptyDir = exports.copyFiles = exports.files_in_directory = exports.subdirectories = exports.time = exports.remoteNodeDir = exports.remotePublicHtml = exports.remoteDir = void 0;
+exports.random_float = exports.git_full_address = exports.file_request_error_message = exports.file_request_success_message = exports.portal_http_upload = exports.portal_api_request = exports.require_portal_id = exports.match = exports.dotted_parameter = exports.modify_resource_icon = exports.sleep = exports.taskkil = exports.realArray = exports.real_array = exports.dollar_replace = exports.brackets_replace = exports.escape_sed = exports.escapeRegExp = exports.back_slash = exports.forward_slash = exports.unique_school_id = exports.copy_to_clipboard = exports.openInBrowser = exports.encoded_url = exports.file_copy_contents = exports.folderDialog = exports.filesDialog = exports.fileDialog = exports.shellExec = exports.echo_log_file = exports.shell_log_file = exports.log_file = exports.portal_dir = exports.settings = exports.empty_tmp_directory = exports.tmp_directory = exports.project_root = exports.document_root = exports.setDefaults = exports.setDefault = exports.writeFiles = exports.rmdir = exports.emptyDir = exports.copyFiles = exports.files_in_directory = exports.subdirectories = exports.time = exports.remoteNodeDir = exports.remotePublicHtml = exports.remoteDir = void 0;
 exports.argsCommandAppend = exports.escapeShell = exports.hex2bin = exports.bin2hex = exports.arg_node_ids = exports.zipDirectory = exports.copyProjectTemplateDirectory = exports.copyTemplateDirectory = exports.copyProjectTemplateFile = exports.copyTemplateFile = exports.template_content = exports.template_path = exports.newTmpFile = exports.unique_characters_from_fs = exports.unique_digits_from_fs = exports.unique_from_fs = exports.random_digits = exports.random_characters = exports.round = exports.rigid_public_ip = exports.public_ip = exports.println = exports.relativeToDocumentRoot = exports.hstart = exports.active_root_ips = exports.activeNodeIds = exports.node_root = exports.root = exports.identityFile = exports.hostname = exports.node = exports.node_ids = exports.spawn_process = exports.base64_decode = exports.base64_encode = exports.hftp_request = exports.project_ftp_mkdir = exports.ftp_mkdir = exports.ftp_put = exports.upload_project_file = exports.upload_project_files = exports.node_ftp_connection = exports.ftp_config = exports.upload_file = exports.upload_files = exports.ftp_connection = exports.hash = exports.writeFileSync = exports.writeConfig = exports.config = void 0;
 exports.percentageChunk = exports.webpackOptions = exports.n = exports.download = exports.project_specific_scripts_path = exports.saveReadlineInterfaceHistory = exports.readlineInterface = exports.setTerminalTitle = void 0;
 const fs = require("fs");
@@ -333,7 +333,7 @@ function encoded_url(main_link, queryStringObject = {}) {
     return url;
 }
 exports.encoded_url = encoded_url;
-function open_in_browser(url, browser = 'chrome', _options = {}) {
+function openInBrowser(url, browser = 'chrome', _options = {}) {
     var options = setDefaults({
         nodeIntegration: false
     }, _options);
@@ -344,11 +344,17 @@ function open_in_browser(url, browser = 'chrome', _options = {}) {
             command += ` --node-integration="true" `;
     }
     else {
-        command = `start ${browser} "${url}"`;
+        switch (os.platform()) {
+            case "win32":
+                command = `start ${browser} "${url}"`;
+                break;
+            case "darwin":
+                command = `open -a "Google Chrome.app" "${url}"`;
+        }
     }
     return shellExec(command);
 }
-exports.open_in_browser = open_in_browser;
+exports.openInBrowser = openInBrowser;
 function copy_to_clipboard(content) {
     log.write(content);
     return file_copy_contents(log.file());

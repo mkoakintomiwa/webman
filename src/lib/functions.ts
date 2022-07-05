@@ -377,7 +377,7 @@ export function encoded_url(main_link,queryStringObject={}){
 
 
 
-export function open_in_browser(url,browser='chrome',_options={}){
+export function openInBrowser(url: string, browser='chrome',_options={}){
 	var options = setDefaults({
 		nodeIntegration:false
 	},_options);
@@ -387,7 +387,14 @@ export function open_in_browser(url,browser='chrome',_options={}){
 		command = `electron %portal%/nodejs/browser "${url}"`;
 		if (options.nodeIntegration) command+=` --node-integration="true" `
 	}else{
-		command = `start ${browser} "${url}"`;
+		switch(os.platform()){
+			case "win32":
+				command = `start ${browser} "${url}"`;
+			break
+
+			case "darwin":
+				command = `open -a "Google Chrome.app" "${url}"`
+		}
 	}
 	return shellExec(command);
 }
