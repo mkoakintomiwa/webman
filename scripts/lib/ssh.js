@@ -9,8 +9,9 @@ const { Client } = require('ssh2');
 var readline = require('readline');
 const fs = require("fs");
 var stdout = require('./stdout');
-const path = require("path");
 const argv = require("yargs").parseSync();
+const os = require("os");
+const path = require("path");
 function ssh_options(_options) {
     var options = fx.setDefaults({
         readyTimeout: 99999,
@@ -23,7 +24,7 @@ function ssh_options(_options) {
     return {
         host: options.host,
         username: options.username,
-        privateKey: options.privateKey,
+        privateKey: path.join(os.homedir(), ".ssh", "id_rsa"),
         password: options.password,
         passphrase: options.passphrase,
         readyTimeout: options.readyTimeout,

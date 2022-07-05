@@ -1,4 +1,4 @@
-const fx = require("./functions");
+const fx = require("./lib/functions");
 const { escape_sed,portal_properties_dir,remote_public_html } = require("./functions");
 const chalk = require('chalk');
 const {NodeSSH} = require('node-ssh')
@@ -8,6 +8,7 @@ const fs = require("fs");
 var stdout = require('./stdout');
 const path = require("path");
 const argv = require("yargs").parseSync();
+const os = require("os");
 
 
 var ssh_options = exports.ssh_options = function(_options){
@@ -24,7 +25,7 @@ var ssh_options = exports.ssh_options = function(_options){
     return {
         host: options.host,
         username: options.username,
-        privateKey: options.privateKey,
+        privateKey: path.join(os.homedir(),".ssh","id_rsa"),
         password:options.password,
         passphrase:options.passphrase,
         readyTimeout: options.readyTimeout,

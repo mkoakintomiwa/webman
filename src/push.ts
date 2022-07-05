@@ -113,11 +113,7 @@ async function pushConfig(nodeId: string){
 
     fs.writeFileSync(tmpFile,JSON.stringify(node,null,4));
 
-    let sshConnection;
-
-    await ssh.nodeSSHConnection(nodeId).then(x=>{
-        sshConnection = x;
-    });
+    let sshConnection = await ssh.nodeSSHConnection(nodeId);
 
     await ssh.node_upload_file(fx.relativeToDocumentRoot(tmpFile),fx.remoteNodeDir(nodeId).concat("/" + (config.nodeConfigName || "webman.config.json") ),nodeId,sshConnection);
 

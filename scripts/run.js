@@ -41,13 +41,13 @@ if (!(context && contexts.includes(context))){
 
 
 function run_command(context_id){
-    let node_id = "";
+    let nodeId = "";
     let root_ip = "";
 
     if (rootRun){
         root_ip = context_id;
     }else{
-        node_id = context_id;
+        nodeId = context_id;
     }
 
     return new Promise(async resolve=>{
@@ -61,16 +61,16 @@ function run_command(context_id){
         }else if (rootRun){
             root = fx.root(root_ip);
         }else{
-            node = fx.node(node_id);
+            node = fx.node(nodeId);
         }
 
         console.log("");
         if (isDevMode){
-            //console.log(`--------------------- ${chalk.greenBright(`(${node_id})`)} ---------------------`);
+            //console.log(`--------------------- ${chalk.greenBright(`(${nodeId})`)} ---------------------`);
         }else if (rootRun){
             console.log(`--------------------- ${chalk.greenBright(root_ip)} ---------------------`);
         }else{
-            console.log(`--------------------- ${node.name} ${chalk.greenBright(`(${node_id})`)} ---------------------`);
+            console.log(`--------------------- ${node.name || ""} ${chalk.greenBright(`(${nodeId})`)} ---------------------`);
         }
 
         let ssh_connection = null;
@@ -80,7 +80,7 @@ function run_command(context_id){
             if (rootRun){
                 root_ssh_connection = await ssh.root_ssh_connection(root_ip);
             }else{
-                ssh_connection = await ssh.nodeSSHConnection(node_id);
+                ssh_connection = await ssh.nodeSSHConnection(nodeId);
             }
         }        
 
@@ -102,11 +102,11 @@ function run_command(context_id){
                 
                 switch(activity){
                     case "google-token":
-                        let node = fx.node(node_id);
+                        let node = fx.node(nodeId);
 
                         let email_address = argv._[2] || node.backup.email_address;
                         
-                        await ssh.node_get_file(`assets/google/accounts/${email_address}/token.json`,node_id,ssh_connection);
+                        await ssh.node_get_file(`assets/google/accounts/${email_address}/token.json`,nodeId,ssh_connection);
                     break;
                 }
 
@@ -146,7 +146,7 @@ function run_command(context_id){
 
                 switch(activity){
                     case "nodejs":
-                        await ssh.update_nodejs(node_id,ssh_connection);
+                        await ssh.update_nodejs(nodeId,ssh_connection);
                     break;
                     
                     case "htaccess":
@@ -155,7 +155,7 @@ function run_command(context_id){
                             fs.writeFileSync(path.join(_document_root,".htaccess"),htaccess);
                             fx.println(`${chalk.magentaBright("Dev Mode:")} ${chalk.cyanBright(".htaccess generated")}`);
                         }else{
-                            await ssh.updateHtaccess(node_id,ssh_connection);
+                            await ssh.updateHtaccess(nodeId,ssh_connection);
                         }
                     break;
 
@@ -163,20 +163,20 @@ function run_command(context_id){
                         if (isDevMode){
                             await ssh.dev_update_composer();
                         }else{
-                            await ssh.update_composer(node_id,ssh_connection);
+                            await ssh.update_composer(nodeId,ssh_connection);
                         }
                     break;
 
                     case "cronjob":
-                        await ssh.updateCronjob(node_id,ssh_connection);
+                        await ssh.updateCronjob(nodeId,ssh_connection);
                     break;
 
                     case "google-credentials":
-                        await ssh.update_google_credentials(node_id,ssh_connection);
+                        await ssh.update_google_credentials(nodeId,ssh_connection);
                     break;
 
                     case "google-token":
-                        await ssh.update_google_token(node_id,ssh_connection);
+                        await ssh.update_google_token(nodeId,ssh_connection);
                     break;
                 }
 
@@ -189,15 +189,15 @@ function run_command(context_id){
 
                 if (argv.steps){
                     fx.shellExec(custom_command);
-                    await info_prompt(`Waiting for completion @${node.name}`,node_id,"Enter");
+                    await info_prompt(`Waiting for completion @${node.name}`,nodeId,"Enter");
                 }else{
                     if (rootRun){
                         await ssh.execute_command(custom_command,root_ssh_connection,{
-                            node_id: node_id
+                            nodeId: nodeId
                         });
                     }else{
                         await ssh.node_execute_command(custom_command,ssh_connection,{
-                            node_id: node_id
+                            nodeId: nodeId
                         });
                     }
                         
@@ -217,11 +217,11 @@ function run_command(context_id){
                 // if (intent==="android"){
 
                 //     const _android = require("../apps/android/build");
-                //     const android_dir = path.join(_android.projects_dir,node_id);
+                //     const android_dir = path.join(_android.projects_dir,nodeId);
                 //     const android_template_dir = _android.project_template_dir;
                 //     const template_res_dir = path.join(android_template_dir,_android.res_rel_dir);
 
-                //     const pp_dir = fx.portal_properties_dir(node_id);
+                //     const pp_dir = fx.portal_properties_dir(nodeId);
                 //     const pp_res_dir = path.join(pp_dir,_android.pp_res_rel_dir);
                     
                 //     secondIntents = ['build','copy-res','db-dump','debug','release','run-release','locate-release','install-release','verify','install','uninstall','start'];
@@ -236,57 +236,57 @@ function run_command(context_id){
                 //     const build = _build.build;
 
                 //     if (secondIntent==="build"){                    
-                //         await build.run(node_id);
+                //         await build.run(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="debug"){                    
-                //         await build.debug(node_id);
+                //         await build.debug(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="release"){                    
-                //         await build.release(node_id);
+                //         await build.release(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="run-release"){                    
-                //         await build.run_release(node_id);
+                //         await build.run_release(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="install-release"){                    
-                //         await build.install_release(node_id);
+                //         await build.install_release(nodeId);
                 //     }
 
                     
                 //     if (secondIntent==="locate-release"){                    
-                //         await build.locate_release(node_id);
+                //         await build.locate_release(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="verify"){                    
-                //         await build.verify(node_id);
+                //         await build.verify(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="install"){                    
-                //         await build.install(node_id);
+                //         await build.install(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="uninstall"){                    
-                //         await build.uninstall(node_id);
+                //         await build.uninstall(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="start"){                    
-                //         await build.start_activity(node_id);
+                //         await build.start_activity(nodeId);
                 //     }
 
 
                 //     if (secondIntent==="db-dump"){
-                //         await build.db_dump(node_id);
+                //         await build.db_dump(nodeId);
                 //     }
 
 
@@ -375,7 +375,7 @@ function run_command(context_id){
             break;
 
             case "repair-workspace":
-                await ssh.repairWorkspace(node_id,ssh_connection);
+                await ssh.repairWorkspace(nodeId,ssh_connection);
             break;
 
         }
@@ -397,7 +397,7 @@ function run_command(context_id){
 (async _=>{
     
     if (context==="custom"){
-        await info_prompt("Custom command","node",argv.steps?"echo $node_id":"ls").then(p=>{
+        await info_prompt("Custom command","node",argv.steps?"echo $nodeId":"ls").then(p=>{
             custom_command_template = p;
         });
     }
@@ -424,7 +424,7 @@ function run_command(context_id){
     
     for (let context_id of run_through){
         let customVariables = {
-            node_id:context_id,
+            nodeId:context_id,
             root_ip: context_id
         }
 

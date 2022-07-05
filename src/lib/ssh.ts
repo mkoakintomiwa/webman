@@ -6,8 +6,9 @@ const { Client } = require('ssh2');
 var readline = require('readline');
 const fs = require("fs");
 var stdout = require('./stdout');
-const path = require("path");
 const argv = require("yargs").parseSync();
+import * as os from "os";
+import * as path from "path";
 
 
 export function ssh_options(_options){
@@ -24,7 +25,7 @@ export function ssh_options(_options){
     return {
         host: options.host,
         username: options.username,
-        privateKey: options.privateKey,
+        privateKey: path.join(os.homedir(),".ssh","id_rsa"),
         password:options.password,
         passphrase:options.passphrase,
         readyTimeout: options.readyTimeout,
