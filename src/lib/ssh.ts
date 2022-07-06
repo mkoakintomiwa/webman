@@ -1,7 +1,7 @@
 const fx = require("./functions");
 const { escape_sed,portal_properties_dir,remote_public_html } = require("./functions");
 const chalk = require('chalk');
-const {NodeSSH} = require('node-ssh')
+import { NodeSSH } from "node-ssh";
 const { Client } = require('ssh2');
 var readline = require('readline');
 const fs = require("fs");
@@ -301,6 +301,23 @@ export function node_get_file(relative_path,node_id,ssh_connection){
 
 
 
+export function nodeExecuteCommand(command: string,nodeSSHConnection: NodeSSH, options: any={}){
+    let nodeId = options.nodeId || "";
+    let _options = fx.setDefaults({
+        cwd: fx.remoteNodeDir(nodeId)
+    },options);
+    return execute_command(command,nodeSSHConnection,_options);
+}
+
+
+/**
+ * 
+ * @param command 
+ * @param nodeSSHConnection 
+ * @param _options 
+ * @returns
+ * @deprecated Use nodeExecuteCommand instead
+ */
 export function node_execute_command(command,nodeSSHConnection,_options: any={}){
     let node_id = _options.node_id || "";
     let options = fx.setDefaults({

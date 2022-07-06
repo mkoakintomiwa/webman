@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.node_root_open_phpmyadmin = exports.node_open_phpmyadmin = exports.node_open_heidisql = exports.open_heidisql = exports.root_open_putty = exports.node_root_open_putty = exports.node_open_putty = exports.open_putty = exports.node_root_open_filezilla = exports.node_open_filezilla = exports.open_filezilla = exports.updateGitRemoteOrigin = exports.update_nodejs = exports.updateHtaccess = exports.update_google_token = exports.update_google_credentials = exports.updateCronjob = exports.update_composer = exports.create_cron_job = exports.build_delete_cron_job_command = exports.build_cron_job_command = exports.cron_command_from_array = exports.upload_project_file = exports.upload_project_files = exports.node_upload_file = exports.node_upload_files = exports.node_root_execute_command = exports.node_execute_command = exports.node_get_file = exports.get_file = exports.put_directory = exports.upload_file = exports.upload_files = exports.execute_command = exports.nodeRootSSHConnection = exports.root_ssh_connection = exports.nodeSSHConnection = exports.interactive_shell = exports.root_ssh_options = exports.node_root_ssh_options = exports.node_ssh_options = exports.ssh_options = void 0;
+exports.node_root_open_phpmyadmin = exports.node_open_phpmyadmin = exports.node_open_heidisql = exports.open_heidisql = exports.root_open_putty = exports.node_root_open_putty = exports.node_open_putty = exports.open_putty = exports.node_root_open_filezilla = exports.node_open_filezilla = exports.open_filezilla = exports.updateGitRemoteOrigin = exports.update_nodejs = exports.updateHtaccess = exports.update_google_token = exports.update_google_credentials = exports.updateCronjob = exports.update_composer = exports.create_cron_job = exports.build_delete_cron_job_command = exports.build_cron_job_command = exports.cron_command_from_array = exports.upload_project_file = exports.upload_project_files = exports.node_upload_file = exports.node_upload_files = exports.node_root_execute_command = exports.node_execute_command = exports.nodeExecuteCommand = exports.node_get_file = exports.get_file = exports.put_directory = exports.upload_file = exports.upload_files = exports.execute_command = exports.nodeRootSSHConnection = exports.root_ssh_connection = exports.nodeSSHConnection = exports.interactive_shell = exports.root_ssh_options = exports.node_root_ssh_options = exports.node_ssh_options = exports.ssh_options = void 0;
 const fx = require("./functions");
 const { escape_sed, portal_properties_dir, remote_public_html } = require("./functions");
 const chalk = require('chalk');
-const { NodeSSH } = require('node-ssh');
+const node_ssh_1 = require("node-ssh");
 const { Client } = require('ssh2');
 var readline = require('readline');
 const fs = require("fs");
@@ -144,7 +144,7 @@ exports.interactive_shell = interactive_shell;
  */
 var ssh_connection = exports.ssh_connection = async function (_options = {}) {
     var options = ssh_options(_options);
-    var ssh = new NodeSSH();
+    var ssh = new node_ssh_1.NodeSSH();
     await new Promise((resolve, reject) => {
         try {
             ssh.connect(options).then(_ => {
@@ -232,7 +232,7 @@ function upload_file(localPath, remotePath, sshConnection) {
 }
 exports.upload_file = upload_file;
 function put_directory(local_directory, remote_directory, _options) {
-    var ssh = new NodeSSH();
+    var ssh = new node_ssh_1.NodeSSH();
     return new Promise(resolve => {
         ssh.connect(ssh_options(_options)).then(_ => {
             try {
@@ -264,6 +264,22 @@ function node_get_file(relative_path, node_id, ssh_connection) {
     return get_file(local_file, remote_file, ssh_connection);
 }
 exports.node_get_file = node_get_file;
+function nodeExecuteCommand(command, nodeSSHConnection, options = {}) {
+    let nodeId = options.nodeId || "";
+    let _options = fx.setDefaults({
+        cwd: fx.remoteNodeDir(nodeId)
+    }, options);
+    return execute_command(command, nodeSSHConnection, _options);
+}
+exports.nodeExecuteCommand = nodeExecuteCommand;
+/**
+ *
+ * @param command
+ * @param nodeSSHConnection
+ * @param _options
+ * @returns
+ * @deprecated Use nodeExecuteCommand instead
+ */
 function node_execute_command(command, nodeSSHConnection, _options = {}) {
     let node_id = _options.node_id || "";
     let options = fx.setDefaults({
