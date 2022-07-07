@@ -117,17 +117,21 @@ async function pushConfig(nodeId: string){
 
     await ssh.node_upload_file(fx.relativeToDocumentRoot(tmpFile),fx.remoteNodeDir(nodeId).concat("/" + (config.nodeConfigName || "webman.config.json") ),nodeId,sshConnection);
 
-    let cnfTmp = fx.newTmpFile("json");
+    let cnfTmp = null;
 
-    fs.writeFileSync(cnfTmp,`[client]
+    if (node.mysql){
+        cnfTmp = fx.newTmpFile("json");
+        fs.writeFileSync(cnfTmp,`[client]
 user = ${node.mysql.username}
 password = ${node.mysql.password}
 `);
 
-    await ssh.node_upload_file(fx.relativeToDocumentRoot(cnfTmp),`/home/${node.ssh.username}/.my.cnf`,nodeId, sshConnection);
-
+        await ssh.node_upload_file(fx.relativeToDocumentRoot(cnfTmp),`/home/${node.ssh.username}/.my.cnf`,nodeId, sshConnection);
+    }
+    
     sshConnection.dispose();
 
     fs.unlinkSync(tmpFile);
-    fs.unlinkSync(cnfTmp);
+    if (cnfTmp) fs.unlinkSync(cnfTmp);
+    fx.println();
 }

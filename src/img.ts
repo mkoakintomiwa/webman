@@ -17,8 +17,8 @@ program
 program
     .command("get-assets")
     .name("get-assets")
-    .description("Download assets from css url()")
-    .option("-f,--file <css-file>","The CSS file")
+    .description("Download assets from img src=''")
+    .option("-f,--file <css-file>","File containing images")
     .option("-u,--url <relative-url>","Relative URL to assets")
     .action(async(flags)=>{
         let cssPath = path.normalize(flags.file);

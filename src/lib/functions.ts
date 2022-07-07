@@ -38,12 +38,13 @@ class log{
 
 exports.log = log;
 
-export function remoteDir(node_id){
-	return `/home/${node(node_id).ssh.username}`;
+export function remoteDir(nodeId: string){
+	return `/home/${node(nodeId).ssh.username}`;
 }
 
-export function remotePublicHtml(node_id){
-	return `${remoteDir(node_id)}/public_html`;
+export function remotePublicHtml(nodeId: string){
+	let _node = node(nodeId);
+	return _node.home || `${remoteDir(nodeId)}/public_html`;
 }
 
 

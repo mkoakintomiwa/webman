@@ -36,12 +36,13 @@ class log {
     }
 }
 exports.log = log;
-function remoteDir(node_id) {
-    return `/home/${node(node_id).ssh.username}`;
+function remoteDir(nodeId) {
+    return `/home/${node(nodeId).ssh.username}`;
 }
 exports.remoteDir = remoteDir;
-function remotePublicHtml(node_id) {
-    return `${remoteDir(node_id)}/public_html`;
+function remotePublicHtml(nodeId) {
+    let _node = node(nodeId);
+    return _node.home || `${remoteDir(nodeId)}/public_html`;
 }
 exports.remotePublicHtml = remotePublicHtml;
 function remoteNodeDir(node_id) {
