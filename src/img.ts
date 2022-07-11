@@ -8,7 +8,7 @@ import * as url from 'url';
 
 let program = new Command();
 
-const documentRoot = fx.document_root();
+const documentRoot = fx.documentRoot();
 
 program
     .name("webman img")

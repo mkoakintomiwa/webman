@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fx = require("./lib/functions");
 const fs = require("fs");
-const os = require("os");
 const path = require("path");
 const commander_1 = require("commander");
 const SSHConfig = require('ssh-config');
@@ -24,10 +23,10 @@ program
                     HostName: node.host,
                     PasswordAuthentication: "false",
                     PubkeyAuthentication: "true",
-                    IdentityFile: node.identityFile || path.join(os.homedir(), ".ssh", "id_rsa")
+                    IdentityFile: node.ssh.privateKey
                 });
             }
-            fs.writeFileSync(path.join(fx.document_root(), ".ssh", "config"), SSHConfig.stringify(config));
+            fs.writeFileSync(path.join(fx.documentRoot(), ".ssh", "config"), SSHConfig.stringify(config));
             console.log("Config created!");
     }
 });

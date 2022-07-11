@@ -10,7 +10,7 @@ import * as os from "os"
 
 let program = new Command();
 
-const documentRoot = fx.document_root();
+const documentRoot = fx.documentRoot();
 
 program
     .name("webman nextjs-dev")
@@ -20,13 +20,13 @@ program
     .command("init")
     .name("init")
     .description("Initialize NextJS in remote node")
-    .argument("[nodeId]","NodeId to initiate NextJS development")
+    .argument("<nodeId>","NodeId to initiate NextJS development")
     .action(async(nodeId)=>{
         let node = fx.node(nodeId);
 
         let config = fx.config();
             
-        let sshConnection = await ssh.nodeSSHConnection(nodeId);
+        const sshConnection = await ssh.nodeSSHConnection(nodeId);
 
         let remoteDir = fx.remotePublicHtml(nodeId);
 
@@ -35,25 +35,35 @@ program
             process.exit();
         }
 
-        await ssh.execute_command(`rm -rf * .*`,sshConnection,{
-            cwd: remoteDir
+        await ssh.nodeExecuteCommands([
+            `rm -rf * .*`,
+            `git init && git config user.name "${config.git.config.user.name}" && git config user.email "${config.git.config.user.email}"`
+        ], nodeId, sshConnection);
+
+        await ssh.putDirectory(fx.templatePath("nextjs-dev"), remoteDir, sshConnection, {
+            validate: (itemPath) => path.basename(itemPath) !== ".gitlab-ci.yml"
         });
 
-        await ssh.execute_command(`git init && git config user.name "${config.git.config.user.name}" && git config user.email "${config.git.config.user.email}"`,sshConnection,{
-            cwd: remoteDir
-        });
+        fx.println();
 
-        await ssh.upload_file(fx.template_path("nextjs-dev/.gitignore"),`${remoteDir}/.gitignore`,sshConnection);
-
-        await ssh.upload_file(fx.template_path("nextjs-dev/deploy.php"),`${remoteDir}/deploy.php`,sshConnection);
-
-        await ssh.upload_file(fx.template_path("nextjs-dev/deploy.sh"),`${remoteDir}/deploy.sh`,sshConnection);
-
-        await ssh.execute_command(`chmod +x deploy.sh && git add . && git commit -am "NextJS Development tools install by webman" && git branch -M main`,sshConnection,{
-            cwd: remoteDir
-        });
+        await ssh.nodeExecuteCommand(`chmod +x deploy.sh && git add . && git commit -am "NextJS Development tools install by webman" && git branch -M main`, nodeId, sshConnection);
 
         sshConnection.dispose();
+    });
+
+
+
+program
+    .command("get-ci-config")
+    .name("get-ci-config")
+    .description("Initialize NextJS in remote node")
+    .argument("<domain-name>","Domain name of application")
+    .action(async(domainName)=>{
+        let content = fx.templateContent("nextjs-dev/.gitlab-ci.yml");
+        fs.writeFileSync(".gitlab-ci.yml", content.replace(`{{ domainName }}`, domainName));
+        fx.println();
+        console.log(".gitlab-ci.yml created")
+        fx.println();
     });
 
 program.parse();

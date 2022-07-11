@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs");
 const path = require("path");
 const { info_prompt, die } = require("./lib/stdout");
 const chalk = require("chalk");
@@ -69,7 +68,7 @@ function run_command(context_id) {
         let root_ssh_connection = null;
         if (!isDevMode) {
             if (rootRun) {
-                root_ssh_connection = await ssh.root_ssh_connection(root_ip);
+                root_ssh_connection = await ssh.rootSSHConnection(root_ip);
             }
             else {
                 ssh_connection = await ssh.nodeSSHConnection(nodeId);
@@ -87,7 +86,7 @@ function run_command(context_id) {
                     case "google-token":
                         let node = fx.node(nodeId);
                         let email_address = argv._[2] || node.backup.email_address;
-                        await ssh.node_get_file(`assets/google/accounts/${email_address}/token.json`, nodeId, ssh_connection);
+                        await ssh.nodeGetFile(`assets/google/accounts/${email_address}/token.json`, nodeId, ssh_connection);
                         break;
                 }
                 break;
@@ -96,11 +95,11 @@ function run_command(context_id) {
                 var activity = argv._[1].toString();
                 switch (activity) {
                     case "get-url":
-                        await ssh.execute_command(`cd public_html && git remote get-url origin`, ssh_connection);
+                        await ssh.nodeExecuteCommand(`cd public_html && git remote get-url origin`, nodeId, ssh_connection);
                         break;
                     case "set-url":
                         let gitToken = (await fx.currentGitToken()).portalBeta;
-                        await ssh.execute_command(`cd public_html && git remote set-url origin https://icitify:${gitToken}@github.com/icitify/portal-beta && git remote get-url origin`, ssh_connection);
+                        await ssh.nodeExecuteCommand(`cd public_html && git remote set-url origin https://icitify:${gitToken}@github.com/icitify/portal-beta && git remote get-url origin`, nodeId, ssh_connection);
                 }
                 break;
             case "update":
@@ -110,36 +109,6 @@ function run_command(context_id) {
                     die(`You must pass a valid component to be updated, Components: ${activities.join(",")}.`);
                 }
                 switch (activity) {
-                    case "nodejs":
-                        await ssh.update_nodejs(nodeId, ssh_connection);
-                        break;
-                    case "htaccess":
-                        if (isDevMode) {
-                            let htaccess = fx._.generateHtaccess();
-                            fs.writeFileSync(path.join(_document_root, ".htaccess"), htaccess);
-                            fx.println(`${chalk.magentaBright("Dev Mode:")} ${chalk.cyanBright(".htaccess generated")}`);
-                        }
-                        else {
-                            await ssh.updateHtaccess(nodeId, ssh_connection);
-                        }
-                        break;
-                    case "composer":
-                        if (isDevMode) {
-                            //await ssh.dev_update_composer();
-                        }
-                        else {
-                            await ssh.update_composer(nodeId, ssh_connection);
-                        }
-                        break;
-                    case "cronjob":
-                        await ssh.updateCronjob(nodeId, ssh_connection);
-                        break;
-                    case "google-credentials":
-                        await ssh.update_google_credentials(nodeId, ssh_connection);
-                        break;
-                    case "google-token":
-                        await ssh.update_google_token(nodeId, ssh_connection);
-                        break;
                 }
                 break;
             case "custom":
@@ -149,14 +118,12 @@ function run_command(context_id) {
                 }
                 else {
                     if (rootRun) {
-                        await ssh.execute_command(custom_command, root_ssh_connection, {
-                            nodeId: nodeId
+                        await ssh.executeCommand(custom_command, root_ssh_connection, {
+                            cwd: "/root"
                         });
                     }
                     else {
-                        await ssh.nodeExecuteCommand(custom_command, ssh_connection, {
-                            nodeId: nodeId
-                        });
+                        await ssh.nodeExecuteCommand(custom_command, node, ssh_connection);
                     }
                 }
                 break;

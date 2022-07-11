@@ -8,7 +8,7 @@ const chalk = require("chalk");
 const https = require("https");
 const url = require("url");
 let program = new commander_1.Command();
-const documentRoot = fx.document_root();
+const documentRoot = fx.documentRoot();
 program
     .name("webman css")
     .description("Automate css activities");

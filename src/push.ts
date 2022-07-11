@@ -8,7 +8,7 @@ const chalk = require("chalk");
 
 let program = new Command();
 
-const documentRoot = fx.document_root();
+const documentRoot = fx.documentRoot();
 
 program
     .name("webman push")
@@ -26,15 +26,13 @@ program
             
             let sshConnection = await ssh.nodeSSHConnection(nodeId);
 
-            let publicKeyPath = path.join(os.homedir(),".ssh","id_rsa.pub");
+            let publicKeyPath = node.ssh.privateKey + ".pub";
 
-            let remoteHomeDir = `/home/${node.ssh.username}`;
+            let remoteHomeDir = node.remoteHomeDir || `/home/${node.ssh.username}`;
 
-            await ssh.upload_file(publicKeyPath,`${remoteHomeDir}/authorized_keys.chunk`,sshConnection);
+            await ssh.uploadFile(publicKeyPath,`${remoteHomeDir}/authorized_keys.chunk`,sshConnection);
 
-            await ssh.execute_command(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`,sshConnection,{
-                cwd: remoteHomeDir
-            });
+            await ssh.executeCommand(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`, sshConnection);
 
             sshConnection.dispose();
 
@@ -42,15 +40,15 @@ program
         }else if (flags.rootIp){
             let rootIp = flags.rootIp;
             
-            let sshConnection = await ssh.root_ssh_connection(rootIp);
+            let sshConnection = await ssh.rootSSHConnection(rootIp);
 
             let publicKeyPath = path.join(os.homedir(),".ssh","id_rsa.pub");
 
             let remoteHomeDir = `/root`;
 
-            await ssh.upload_file(publicKeyPath,`${remoteHomeDir}/authorized_keys.chunk`,sshConnection);
+            await ssh.uploadFile(publicKeyPath,`${remoteHomeDir}/authorized_keys.chunk`,sshConnection);
 
-            await ssh.execute_command(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`,sshConnection,{
+            await ssh.executeCommand(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`,sshConnection,{
                 cwd: remoteHomeDir
             });
 
@@ -115,7 +113,7 @@ async function pushConfig(nodeId: string){
 
     let sshConnection = await ssh.nodeSSHConnection(nodeId);
 
-    await ssh.node_upload_file(fx.relativeToDocumentRoot(tmpFile),fx.remoteNodeDir(nodeId).concat("/" + (config.nodeConfigName || "webman.config.json") ),nodeId,sshConnection);
+    await ssh.nodeUploadFile(fx.relativeToDocumentRoot(tmpFile),fx.remoteNodeDir(nodeId).concat("/" + (config.nodeConfigName || "webman.config.json") ),nodeId,sshConnection);
 
     let cnfTmp = null;
 
@@ -126,7 +124,7 @@ user = ${node.mysql.username}
 password = ${node.mysql.password}
 `);
 
-        await ssh.node_upload_file(fx.relativeToDocumentRoot(cnfTmp),`/home/${node.ssh.username}/.my.cnf`,nodeId, sshConnection);
+        await ssh.nodeUploadFile(fx.relativeToDocumentRoot(cnfTmp),`/home/${node.ssh.username}/.my.cnf`,nodeId, sshConnection);
     }
     
     sshConnection.dispose();

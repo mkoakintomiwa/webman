@@ -29,13 +29,13 @@ program
                         HostName: node.host,
                         PasswordAuthentication: "false",
                         PubkeyAuthentication: "true",
-                        IdentityFile: node.identityFile || path.join(os.homedir(),".ssh","id_rsa") 
+                        IdentityFile: node.ssh.privateKey
                     });
                 }
 
             fs.writeFileSync(
                 path.join(
-                    fx.document_root(),
+                    fx.documentRoot(),
                     ".ssh",
                     "config"
                 ),

@@ -17,7 +17,7 @@ function transpile_react(file_path, output_path = null, minify = true) {
     let bundleFilename = fx.unique_characters_from_fs(fx.tmp_directory()) + '.js';
     let _tmp_directory = fx.tmp_directory();
     let bundlePath = path.join(_tmp_directory, bundleFilename);
-    let _document_root = fx.document_root();
+    let _document_root = fx.documentRoot();
     return new Promise(async (resolve) => {
         var _transpiled = "";
         //fx.println();

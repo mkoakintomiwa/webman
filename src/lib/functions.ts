@@ -48,8 +48,8 @@ export function remotePublicHtml(nodeId: string){
 }
 
 
-export function remoteNodeDir(node_id){
-	return `${remotePublicHtml(node_id)}${node(node_id).relDirname}`;
+export function remoteNodeDir(nodeId: string){
+	return `${remotePublicHtml(nodeId)}${node(nodeId).relDirname}`;
 }
 
 
@@ -163,11 +163,11 @@ export function writeFiles(file_content_array,cwd=null,callback=null){
 
 
 
-export function setDefault(parameter,value){
+export function setDefault<T>(parameter: T,value: T): T{
 	return typeof parameter != 'undefined' ? parameter : value;
 }
 
-export function setDefaults(defaults,options){
+export function setDefaults<T>(defaults: T, options: T): T {
 	for (let property in defaults){
         let value = defaults[property];
 		if (typeof options[property] === 'undefined') options[property] = value; 
@@ -175,10 +175,10 @@ export function setDefaults(defaults,options){
     return options;
 }
 
-export function document_root(root_file=".webman"){
+export function documentRoot(rootFile=".webman"){
     var dirname = process.cwd();
     while(true){
-        if (fs.existsSync(dirname+'/'+root_file)){
+        if (fs.existsSync(dirname+'/'+rootFile)){
             return dirname;
         }else{
 			if (dirname != path.dirname(dirname)){
@@ -207,7 +207,7 @@ export function project_root(root_file="bin"){
 
 
 export function tmp_directory(){
-	var _tmp_directory = path.normalize(`${document_root()}/tmp`);
+	var _tmp_directory = path.normalize(`${documentRoot()}/tmp`);
 	if (!fs.existsSync(_tmp_directory)) fs.mkdirSync(_tmp_directory);
 	return _tmp_directory;
 }
@@ -219,13 +219,13 @@ export function empty_tmp_directory(){
 
 
 export function settings(){
-	return JSON.parse(fs.readFileSync(document_root()+'/settings.json','utf8'));
+	return JSON.parse(fs.readFileSync(documentRoot()+'/settings.json','utf8'));
 }
 
 
 
 export function portal_dir(){
-	return document_root("portal_root.json");
+	return documentRoot("portal_root.json");
 }
 
 
@@ -378,10 +378,10 @@ export function encoded_url(main_link,queryStringObject={}){
 
 
 
-export function openInBrowser(url: string, browser='chrome',_options={}){
-	var options = setDefaults({
+export function openInBrowser(url: string, browser='chrome',options: any={}){
+	options = setDefaults({
 		nodeIntegration:false
-	},_options);
+	},options);
 
 	var command='';
 	if (browser==="electron"){
@@ -414,7 +414,7 @@ export function unique_school_id(){
 }
 
 
-export function forward_slash(string){
+export function forwardSlash(string){
 	return string.replace(/\\/g,"/");
 }
 
@@ -599,40 +599,40 @@ export function require_portal_id(supposed_portal_id){
 
 
 
-export function portal_api_request(node_id,relative_server_script="assets/handshake.php",request_options: any = {}){
-	var unirest = require("unirest");
-	var _node = node(node_id);
+// export function portal_api_request(node_id,relative_server_script="assets/handshake.php",request_options: any = {}){
+// 	var unirest = require("unirest");
+// 	var _node = node(node_id);
 
-	request_options = setDefaults({
-		fields:{},
-		attachments:{}
-	},request_options);
+// 	request_options = setDefaults({
+// 		fields:{},
+// 		attachments:{}
+// 	},request_options);
 
-	return new Promise(resolve=>{
-		unirest.post(_node.nodeUrl+"/"+relative_server_script).headers({
-			"Authorization": _node.handshake_auth_key
-		}).field(Object.assign({
-			"auth_key":_node.handshake_auth_key
-		},request_options.fields)).attach(request_options.attachments).then(async response=>{
-			response['is_successful'] = response.status===200 && response.body && response.body.trim().length>0 && response.body.indexOf('Error: ')===-1 && response.body.indexOf('Redirecting')===-1;             
-			resolve(response);
-		});
-	});
-}
+// 	return new Promise(resolve=>{
+// 		unirest.post(_node.nodeUrl+"/"+relative_server_script).headers({
+// 			"Authorization": _node.handshake_auth_key
+// 		}).field(Object.assign({
+// 			"auth_key":_node.handshake_auth_key
+// 		},request_options.fields)).attach(request_options.attachments).then(async response=>{
+// 			response['is_successful'] = response.status===200 && response.body && response.body.trim().length>0 && response.body.indexOf('Error: ')===-1 && response.body.indexOf('Redirecting')===-1;             
+// 			resolve(response);
+// 		});
+// 	});
+// }
 
 
 
-export function portal_http_upload(portal_id,relative_local_path,relative_remote_path=null,relative_server_script="/assets/handshake.php"){
-	const portal = process.env.portal;
-	return portal_api_request(portal_id,relative_server_script,{
-		fields:{
-			"filename":"\\"+(relative_remote_path?relative_remote_path:relative_local_path)
-		},
-		attachments:{
-			"file":path.normalize(portal+"\\"+relative_local_path)
-		}
-	});
-}
+// export function portal_http_upload(portal_id,relative_local_path,relative_remote_path=null,relative_server_script="/assets/handshake.php"){
+// 	const portal = process.env.portal;
+// 	return portal_api_request(portal_id,relative_server_script,{
+// 		fields:{
+// 			"filename":"\\"+(relative_remote_path?relative_remote_path:relative_local_path)
+// 		},
+// 		attachments:{
+// 			"file":path.normalize(portal+"\\"+relative_local_path)
+// 		}
+// 	});
+// }
 
 
 export function file_request_success_message(school,response,row_cursor_position,rows){
@@ -680,10 +680,10 @@ export function random_float(min,max,precision=2){
 }
 
 
-export function config(_document_root=null){
-	if (!_document_root) _document_root = document_root();
+export function config(_documentRoot=null): WebmanConfig{
+	if (!_documentRoot) _documentRoot = documentRoot();
     let _config: any = {};
-	let main = JSON.parse(fs.readFileSync(path.join(_document_root,".webman","config.json")).toString());
+	let main = JSON.parse(fs.readFileSync(path.join(_documentRoot,".webman","config.json")).toString());
 
 	if (main.extends){
 		for(let rawConfigPath of main.extends){
@@ -698,14 +698,14 @@ export function config(_document_root=null){
 }
 
 
-export function writeConfig(_config,_document_root=null){
-	if (!_document_root) _document_root = document_root();
+export function writeConfig(_config: WebmanConfig,_document_root: string = null){
+	if (!_document_root) _document_root = documentRoot();
 	let _path = path.join(_document_root,".webman","config.json");
 	return writeFileSync(_path,JSON.stringify(_config,null,4));
 }
 
 
-export function writeFileSync(_path,content){
+export function writeFileSync(_path: string, content: string){
 	if (!fs.existsSync(path.dirname(_path))) fs.mkdirSync(path.dirname(_path),{recursive:true});
 	fs.writeFileSync(_path,content)
 }
@@ -748,7 +748,7 @@ export function upload_files(local_remote_array, ftp_connection, message = null)
 			if (message){
 				message(local_path,remote_path);
 			}else{
-				console.log(`${chalk.magentaBright('put file:')} ${chalk.greenBright(forward_slash(local_path))} ${chalk.redBright(`->`)} ${chalk.cyanBright(forward_slash(remote_path))}`);
+				console.log(`${chalk.magentaBright('put file:')} ${chalk.greenBright(forwardSlash(local_path))} ${chalk.redBright(`->`)} ${chalk.cyanBright(forwardSlash(remote_path))}`);
 			}
 
 			await new Promise<void>(resolve=>{
@@ -777,20 +777,20 @@ export function upload_file(local_path,remote_path,ftp_connection,message){
 }
 
 
-export function ftp_config(node_id){
-	let _node = node(node_id);
+// export function ftp_config(node_id){
+// 	let _node = node(node_id);
 	
-	let _ftp_config = _node.ftp;
+// 	let _ftp_config = _node.ftp;
 
-	_ftp_config["host"] = _node.host;
-	_ftp_config["relDirname"] = _node.relDirname;
-	return _ftp_config;
-}
+// 	_ftp_config["host"] = _node.host;
+// 	_ftp_config["relDirname"] = _node.relDirname;
+// 	return _ftp_config;
+// }
 
 
-export function node_ftp_connection(node_id){
-	return ftp_connection(ftp_config(node_id));
-}
+// export function node_ftp_connection(node_id){
+// 	return ftp_connection(ftp_config(node_id));
+// }
 
 
 export function upload_project_files(file_relative_paths, node_id, ftp_connection,message){
@@ -847,27 +847,27 @@ export function project_ftp_mkdir(relative_path,node_id,ftp_connection){
 }
 
 
-export function hftp_request(node_id,request_options: any = {}){
-	var unirest = require("unirest");
+// export function hftp_request(node_id,request_options: any = {}){
+// 	var unirest = require("unirest");
 
-	const _node = node(node_id);
+// 	const _node = node(node_id);
 
-	request_options = setDefaults({
-		fields:{},
-		attachments:{}
-	},request_options);
+// 	request_options = setDefaults({
+// 		fields:{},
+// 		attachments:{}
+// 	},request_options);
 
-	return new Promise(resolve=>{
-		unirest.post(_node.nodeUrl.concat("/assets/handshake.php")).headers({
-			"Authorization": _node.handshake_auth_key
-		}).field(Object.assign({
-			"auth_key":_node.handshake_auth_key
-		},request_options.fields)).attach(request_options.attachments).then(async response=>{
-			response['is_successful'] = response.status===200 && response.body && response.body.trim().length>0 && response.body.indexOf('Error: ')===-1 && response.body.indexOf('Redirecting')===-1;            
-			resolve(response);
-		});
-	});
-}
+// 	return new Promise(resolve=>{
+// 		unirest.post(_node.nodeUrl.concat("/assets/handshake.php")).headers({
+// 			"Authorization": _node.handshake_auth_key
+// 		}).field(Object.assign({
+// 			"auth_key":_node.handshake_auth_key
+// 		},request_options.fields)).attach(request_options.attachments).then(async response=>{
+// 			response['is_successful'] = response.status===200 && response.body && response.body.trim().length>0 && response.body.indexOf('Error: ')===-1 && response.body.indexOf('Redirecting')===-1;            
+// 			resolve(response);
+// 		});
+// 	});
+// }
 
 
 
@@ -896,41 +896,47 @@ export function spawn_process(command,options=null){
 }
 
 
-export function node_ids(){
-	return Object.keys(config()["nodes"]);
+export function userPrivateKey(){
+	return path.join(os.homedir(),".ssh","id_rsa");
 }
 
-export function node(nodeId: string){
-	if (!nodeId)  nodeId = node_ids()[0]; 
-	return config()["nodes"][nodeId];
-}
 
 export function hostname(nodeId: string){
 	let _node = node(nodeId);
 	return _node.hostname || (_node.ssh?`${_node.ssh.username}_${_node.host}`:nodeId);
 }
 
+export function nodeIds(){
+	return Object.keys(config()["nodes"]);
+}
 
-export function identityFile(nodeId: string){
-	let _node = node(nodeId);
-	return _node.identityFile || path.join(os.homedir(),".ssh","id_rsa")
+export function node(nodeId: string): WebmanNode{
+	let _node: WebmanNode = config()["nodes"][nodeId];
+
+	if (!_node.ssh.privateKey) _node.ssh.privateKey = userPrivateKey();
+
+	return _node;
+
 }
 
 
-export function root(root_ip_address){
-	return config()["roots"][root_ip_address];
+export function root(rootIpAddress: string): WebmanRoot{
+	let _root = config()["roots"][rootIpAddress];
+	if (!_root.username) _root.username = "root";
+	if (!_root.privateKey) _root.privateKey = userPrivateKey();
+	return _root;
 }
 
 
-export function node_root(node_id=null){
-	return root(node(node_id).host);
+export function nodeRoot(nodeId: string): WebmanRoot{
+	return root(node(nodeId).host);
 }
 
 
 export function activeNodeIds(){
 	let accumulator = [];
 
-	for (let node_id of node_ids()){
+	for (let node_id of nodeIds()){
 		if (node(node_id).active !== false) accumulator.push(node_id);
 	}
 	return accumulator;
@@ -954,7 +960,7 @@ export function hstart(command){
 
 
 export function relativeToDocumentRoot(absolute_path){
-	return path.relative(document_root(),absolute_path);
+	return path.relative(documentRoot(),absolute_path);
 }
 
 
@@ -1019,7 +1025,7 @@ var trace_save = exports.trace_save = async function(relative_path,is_source_fil
 
 			if (_config.test.active){
 				let test_rows = [];
-				let node_id = _config.test.node_id;
+				let node_id = _config.test.nodeId;
 				await sqlite.fetch("SELECT node_id,filename FROM test_files WHERE node_id=? AND filename=?",[node_id,filename],conn).then(_rows=>{
 					test_rows = _rows;
 				});
@@ -1132,7 +1138,7 @@ export function unique_characters_from_fs(directory_path, length=7){
 
 
 export function newTmpFile(file_extension="",length=7){
-	let _document_root = document_root();
+	let _document_root = documentRoot();
 	if (file_extension.length>0) file_extension = ".".concat(file_extension)
 
 	let _tmp_directory = tmp_directory();
@@ -1142,11 +1148,11 @@ export function newTmpFile(file_extension="",length=7){
 }
 
 
-export function template_path(template_relative_path){
+export function templatePath(templateRelativePath: string){
 	let _project_root = project_root();
-	let _document_root = document_root();
-	let document_file_path = `${_document_root}/.webman/templates/${template_relative_path}`;
-	let project_file_path = `${_project_root}/templates/${template_relative_path}`;
+	let _document_root = documentRoot();
+	let document_file_path = `${_document_root}/.webman/templates/${templateRelativePath}`;
+	let project_file_path = `${_project_root}/templates/${templateRelativePath}`;
 
 	let file_path = document_file_path;
 
@@ -1156,17 +1162,17 @@ export function template_path(template_relative_path){
 }
 
 
-export function template_content(template_relative_path){
-	return fs.readFileSync(template_path(template_relative_path)).toString();
+export function templateContent(templateRelativePath: string){
+	return fs.readFileSync(templatePath(templateRelativePath)).toString();
 }
 
 
 
-export function copyTemplateFile(template_relative_file_path,document_relative_file_path){
+export function copyTemplateFile(templateRelativeFilePath: string, documentRelativeFilePath: string){
 	return new Promise(async function(){
-		let _document_root = document_root();
-		let _path = path.join(_document_root,document_relative_file_path);
-		fs.copyFileSync(template_path(template_relative_file_path),_path);
+		let _document_root = documentRoot();
+		let _path = path.join(_document_root, documentRelativeFilePath);
+		fs.copyFileSync(templatePath(templateRelativeFilePath),_path);
 		await shellExec(`webman save "${_path}"`);
 	});
 }
@@ -1179,8 +1185,8 @@ export function copyProjectTemplateFile(template_relative_file_path){
 
 
 export function copyTemplateDirectory(template_relative_directory,document_relative_directory){
-	let _document_root = document_root();
-	return copyFiles(template_path(template_relative_directory),path.join(_document_root,document_relative_directory))
+	let _document_root = documentRoot();
+	return copyFiles(templatePath(template_relative_directory),path.join(_document_root,document_relative_directory))
 }
 
 
@@ -1265,7 +1271,7 @@ var runProjectSpecificScript = exports.runProjectSpecificScript = async function
 
     let filename = unique_characters_from_fs(scripts_dir,11)+".js";
 
-    let script_content = fs.readFileSync(path.join(document_root(),".webman","scripts",script_name)).toString();
+    let script_content = fs.readFileSync(path.join(documentRoot(),".webman","scripts",script_name)).toString();
 
     fs.writeFileSync(path.join(scripts_dir,filename),script_content);
 
@@ -1286,8 +1292,8 @@ export function setTerminalTitle(title){
 }
 
 
-export function readlineInterface(historyName){
-	let _document_root = document_root();
+export function readlineInterface(historyName: string){
+	let _document_root = documentRoot();
 
 	let historyPath = path.join(_document_root,".webman","terminal-histories",historyName+".json");
 
@@ -1318,8 +1324,8 @@ export function readlineInterface(historyName){
 }
 
 
-export function saveReadlineInterfaceHistory(historyName, history){
-	let _document_root = document_root();
+export function saveReadlineInterfaceHistory(historyName: string, history: any){
+	let _document_root = documentRoot();
 
 	let historyPath = path.join(_document_root,".webman","terminal-histories",historyName+".json");
 
@@ -1328,17 +1334,17 @@ export function saveReadlineInterfaceHistory(historyName, history){
 
 
 export function project_specific_scripts_path(){
-	return path.join(document_root(),".webman","scripts");
+	return path.join(documentRoot(),".webman","scripts");
 }
 
 
 var compileApp = exports.compileApp = async function(appLocation, bundlePath=null, appType="web"){
 
-	let _document_root = document_root();
+	let _documentRoot = documentRoot();
 	let sPath = appLocation;
 	let sPathName = path.basename(sPath);
-	let file_ordinance = path.join(_document_root,"src",sPath,sPathName);
-	let output_file_path = path.join(_document_root,`${sPath}.php`);
+	let file_ordinance = path.join(_documentRoot,"src",sPath,sPathName);
+	let output_file_path = path.join(_documentRoot,`${sPath}.php`);
 	var output_file_dir = path.dirname(output_file_path);
 
 	let appIsReact = fs.existsSync(`${file_ordinance}.jsx`);
@@ -1427,7 +1433,7 @@ export function n(module){
 
 
 export function webpackOptions({ filePath, output, mode }){
-	let _document_root = document_root();
+	let _document_root = documentRoot();
 	let _options = {
 		entry: filePath,
 		"cache": true,

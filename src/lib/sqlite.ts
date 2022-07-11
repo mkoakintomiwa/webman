@@ -2,7 +2,7 @@ import * as fx from "./functions";
 import * as sqlite3 from 'sqlite3';
 
 export function connection(){
-    var document_root = fx.document_root();
+    var document_root = fx.documentRoot();
     return new sqlite3.Database(`${document_root}/.webman/webman.db`);
 }
 

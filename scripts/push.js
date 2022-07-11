@@ -8,7 +8,7 @@ const os = require("os");
 const commander_1 = require("commander");
 const chalk = require("chalk");
 let program = new commander_1.Command();
-const documentRoot = fx.document_root();
+const documentRoot = fx.documentRoot();
 program
     .name("webman push")
     .description("Push object to remote locations");
@@ -22,22 +22,20 @@ program
     if (nodeId) {
         let node = fx.node(nodeId);
         let sshConnection = await ssh.nodeSSHConnection(nodeId);
-        let publicKeyPath = path.join(os.homedir(), ".ssh", "id_rsa.pub");
-        let remoteHomeDir = `/home/${node.ssh.username}`;
-        await ssh.upload_file(publicKeyPath, `${remoteHomeDir}/authorized_keys.chunk`, sshConnection);
-        await ssh.execute_command(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`, sshConnection, {
-            cwd: remoteHomeDir
-        });
+        let publicKeyPath = node.ssh.privateKey + ".pub";
+        let remoteHomeDir = node.remoteHomeDir || `/home/${node.ssh.username}`;
+        await ssh.uploadFile(publicKeyPath, `${remoteHomeDir}/authorized_keys.chunk`, sshConnection);
+        await ssh.executeCommand(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`, sshConnection);
         sshConnection.dispose();
         console.log(`\nPublic key successfully uploaded\n`);
     }
     else if (flags.rootIp) {
         let rootIp = flags.rootIp;
-        let sshConnection = await ssh.root_ssh_connection(rootIp);
+        let sshConnection = await ssh.rootSSHConnection(rootIp);
         let publicKeyPath = path.join(os.homedir(), ".ssh", "id_rsa.pub");
         let remoteHomeDir = `/root`;
-        await ssh.upload_file(publicKeyPath, `${remoteHomeDir}/authorized_keys.chunk`, sshConnection);
-        await ssh.execute_command(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`, sshConnection, {
+        await ssh.uploadFile(publicKeyPath, `${remoteHomeDir}/authorized_keys.chunk`, sshConnection);
+        await ssh.executeCommand(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`, sshConnection, {
             cwd: remoteHomeDir
         });
         sshConnection.dispose();
@@ -81,7 +79,7 @@ async function pushConfig(nodeId) {
     node = Object.assign({ nodeId }, node);
     fs.writeFileSync(tmpFile, JSON.stringify(node, null, 4));
     let sshConnection = await ssh.nodeSSHConnection(nodeId);
-    await ssh.node_upload_file(fx.relativeToDocumentRoot(tmpFile), fx.remoteNodeDir(nodeId).concat("/" + (config.nodeConfigName || "webman.config.json")), nodeId, sshConnection);
+    await ssh.nodeUploadFile(fx.relativeToDocumentRoot(tmpFile), fx.remoteNodeDir(nodeId).concat("/" + (config.nodeConfigName || "webman.config.json")), nodeId, sshConnection);
     let cnfTmp = null;
     if (node.mysql) {
         cnfTmp = fx.newTmpFile("json");
@@ -89,7 +87,7 @@ async function pushConfig(nodeId) {
 user = ${node.mysql.username}
 password = ${node.mysql.password}
 `);
-        await ssh.node_upload_file(fx.relativeToDocumentRoot(cnfTmp), `/home/${node.ssh.username}/.my.cnf`, nodeId, sshConnection);
+        await ssh.nodeUploadFile(fx.relativeToDocumentRoot(cnfTmp), `/home/${node.ssh.username}/.my.cnf`, nodeId, sshConnection);
     }
     sshConnection.dispose();
     fs.unlinkSync(tmpFile);

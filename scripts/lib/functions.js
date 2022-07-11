@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.random_float = exports.git_full_address = exports.file_request_error_message = exports.file_request_success_message = exports.portal_http_upload = exports.portal_api_request = exports.require_portal_id = exports.match = exports.dotted_parameter = exports.modify_resource_icon = exports.sleep = exports.taskkil = exports.realArray = exports.real_array = exports.dollar_replace = exports.brackets_replace = exports.escape_sed = exports.escapeRegExp = exports.back_slash = exports.forward_slash = exports.unique_school_id = exports.copy_to_clipboard = exports.openInBrowser = exports.encoded_url = exports.file_copy_contents = exports.folderDialog = exports.filesDialog = exports.fileDialog = exports.shellExec = exports.echo_log_file = exports.shell_log_file = exports.log_file = exports.portal_dir = exports.settings = exports.empty_tmp_directory = exports.tmp_directory = exports.project_root = exports.document_root = exports.setDefaults = exports.setDefault = exports.writeFiles = exports.rmdir = exports.emptyDir = exports.copyFiles = exports.files_in_directory = exports.subdirectories = exports.time = exports.remoteNodeDir = exports.remotePublicHtml = exports.remoteDir = void 0;
-exports.argsCommandAppend = exports.escapeShell = exports.hex2bin = exports.bin2hex = exports.arg_node_ids = exports.zipDirectory = exports.copyProjectTemplateDirectory = exports.copyTemplateDirectory = exports.copyProjectTemplateFile = exports.copyTemplateFile = exports.template_content = exports.template_path = exports.newTmpFile = exports.unique_characters_from_fs = exports.unique_digits_from_fs = exports.unique_from_fs = exports.random_digits = exports.random_characters = exports.round = exports.rigid_public_ip = exports.public_ip = exports.println = exports.relativeToDocumentRoot = exports.hstart = exports.active_root_ips = exports.activeNodeIds = exports.node_root = exports.root = exports.identityFile = exports.hostname = exports.node = exports.node_ids = exports.spawn_process = exports.base64_decode = exports.base64_encode = exports.hftp_request = exports.project_ftp_mkdir = exports.ftp_mkdir = exports.ftp_put = exports.upload_project_file = exports.upload_project_files = exports.node_ftp_connection = exports.ftp_config = exports.upload_file = exports.upload_files = exports.ftp_connection = exports.hash = exports.writeFileSync = exports.writeConfig = exports.config = void 0;
-exports.percentageChunk = exports.webpackOptions = exports.n = exports.download = exports.project_specific_scripts_path = exports.saveReadlineInterfaceHistory = exports.readlineInterface = exports.setTerminalTitle = void 0;
+exports.writeConfig = exports.config = exports.random_float = exports.git_full_address = exports.file_request_error_message = exports.file_request_success_message = exports.require_portal_id = exports.match = exports.dotted_parameter = exports.modify_resource_icon = exports.sleep = exports.taskkil = exports.realArray = exports.real_array = exports.dollar_replace = exports.brackets_replace = exports.escape_sed = exports.escapeRegExp = exports.back_slash = exports.forwardSlash = exports.unique_school_id = exports.copy_to_clipboard = exports.openInBrowser = exports.encoded_url = exports.file_copy_contents = exports.folderDialog = exports.filesDialog = exports.fileDialog = exports.shellExec = exports.echo_log_file = exports.shell_log_file = exports.log_file = exports.portal_dir = exports.settings = exports.empty_tmp_directory = exports.tmp_directory = exports.project_root = exports.documentRoot = exports.setDefaults = exports.setDefault = exports.writeFiles = exports.rmdir = exports.emptyDir = exports.copyFiles = exports.files_in_directory = exports.subdirectories = exports.time = exports.remoteNodeDir = exports.remotePublicHtml = exports.remoteDir = void 0;
+exports.download = exports.project_specific_scripts_path = exports.saveReadlineInterfaceHistory = exports.readlineInterface = exports.setTerminalTitle = exports.argsCommandAppend = exports.escapeShell = exports.hex2bin = exports.bin2hex = exports.arg_node_ids = exports.zipDirectory = exports.copyProjectTemplateDirectory = exports.copyTemplateDirectory = exports.copyProjectTemplateFile = exports.copyTemplateFile = exports.templateContent = exports.templatePath = exports.newTmpFile = exports.unique_characters_from_fs = exports.unique_digits_from_fs = exports.unique_from_fs = exports.random_digits = exports.random_characters = exports.round = exports.rigid_public_ip = exports.public_ip = exports.println = exports.relativeToDocumentRoot = exports.hstart = exports.active_root_ips = exports.activeNodeIds = exports.nodeRoot = exports.root = exports.node = exports.nodeIds = exports.hostname = exports.userPrivateKey = exports.spawn_process = exports.base64_decode = exports.base64_encode = exports.project_ftp_mkdir = exports.ftp_mkdir = exports.ftp_put = exports.upload_project_file = exports.upload_project_files = exports.upload_file = exports.upload_files = exports.ftp_connection = exports.hash = exports.writeFileSync = void 0;
+exports.percentageChunk = exports.webpackOptions = exports.n = void 0;
 const fs = require("fs");
 const os = require("os");
 const fsExtra = require("fs-extra");
@@ -45,8 +45,8 @@ function remotePublicHtml(nodeId) {
     return _node.home || `${remoteDir(nodeId)}/public_html`;
 }
 exports.remotePublicHtml = remotePublicHtml;
-function remoteNodeDir(node_id) {
-    return `${remotePublicHtml(node_id)}${node(node_id).relDirname}`;
+function remoteNodeDir(nodeId) {
+    return `${remotePublicHtml(nodeId)}${node(nodeId).relDirname}`;
 }
 exports.remoteNodeDir = remoteNodeDir;
 function time() {
@@ -164,10 +164,10 @@ function setDefaults(defaults, options) {
     return options;
 }
 exports.setDefaults = setDefaults;
-function document_root(root_file = ".webman") {
+function documentRoot(rootFile = ".webman") {
     var dirname = process.cwd();
     while (true) {
-        if (fs.existsSync(dirname + '/' + root_file)) {
+        if (fs.existsSync(dirname + '/' + rootFile)) {
             return dirname;
         }
         else {
@@ -180,7 +180,7 @@ function document_root(root_file = ".webman") {
         }
     }
 }
-exports.document_root = document_root;
+exports.documentRoot = documentRoot;
 function project_root(root_file = "bin") {
     var dirname = __dirname;
     while (true) {
@@ -194,7 +194,7 @@ function project_root(root_file = "bin") {
 }
 exports.project_root = project_root;
 function tmp_directory() {
-    var _tmp_directory = path.normalize(`${document_root()}/tmp`);
+    var _tmp_directory = path.normalize(`${documentRoot()}/tmp`);
     if (!fs.existsSync(_tmp_directory))
         fs.mkdirSync(_tmp_directory);
     return _tmp_directory;
@@ -205,11 +205,11 @@ function empty_tmp_directory() {
 }
 exports.empty_tmp_directory = empty_tmp_directory;
 function settings() {
-    return JSON.parse(fs.readFileSync(document_root() + '/settings.json', 'utf8'));
+    return JSON.parse(fs.readFileSync(documentRoot() + '/settings.json', 'utf8'));
 }
 exports.settings = settings;
 function portal_dir() {
-    return document_root("portal_root.json");
+    return documentRoot("portal_root.json");
 }
 exports.portal_dir = portal_dir;
 function log_file() {
@@ -334,10 +334,10 @@ function encoded_url(main_link, queryStringObject = {}) {
     return url;
 }
 exports.encoded_url = encoded_url;
-function openInBrowser(url, browser = 'chrome', _options = {}) {
-    var options = setDefaults({
+function openInBrowser(url, browser = 'chrome', options = {}) {
+    options = setDefaults({
         nodeIntegration: false
-    }, _options);
+    }, options);
     var command = '';
     if (browser === "electron") {
         command = `electron %portal%/nodejs/browser "${url}"`;
@@ -367,10 +367,10 @@ function unique_school_id() {
     });
 }
 exports.unique_school_id = unique_school_id;
-function forward_slash(string) {
+function forwardSlash(string) {
     return string.replace(/\\/g, "/");
 }
-exports.forward_slash = forward_slash;
+exports.forwardSlash = forwardSlash;
 function back_slash(string) {
     return string.replace(/\//g, "\\");
 }
@@ -528,37 +528,35 @@ function require_portal_id(supposed_portal_id) {
     });
 }
 exports.require_portal_id = require_portal_id;
-function portal_api_request(node_id, relative_server_script = "assets/handshake.php", request_options = {}) {
-    var unirest = require("unirest");
-    var _node = node(node_id);
-    request_options = setDefaults({
-        fields: {},
-        attachments: {}
-    }, request_options);
-    return new Promise(resolve => {
-        unirest.post(_node.nodeUrl + "/" + relative_server_script).headers({
-            "Authorization": _node.handshake_auth_key
-        }).field(Object.assign({
-            "auth_key": _node.handshake_auth_key
-        }, request_options.fields)).attach(request_options.attachments).then(async (response) => {
-            response['is_successful'] = response.status === 200 && response.body && response.body.trim().length > 0 && response.body.indexOf('Error: ') === -1 && response.body.indexOf('Redirecting') === -1;
-            resolve(response);
-        });
-    });
-}
-exports.portal_api_request = portal_api_request;
-function portal_http_upload(portal_id, relative_local_path, relative_remote_path = null, relative_server_script = "/assets/handshake.php") {
-    const portal = process.env.portal;
-    return portal_api_request(portal_id, relative_server_script, {
-        fields: {
-            "filename": "\\" + (relative_remote_path ? relative_remote_path : relative_local_path)
-        },
-        attachments: {
-            "file": path.normalize(portal + "\\" + relative_local_path)
-        }
-    });
-}
-exports.portal_http_upload = portal_http_upload;
+// export function portal_api_request(node_id,relative_server_script="assets/handshake.php",request_options: any = {}){
+// 	var unirest = require("unirest");
+// 	var _node = node(node_id);
+// 	request_options = setDefaults({
+// 		fields:{},
+// 		attachments:{}
+// 	},request_options);
+// 	return new Promise(resolve=>{
+// 		unirest.post(_node.nodeUrl+"/"+relative_server_script).headers({
+// 			"Authorization": _node.handshake_auth_key
+// 		}).field(Object.assign({
+// 			"auth_key":_node.handshake_auth_key
+// 		},request_options.fields)).attach(request_options.attachments).then(async response=>{
+// 			response['is_successful'] = response.status===200 && response.body && response.body.trim().length>0 && response.body.indexOf('Error: ')===-1 && response.body.indexOf('Redirecting')===-1;             
+// 			resolve(response);
+// 		});
+// 	});
+// }
+// export function portal_http_upload(portal_id,relative_local_path,relative_remote_path=null,relative_server_script="/assets/handshake.php"){
+// 	const portal = process.env.portal;
+// 	return portal_api_request(portal_id,relative_server_script,{
+// 		fields:{
+// 			"filename":"\\"+(relative_remote_path?relative_remote_path:relative_local_path)
+// 		},
+// 		attachments:{
+// 			"file":path.normalize(portal+"\\"+relative_local_path)
+// 		}
+// 	});
+// }
 function file_request_success_message(school, response, row_cursor_position, rows) {
     console.log("");
     console.log(`${chalk.yellowBright(response.body)} ${chalk.whiteBright('*')} ${chalk.yellowBright(`${row_cursor_position}/${rows.length} files synced`)} ${chalk.whiteBright('*')} ${chalk.yellowBright(`${parseFloat(((row_cursor_position / rows.length) * 100).toFixed(2))}%`)}`);
@@ -593,11 +591,11 @@ function random_float(min, max, precision = 2) {
     return (Math.random() * (max - min) + min).toFixed(precision);
 }
 exports.random_float = random_float;
-function config(_document_root = null) {
-    if (!_document_root)
-        _document_root = document_root();
+function config(_documentRoot = null) {
+    if (!_documentRoot)
+        _documentRoot = documentRoot();
     let _config = {};
-    let main = JSON.parse(fs.readFileSync(path.join(_document_root, ".webman", "config.json")).toString());
+    let main = JSON.parse(fs.readFileSync(path.join(_documentRoot, ".webman", "config.json")).toString());
     if (main.extends) {
         for (let rawConfigPath of main.extends) {
             let configPath = path.resolve(rawConfigPath);
@@ -612,7 +610,7 @@ function config(_document_root = null) {
 exports.config = config;
 function writeConfig(_config, _document_root = null) {
     if (!_document_root)
-        _document_root = document_root();
+        _document_root = documentRoot();
     let _path = path.join(_document_root, ".webman", "config.json");
     return writeFileSync(_path, JSON.stringify(_config, null, 4));
 }
@@ -649,7 +647,7 @@ function upload_files(local_remote_array, ftp_connection, message = null) {
                 message(local_path, remote_path);
             }
             else {
-                console.log(`${chalk.magentaBright('put file:')} ${chalk.greenBright(forward_slash(local_path))} ${chalk.redBright(`->`)} ${chalk.cyanBright(forward_slash(remote_path))}`);
+                console.log(`${chalk.magentaBright('put file:')} ${chalk.greenBright(forwardSlash(local_path))} ${chalk.redBright(`->`)} ${chalk.cyanBright(forwardSlash(remote_path))}`);
             }
             await new Promise(resolve => {
                 ftp_connection.mkdir(path.dirname(remote_path), true, (err) => {
@@ -671,18 +669,16 @@ function upload_file(local_path, remote_path, ftp_connection, message) {
     ], ftp_connection, message);
 }
 exports.upload_file = upload_file;
-function ftp_config(node_id) {
-    let _node = node(node_id);
-    let _ftp_config = _node.ftp;
-    _ftp_config["host"] = _node.host;
-    _ftp_config["relDirname"] = _node.relDirname;
-    return _ftp_config;
-}
-exports.ftp_config = ftp_config;
-function node_ftp_connection(node_id) {
-    return ftp_connection(ftp_config(node_id));
-}
-exports.node_ftp_connection = node_ftp_connection;
+// export function ftp_config(node_id){
+// 	let _node = node(node_id);
+// 	let _ftp_config = _node.ftp;
+// 	_ftp_config["host"] = _node.host;
+// 	_ftp_config["relDirname"] = _node.relDirname;
+// 	return _ftp_config;
+// }
+// export function node_ftp_connection(node_id){
+// 	return ftp_connection(ftp_config(node_id));
+// }
 function upload_project_files(file_relative_paths, node_id, ftp_connection, message) {
     var local_remote_array = [];
     var _node = node(node_id);
@@ -722,25 +718,24 @@ function project_ftp_mkdir(relative_path, node_id, ftp_connection) {
     return ftp_mkdir(`${remoteDir(node_id)}/${relative_path}`, ftp_connection);
 }
 exports.project_ftp_mkdir = project_ftp_mkdir;
-function hftp_request(node_id, request_options = {}) {
-    var unirest = require("unirest");
-    const _node = node(node_id);
-    request_options = setDefaults({
-        fields: {},
-        attachments: {}
-    }, request_options);
-    return new Promise(resolve => {
-        unirest.post(_node.nodeUrl.concat("/assets/handshake.php")).headers({
-            "Authorization": _node.handshake_auth_key
-        }).field(Object.assign({
-            "auth_key": _node.handshake_auth_key
-        }, request_options.fields)).attach(request_options.attachments).then(async (response) => {
-            response['is_successful'] = response.status === 200 && response.body && response.body.trim().length > 0 && response.body.indexOf('Error: ') === -1 && response.body.indexOf('Redirecting') === -1;
-            resolve(response);
-        });
-    });
-}
-exports.hftp_request = hftp_request;
+// export function hftp_request(node_id,request_options: any = {}){
+// 	var unirest = require("unirest");
+// 	const _node = node(node_id);
+// 	request_options = setDefaults({
+// 		fields:{},
+// 		attachments:{}
+// 	},request_options);
+// 	return new Promise(resolve=>{
+// 		unirest.post(_node.nodeUrl.concat("/assets/handshake.php")).headers({
+// 			"Authorization": _node.handshake_auth_key
+// 		}).field(Object.assign({
+// 			"auth_key":_node.handshake_auth_key
+// 		},request_options.fields)).attach(request_options.attachments).then(async response=>{
+// 			response['is_successful'] = response.status===200 && response.body && response.body.trim().length>0 && response.body.indexOf('Error: ')===-1 && response.body.indexOf('Redirecting')===-1;            
+// 			resolve(response);
+// 		});
+// 	});
+// }
 function base64_encode(non_base64_string) {
     return Buffer.from(non_base64_string).toString('base64');
 }
@@ -762,37 +757,42 @@ function spawn_process(command, options = null) {
     });
 }
 exports.spawn_process = spawn_process;
-function node_ids() {
-    return Object.keys(config()["nodes"]);
+function userPrivateKey() {
+    return path.join(os.homedir(), ".ssh", "id_rsa");
 }
-exports.node_ids = node_ids;
-function node(nodeId) {
-    if (!nodeId)
-        nodeId = node_ids()[0];
-    return config()["nodes"][nodeId];
-}
-exports.node = node;
+exports.userPrivateKey = userPrivateKey;
 function hostname(nodeId) {
     let _node = node(nodeId);
     return _node.hostname || (_node.ssh ? `${_node.ssh.username}_${_node.host}` : nodeId);
 }
 exports.hostname = hostname;
-function identityFile(nodeId) {
-    let _node = node(nodeId);
-    return _node.identityFile || path.join(os.homedir(), ".ssh", "id_rsa");
+function nodeIds() {
+    return Object.keys(config()["nodes"]);
 }
-exports.identityFile = identityFile;
-function root(root_ip_address) {
-    return config()["roots"][root_ip_address];
+exports.nodeIds = nodeIds;
+function node(nodeId) {
+    let _node = config()["nodes"][nodeId];
+    if (!_node.ssh.privateKey)
+        _node.ssh.privateKey = userPrivateKey();
+    return _node;
+}
+exports.node = node;
+function root(rootIpAddress) {
+    let _root = config()["roots"][rootIpAddress];
+    if (!_root.username)
+        _root.username = "root";
+    if (!_root.privateKey)
+        _root.privateKey = userPrivateKey();
+    return _root;
 }
 exports.root = root;
-function node_root(node_id = null) {
-    return root(node(node_id).host);
+function nodeRoot(nodeId) {
+    return root(node(nodeId).host);
 }
-exports.node_root = node_root;
+exports.nodeRoot = nodeRoot;
 function activeNodeIds() {
     let accumulator = [];
-    for (let node_id of node_ids()) {
+    for (let node_id of nodeIds()) {
         if (node(node_id).active !== false)
             accumulator.push(node_id);
     }
@@ -814,7 +814,7 @@ function hstart(command) {
 }
 exports.hstart = hstart;
 function relativeToDocumentRoot(absolute_path) {
-    return path.relative(document_root(), absolute_path);
+    return path.relative(documentRoot(), absolute_path);
 }
 exports.relativeToDocumentRoot = relativeToDocumentRoot;
 var trace_save = exports.trace_save = async function (relative_path, is_source_file, is_specs_file, is_test_mode, node_id = null) {
@@ -868,7 +868,7 @@ var trace_save = exports.trace_save = async function (relative_path, is_source_f
             }
             if (_config.test.active) {
                 let test_rows = [];
-                let node_id = _config.test.node_id;
+                let node_id = _config.test.nodeId;
                 await sqlite.fetch("SELECT node_id,filename FROM test_files WHERE node_id=? AND filename=?", [node_id, filename], conn).then(_rows => {
                     test_rows = _rows;
                 });
@@ -956,7 +956,7 @@ function unique_characters_from_fs(directory_path, length = 7) {
 }
 exports.unique_characters_from_fs = unique_characters_from_fs;
 function newTmpFile(file_extension = "", length = 7) {
-    let _document_root = document_root();
+    let _document_root = documentRoot();
     if (file_extension.length > 0)
         file_extension = ".".concat(file_extension);
     let _tmp_directory = tmp_directory();
@@ -965,26 +965,26 @@ function newTmpFile(file_extension = "", length = 7) {
     return file_path;
 }
 exports.newTmpFile = newTmpFile;
-function template_path(template_relative_path) {
+function templatePath(templateRelativePath) {
     let _project_root = project_root();
-    let _document_root = document_root();
-    let document_file_path = `${_document_root}/.webman/templates/${template_relative_path}`;
-    let project_file_path = `${_project_root}/templates/${template_relative_path}`;
+    let _document_root = documentRoot();
+    let document_file_path = `${_document_root}/.webman/templates/${templateRelativePath}`;
+    let project_file_path = `${_project_root}/templates/${templateRelativePath}`;
     let file_path = document_file_path;
     if (!fs.existsSync(file_path))
         file_path = project_file_path;
     return file_path;
 }
-exports.template_path = template_path;
-function template_content(template_relative_path) {
-    return fs.readFileSync(template_path(template_relative_path)).toString();
+exports.templatePath = templatePath;
+function templateContent(templateRelativePath) {
+    return fs.readFileSync(templatePath(templateRelativePath)).toString();
 }
-exports.template_content = template_content;
-function copyTemplateFile(template_relative_file_path, document_relative_file_path) {
+exports.templateContent = templateContent;
+function copyTemplateFile(templateRelativeFilePath, documentRelativeFilePath) {
     return new Promise(async function () {
-        let _document_root = document_root();
-        let _path = path.join(_document_root, document_relative_file_path);
-        fs.copyFileSync(template_path(template_relative_file_path), _path);
+        let _document_root = documentRoot();
+        let _path = path.join(_document_root, documentRelativeFilePath);
+        fs.copyFileSync(templatePath(templateRelativeFilePath), _path);
         await shellExec(`webman save "${_path}"`);
     });
 }
@@ -994,8 +994,8 @@ function copyProjectTemplateFile(template_relative_file_path) {
 }
 exports.copyProjectTemplateFile = copyProjectTemplateFile;
 function copyTemplateDirectory(template_relative_directory, document_relative_directory) {
-    let _document_root = document_root();
-    return copyFiles(template_path(template_relative_directory), path.join(_document_root, document_relative_directory));
+    let _document_root = documentRoot();
+    return copyFiles(templatePath(template_relative_directory), path.join(_document_root, document_relative_directory));
 }
 exports.copyTemplateDirectory = copyTemplateDirectory;
 function copyProjectTemplateDirectory(template_relative_directory) {
@@ -1067,7 +1067,7 @@ var runProjectSpecificScript = exports.runProjectSpecificScript = async function
         script_name = path.basename(process.argv[1]).concat(".js");
     let scripts_dir = path.join(project_root(), "scripts");
     let filename = unique_characters_from_fs(scripts_dir, 11) + ".js";
-    let script_content = fs.readFileSync(path.join(document_root(), ".webman", "scripts", script_name)).toString();
+    let script_content = fs.readFileSync(path.join(documentRoot(), ".webman", "scripts", script_name)).toString();
     fs.writeFileSync(path.join(scripts_dir, filename), script_content);
     // eventEmitter.on("SIGINT",function(){
     // 	fs.unlinkSync(path.join(scripts_dir,filename));
@@ -1080,7 +1080,7 @@ function setTerminalTitle(title) {
 }
 exports.setTerminalTitle = setTerminalTitle;
 function readlineInterface(historyName) {
-    let _document_root = document_root();
+    let _document_root = documentRoot();
     let historyPath = path.join(_document_root, ".webman", "terminal-histories", historyName + ".json");
     if (!fs.existsSync(path.dirname(historyPath)))
         fsExtra.mkdirpSync(path.dirname(historyPath));
@@ -1104,21 +1104,21 @@ function readlineInterface(historyName) {
 }
 exports.readlineInterface = readlineInterface;
 function saveReadlineInterfaceHistory(historyName, history) {
-    let _document_root = document_root();
+    let _document_root = documentRoot();
     let historyPath = path.join(_document_root, ".webman", "terminal-histories", historyName + ".json");
     fs.writeFileSync(historyPath, JSON.stringify(history, null, 4));
 }
 exports.saveReadlineInterfaceHistory = saveReadlineInterfaceHistory;
 function project_specific_scripts_path() {
-    return path.join(document_root(), ".webman", "scripts");
+    return path.join(documentRoot(), ".webman", "scripts");
 }
 exports.project_specific_scripts_path = project_specific_scripts_path;
 var compileApp = exports.compileApp = async function (appLocation, bundlePath = null, appType = "web") {
-    let _document_root = document_root();
+    let _documentRoot = documentRoot();
     let sPath = appLocation;
     let sPathName = path.basename(sPath);
-    let file_ordinance = path.join(_document_root, "src", sPath, sPathName);
-    let output_file_path = path.join(_document_root, `${sPath}.php`);
+    let file_ordinance = path.join(_documentRoot, "src", sPath, sPathName);
+    let output_file_path = path.join(_documentRoot, `${sPath}.php`);
     var output_file_dir = path.dirname(output_file_path);
     let appIsReact = fs.existsSync(`${file_ordinance}.jsx`);
     switch (appType) {
@@ -1187,7 +1187,7 @@ function n(module) {
 }
 exports.n = n;
 function webpackOptions({ filePath, output, mode }) {
-    let _document_root = document_root();
+    let _document_root = documentRoot();
     let _options = {
         entry: filePath,
         "cache": true,

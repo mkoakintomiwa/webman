@@ -4,7 +4,7 @@ exports.fetch_one = exports.fetch = exports.execute = exports.connection = void 
 const fx = require("./functions");
 const sqlite3 = require("sqlite3");
 function connection() {
-    var document_root = fx.document_root();
+    var document_root = fx.documentRoot();
     return new sqlite3.Database(`${document_root}/.webman/webman.db`);
 }
 exports.connection = connection;
