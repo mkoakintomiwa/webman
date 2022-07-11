@@ -1,0 +1,19 @@
+stages:
+    - deploy
+
+cache:
+    key: $CACHE_BUILD_VERSION
+    paths:
+        - .next/
+        - node_modules/
+
+
+Deploy Build:
+    image: node:16
+    stage: deploy
+    script:
+        - apt update
+        - apt install zip
+        - yarn install
+        - yarn build
+        - cd build && zip -r build.zip * && curl --location --request POST 'https://{{ domainName }}/deploy' --form "commit='$CI_COMMIT_SHORT_SHA'" --form 'build=@"build.zip"'
