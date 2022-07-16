@@ -3,7 +3,8 @@
         "outDir": "scripts",
         "lib": ["es2020"],
         "module": "commonjs",
-        "target": "es2019"
+        "target": "es2019",
+        "skipLibCheck": true
     },
     "include": ["src/**/*.ts","index.d.ts"]
 }
