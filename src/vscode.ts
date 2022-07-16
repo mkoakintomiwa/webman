@@ -1,9 +1,9 @@
-const fs = require("fs");
-const fx = require("./lib/functions");
+import * as fs from "fs"
+import * as fx from "./lib/functions"
 
-let document_root = fx.document_root();
+let document_root = fx.documentRoot();
 let vscode_dir = `${document_root}/.vscode`;
 
 if (!fs.existsSync(vscode_dir)) fs.mkdirSync(vscode_dir);
 
-fs.writeFileSync(`${vscode_dir}/settings.json`,fx.template_content("vscode/settings.json"));
+fs.writeFileSync(`${vscode_dir}/settings.json`,fx.templateContent("vscode/settings.json"));
