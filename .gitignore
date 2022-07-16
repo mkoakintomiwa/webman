@@ -1,5 +1,6 @@
 node
 node_modules
+scripts
 rust/**/Cargo.lock
 rust/**/target
 package-lock.json

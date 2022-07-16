@@ -1,7 +1,7 @@
 const functions = require("./functions");
-const chalk = require("chalk");
-const fs = require("fs");
-const path = require("path");
+var chalk = require("chalk");
+var fs = require("fs");
+var path = require("path");
 var glob = exports.glob = require("glob");
 var argv = require("yargs").argv;
 exports.chalk = chalk;

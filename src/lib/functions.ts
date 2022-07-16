@@ -5,17 +5,24 @@ import * as path from "path";
 import {spawn} from "child_process";
 import * as sqlite from "./sqlite";
 import * as process from "process";
-const readline = require('readline');
+import yargs from "yargs";
+import { hideBin } from 'yargs/helpers'
 import { transpile_react, transpile_typescript, transpile_sass } from "./transpilers";
 import LineManager from "./LineManager";
 import * as glob from "glob";
 import * as chalk from "chalk";
 import { ncp } from "ncp";
 import * as _ from "lodash"
+
+const readline = require('readline');
 require('dotenv').config();
 
 
-class log{
+export function argv(){
+    return yargs(hideBin(process.argv)).parseSync();
+}
+
+export class log{
 
 	static write(content){
 		fs.writeFileSync(this.file(),content);
@@ -36,7 +43,6 @@ class log{
 	}
 }
 
-exports.log = log;
 
 export function remoteDir(nodeId: string){
 	return `/home/${node(nodeId).ssh.username}`;
@@ -556,15 +562,15 @@ var show_in_explorer = exports.show_in_explorer = (file_path,select=true)=>{
 }
 
 
-export function dotted_parameter(object,parameter,value){
+export function dottedParameter(object,parameter,value){
     if (typeof parameter == 'string')
-        return dotted_parameter(object,parameter.split('.'), value);
+        return dottedParameter(object,parameter.split('.'), value);
     else if (parameter.length==1 && value!==undefined)
         return object[parameter[0]] = value;
     else if (parameter.length==0)
         return object;
     else
-        return dotted_parameter(object[parameter[0]],parameter.slice(1), value);
+        return dottedParameter(object[parameter[0]],parameter.slice(1), value);
 }
 
 
@@ -731,96 +737,6 @@ export function ftp_connection(ftp_config){
 		});
 	});
 
-}
-
-
-
-export function upload_files(local_remote_array, ftp_connection, message = null){
-
-	return new Promise<void>(async resolve=>{
-		
-		for (let local_remote of local_remote_array){
-			var local_path = local_remote["local"];
-			var remote_path = local_remote["remote"];
-			
-			console.log();
-
-			if (message){
-				message(local_path,remote_path);
-			}else{
-				console.log(`${chalk.magentaBright('put file:')} ${chalk.greenBright(forwardSlash(local_path))} ${chalk.redBright(`->`)} ${chalk.cyanBright(forwardSlash(remote_path))}`);
-			}
-
-			await new Promise<void>(resolve=>{
-				ftp_connection.mkdir(path.dirname(remote_path),true,(err)=>{
-					resolve();
-				})
-			});
-			
-			await ftp_put(local_path,remote_path, ftp_connection);
-
-			resolve();
-		}
-	});
-}
-
-
-
-export function upload_file(local_path,remote_path,ftp_connection,message){
-	
-	return upload_files([
-		{
-			local:local_path,
-			remote:remote_path
-		}
-	],ftp_connection,message);
-}
-
-
-// export function ftp_config(node_id){
-// 	let _node = node(node_id);
-	
-// 	let _ftp_config = _node.ftp;
-
-// 	_ftp_config["host"] = _node.host;
-// 	_ftp_config["relDirname"] = _node.relDirname;
-// 	return _ftp_config;
-// }
-
-
-// export function node_ftp_connection(node_id){
-// 	return ftp_connection(ftp_config(node_id));
-// }
-
-
-export function upload_project_files(file_relative_paths, node_id, ftp_connection,message){
-	var local_remote_array = [];
-
-	var _node = node(node_id);
-
-	for (let rel_path of file_relative_paths){
-		
-		local_remote_array.push({
-			local: path.join(_node.relDirname,rel_path),
-			remote: `/public_html${_node.relDirname}/${rel_path}`
-		});
-	}
-	return upload_files(local_remote_array, ftp_connection, message);
-}
-
-
-
-export function upload_project_file(file_relative_path, node_id, ftp_connection, message){
-	return upload_project_files([file_relative_path], node_id, ftp_connection, message);
-}
-
-
-export function ftp_put(local_file_path, remote_file_path, ftp_client_connection){
-	return new Promise(resolve=>{
-		ftp_client_connection.put(local_file_path, remote_file_path, function(err) {
-			resolve(err?err:true);
-		});
-	});
 }
 
 
@@ -1475,9 +1391,25 @@ var currentGitToken = exports.currentGitToken = async function(){
 }
 
 
-export function percentageChunk(chunk){
+export function percentageChunk(chunk: string | number | Buffer){
 	return round(parseFloat(chunk.toString().replace("%","")),2)
 }
+
+export function nodeOpenPhpmyadmin(node_id){
+    var _node = fx.node(node_id);
+    var _mysql = _node.mysql;
+    
+    return openInBrowser(`${_node.nodeUrl}/phpmyadmin/${_mysql.phpmyadminAuthKey}`,"chrome");
+};
+
+
+export function nodeRootOpenPhpmyadmin(node_id){
+    var root = fx.node_root(node_id);
+    var _node = fx.node(node_id);
+    var _mysql = _node.mysql;
+    
+    return openInBrowser(`${_node.nodeUrl}/phpmyadmin/${root.mysql.phpmyadminAuthKey}`,"chrome");
+};
 
 let project_functions_path = path.join(project_specific_scripts_path(),"functions.js");
 

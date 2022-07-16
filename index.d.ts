@@ -49,6 +49,8 @@ type SSHSettings = {
     showDescription?: boolean;
 
     showSpinner?: boolean;
+
+    verbose?: boolean;
 }
 
 
@@ -71,6 +73,10 @@ type WebmanNode = {
     relDirname: string;
 
     nodeUrl: string;
+
+    cloudflare: {
+        email: string
+    }
 
     ssh: {
 
@@ -107,6 +113,17 @@ type WebmanRoot = {
     password?: string;
 
     privateKey?: string;
+
+    hostname?: string;
+
+    mysql: {
+        
+        username?: string;
+
+        password?: string;
+
+        phpmyadminAuthKey?: string;
+    }
 }
 
 

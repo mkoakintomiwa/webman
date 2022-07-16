@@ -33,20 +33,22 @@ export function sshOptions(options: NodeSSHOptions = {}): NodeSSHOptions{
 }
 
 
-export function sshSettings(options: SSHSettings = {}): SSHSettings{
+export function sshSettings(settings: SSHSettings = {}): SSHSettings{
     
-    options = fx.setDefaults({
+    settings = fx.setDefaults({
         message: "",
         showDescription:true,
         showSpinner:true,
-        showNodeName: false
-    }, options)
+        showNodeName: false,
+        verbose: true
+    }, settings);
 
     return {
-        message: options.message,
-        showDescription: options.showDescription,
-        showSpinner: options.showSpinner,
-        showNodeName: options.showNodeName
+        message: settings.message,
+        showDescription: settings.showDescription,
+        showSpinner: settings.showSpinner,
+        showNodeName: settings.showNodeName,
+        verbose: settings.verbose
     }
 }
 
@@ -188,21 +190,25 @@ type NodeSSHExecOptions = SSHExecOptions & {
     stream?: 'stdout' | 'stderr';
 }
 
-export function executeCommand(command: string, sshConnection: NodeSSH, options: NodeSSHExecOptions = {}){
+export function executeCommand(command: string, sshConnection: NodeSSH, options: NodeSSHExecOptions = {}, settings: SSHSettings = {}){
 
     options = fx.setDefaults({
         cwd:null
     },options);
+
+    settings = fx.setDefaults({
+        verbose: true
+    }, settings);
 
     return new Promise<void>(resolve=>{
         try{
             sshConnection.exec(command, [], {
                 cwd: options.cwd,
                 onStdout(chunk) {
-                    console.log(chunk.toString());
+                    if (settings.verbose) console.log(chunk.toString());
                 },
                 onStderr(chunk) {
-                    console.log(chunk.toString('utf8'))
+                    if (settings.verbose) console.log(chunk.toString('utf8'))
                 }
             }).then(_=>{
                 resolve();
@@ -210,7 +216,7 @@ export function executeCommand(command: string, sshConnection: NodeSSH, options:
                 resolve();
             })
         }catch(e){
-            console.log(e);
+            if (settings.verbose) console.log(e);
             resolve();
         }
     });
@@ -278,9 +284,9 @@ export function uploadFile(localPath: string, remotePath: string, sshConnection:
 
 
 
-export function putDirectory(localDirectory: string, remoteDirectory: string, sshConnection: NodeSSH, putDirectoryOptions: SSHGetPutDirectoryOptions = {}, options: SSHSettings = {}){
+export function putDirectory(localDirectory: string, remoteDirectory: string, sshConnection: NodeSSH, putDirectoryOptions: SSHGetPutDirectoryOptions = {}, settings: SSHSettings = {}){
 
-    options = sshSettings(options);
+    settings = sshSettings(settings);
 
     putDirectoryOptions = fx.setDefaults({
         recursive: true,
@@ -292,7 +298,7 @@ export function putDirectory(localDirectory: string, remoteDirectory: string, ss
   
     return new Promise<void>(resolve=>{
         try{
-            if (options.showDescription) describeStream(localDirectory, remoteDirectory, "put directory:");
+            if (settings.showDescription) describeStream(localDirectory, remoteDirectory, "put directory:");
             sshConnection.putDirectory(localDirectory,remoteDirectory, putDirectoryOptions).then(()=>{
                 resolve()
             });
@@ -303,11 +309,11 @@ export function putDirectory(localDirectory: string, remoteDirectory: string, ss
 }
 
 
-export function getFile(localFile: string, remoteFile: string, sshConnection: NodeSSH, options: SSHSettings = {}){
+export function getFile(localFile: string, remoteFile: string, sshConnection: NodeSSH, settings: SSHSettings = {}){
     
-    options = sshSettings(options);
+    settings = sshSettings(settings);
 
-    if (options.showDescription) describeStream(remoteFile, localFile, "pull file:");
+    if (settings.showDescription) describeStream(remoteFile, localFile, "pull file:");
 
     return sshConnection.getFile(localFile,remoteFile);
 }
@@ -320,12 +326,12 @@ export function nodeGetFile(relativePath: string, nodeId: string, sshConnection:
 }
 
 
-export function describeNodeProcess(nodeId: string, options: SSHSettings){
-    options = fx.setDefaults({
+export function describeNodeProcess(nodeId: string, settings: SSHSettings){
+    settings = fx.setDefaults({
         showNodeName:false
-    },options);
+    }, settings);
 
-    if(options.showNodeName) console.log(chalk.green(`\n----- ${fx.node(nodeId).name} -----`));
+    if(settings.showNodeName) console.log(chalk.green(`\n----- ${fx.node(nodeId).name} -----`));
 }
 
 export function describeStream(from: string, to: string, message: string = ""){
@@ -334,27 +340,27 @@ export function describeStream(from: string, to: string, message: string = ""){
 }
 
 
-export function nodeUploadFiles(localRemoteFilesArray: LocalRemoteFilesArray,nodeId: string, sshConnection: NodeSSH, options: SSHSettings = {}){
+export function nodeUploadFiles(localRemoteFilesArray: LocalRemoteFilesArray,nodeId: string, sshConnection: NodeSSH, settings: SSHSettings = {}){
 
-    describeNodeProcess(nodeId, options);
+    describeNodeProcess(nodeId, settings);
     
     return uploadFiles(localRemoteFilesArray,sshConnection);
 }
 
 
 
-export function nodeUploadFile(localPath: string, remotePath: string, nodeId: string, sshConnection: NodeSSH, options: SSHSettings = {}){
+export function nodeUploadFile(localPath: string, remotePath: string, nodeId: string, sshConnection: NodeSSH, settings: SSHSettings = {}){
     return nodeUploadFiles([
         {
             "local":localPath,
             "remote": remotePath
         }
-    ],nodeId, sshConnection, options);
+    ],nodeId, sshConnection, settings);
 }
 
 
 
-export function uploadProjectFiles(fileRelativePaths: string[], nodeId: string, sshConnection: NodeSSH, options: SSHSettings = {}){
+export function uploadProjectFiles(fileRelativePaths: string[], nodeId: string, sshConnection: NodeSSH, settings: SSHSettings = {}){
 	var localRemoteArray = [];
 
 	var node = fx.node(nodeId);
@@ -366,11 +372,11 @@ export function uploadProjectFiles(fileRelativePaths: string[], nodeId: string, 
 			remote: fx.remoteNodeDir(nodeId).concat("/").concat(rel_path)
 		});
 	}
-	return nodeUploadFiles(localRemoteArray, nodeId, sshConnection, options);
+	return nodeUploadFiles(localRemoteArray, nodeId, sshConnection, settings);
 }
 
 
 
-export function uploadProjectFile(fileRelativePath: string, nodeId: string, sshConnection: NodeSSH, options: SSHSettings){
-	return uploadProjectFiles([fileRelativePath], nodeId, sshConnection, options);
+export function uploadProjectFile(fileRelativePath: string, nodeId: string, sshConnection: NodeSSH, settings: SSHSettings={}){
+	return uploadProjectFiles([fileRelativePath], nodeId, sshConnection, settings);
 }
