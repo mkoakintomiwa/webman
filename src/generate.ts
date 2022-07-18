@@ -1,14 +1,15 @@
-var fs = require("fs");
-var path = require("path");
-var ssh = require("./ssh");
-var fx = require("./lib/functions");
+import * as fs from "fs"
+import * as path from "path"
+import * as ssh from "./lib/ssh"
+import * as fx from "./lib/functions"
+
 var argv = require("yargs").argv;
 
 var context = argv._[0];
 
 var node_ids = fx.arg_node_ids(argv);
 
-var _document_root = fx.document_root();
+var _document_root = fx.documentRoot();
 
 let _project_root = fx.project_root();
 
@@ -29,7 +30,14 @@ let _project_root = fx.project_root();
                     ssh_connection = x;
                 });
 
-                await ssh.node_upload_file(fx.relativeToDocumentRoot(tmp_file),fx.remoteNodeDir(node_id).concat("/settings.json"),node_id,ssh_connection);
+                await ssh.nodeUploadFile(
+                    fx.relativeToDocumentRoot(
+                        tmp_file),
+                        fx.remoteNodeDir(node_id).concat("/settings.json"
+                    )
+                    ,node_id
+                    ,ssh_connection
+                );
 
                 let root_ssh_connection = await ssh.nodeRootSSHConnection(node_id);
 
@@ -40,7 +48,7 @@ user = ${node.mysql.username}
 password = ${node.mysql.password}
 `);
 
-                await ssh.node_upload_file(fx.relativeToDocumentRoot(cnf_tmp),`/home/${node.ssh.username}/.my.cnf`,node_id,root_ssh_connection);
+                await ssh.nodeUploadFile(fx.relativeToDocumentRoot(cnf_tmp),`/home/${node.ssh.username}/.my.cnf`,node_id,root_ssh_connection);
 
                 ssh_connection.dispose();
                 root_ssh_connection.dispose();
