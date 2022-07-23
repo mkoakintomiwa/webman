@@ -1395,17 +1395,17 @@ export function percentageChunk(chunk: string | number | Buffer){
 	return round(parseFloat(chunk.toString().replace("%","")),2)
 }
 
-export function nodeOpenPhpmyadmin(node_id){
-    var _node = fx.node(node_id);
+export function nodeOpenPhpmyadmin(nodeId: string){
+    var _node = node(nodeId);
     var _mysql = _node.mysql;
     
     return openInBrowser(`${_node.nodeUrl}/phpmyadmin/${_mysql.phpmyadminAuthKey}`,"chrome");
 };
 
 
-export function nodeRootOpenPhpmyadmin(node_id){
-    var root = fx.node_root(node_id);
-    var _node = fx.node(node_id);
+export function nodeRootOpenPhpmyadmin(nodeId: string){
+    var root = nodeRoot(nodeId);
+    var _node = node(nodeId);
     var _mysql = _node.mysql;
     
     return openInBrowser(`${_node.nodeUrl}/phpmyadmin/${root.mysql.phpmyadminAuthKey}`,"chrome");
