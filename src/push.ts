@@ -19,6 +19,8 @@ program
     .name("public-key")
     .description("upload public key to nodes using username and password")
     .argument("[nodeId]","NodeId to push receive public key")
+    .option("--hostname","Indicate remote dev for hostname, --ip required",false)
+    .option("--ip <ip-address>","IP Address of the root node")
     .option("-z,--root-ip <root-ip-address>","IP Address of root in config")
     .action(async(nodeId,flags)=>{
         if (nodeId){
@@ -37,7 +39,31 @@ program
             sshConnection.dispose();
 
             console.log(`\nPublic key successfully uploaded\n`);
+        
+        }else if (flags.hostname){
+            
+            let ip = flags.ip;
+
+            let root = fx.root(ip);
+            
+            let sshConnection = await ssh.sshConnection(ssh.sshOptions({ host: ip, username: "hostname", password: root.password }));
+
+            let publicKeyPath = path.join(os.homedir(),".ssh","id_rsa.pub");
+
+            let remoteHomeDir = `/home/hostname`;
+
+            await ssh.uploadFile(publicKeyPath,`${remoteHomeDir}/authorized_keys.chunk`,sshConnection);
+
+            await ssh.executeCommand(`mkdir -p .ssh && chmod 700 .ssh && cat authorized_keys.chunk >> .ssh/authorized_keys && chmod 644 .ssh/authorized_keys && rm authorized_keys.chunk`,sshConnection,{
+                cwd: remoteHomeDir
+            });
+
+            sshConnection.dispose();
+
+            console.log(`\nPublic key successfully uploaded\n`);
+
         }else if (flags.rootIp){
+            
             let rootIp = flags.rootIp;
             
             let sshConnection = await ssh.rootSSHConnection(rootIp);

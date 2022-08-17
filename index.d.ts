@@ -25,7 +25,7 @@ type NodeSSHOptions = {
 
     username?: string;
 
-    privateKey?: string;
+    privateKey?: string | Buffer;
 
     password?: string;
 

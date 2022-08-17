@@ -1,7 +1,7 @@
 import * as fx from "./functions";
 const chalk = require('chalk');
 import { NodeSSH, SSHExecOptions, SSHGetPutDirectoryOptions } from "node-ssh";
-const { Client } = require('ssh2');
+import { Client } from 'ssh2';
 var readline = require('readline');
 import * as fs from "fs";
 var stdout = require('./stdout');
@@ -93,9 +93,11 @@ export function rootSSHOptions(rootIp: string): NodeSSHOptions{
 }
 
 
-export function interactiveShell(options: NodeSSHOptions, command: string = null){
+export function interactiveShell(command: string = null, options: NodeSSHOptions = {}){
   
     options = sshOptions(options);
+
+    options.privateKey = fs.readFileSync(options.privateKey);
 
     return new Promise<void>(resolve=>{
         var conn = new Client();
@@ -149,6 +151,9 @@ export function interactiveShell(options: NodeSSHOptions, command: string = null
 }
 
 
+export function nodeInteractiveShell(nodeId: string){
+    return interactiveShell(null, nodeSSHOptions(nodeId));
+}
 
 
 export async function sshConnection(options: NodeSSHOptions = {}){
@@ -157,7 +162,7 @@ export async function sshConnection(options: NodeSSHOptions = {}){
     
     await new Promise<void>((resolve,reject)=>{
         try{
-            ssh.connect(options).then(()=>{
+            ssh.connect(options as any).then(()=>{
                 resolve();
             }).catch(e=>{
                 console.log(e);

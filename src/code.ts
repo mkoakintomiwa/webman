@@ -14,7 +14,7 @@ program
         let defaultRemoteDir: string;
         
         if (flags.hostname){
-            Host = `root@${flags.ip}`;
+            Host = `hostname@${flags.ip}`;
             defaultRemoteDir = `/home/hostname/public_html`;
         }else{
             Host = fx.hostname(nodeId);
