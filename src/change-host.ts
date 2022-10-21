@@ -57,7 +57,7 @@ let node_ids = fx.arg_node_ids(argv);
 
             await ssh.executeCommand(`cd public_html/specs && rm -rf ${node_id}.zip && zip -r ${node_id}.zip .`,nodeSSHConnection);
 
-            await ssh.executeCommand(`cd public_html/specs &&  node /nodejs/scp --host ${new_host_ip} --username ${new_host_username}  --password '${node.ssh.password}' --local-file-path '${node_id}.zip' --remote-file-path '/home/${new_host_username}/public_html/${node_id}.zip'`,nodeSSHConnection);
+            await ssh.executeCommand(`cd public_html/specs &&  node /nodejs/scp ${node_id}.zip  ${new_host_username}@${new_host_ip}:/home/${new_host_username}/public_html/${node_id}.zip  -p '${node.ssh.password}'`,nodeSSHConnection);
 
             await ssh.executeCommand(`cd public_html/specs && rm -rf ${node_id}.zip`,nodeSSHConnection);
 
@@ -67,7 +67,7 @@ let node_ids = fx.arg_node_ids(argv);
 
         for (let db_name of node.mysql.databases){
             
-            await ssh.executeCommand(`cd /home/${node.ssh.username} && mysqldump -u root ${db_name} > ${db_name}.sql && node /nodejs/scp --host ${new_host_ip} --username ${new_host_username}  --password '${node.ssh.password}' --local-file-path '${db_name}.sql' --remote-file-path '/home/${new_host_username}/${db_name}.sql'`,nodeRootSSHConnection);
+            await ssh.executeCommand(`cd /home/${node.ssh.username} && mysqldump -u root ${db_name} > ${db_name}.sql && node /nodejs/scp ${db_name}.sql ${new_host_username}@${new_host_ip}:/home/${new_host_username}/${db_name}.sql  -p '${node.ssh.password}'`,nodeRootSSHConnection);
 
             let command = `mysql --execute "DROP DATABASE IF EXISTS ${db_name}; CREATE DATABASE IF NOT EXISTS ${db_name}; GRANT ALL ON ${db_name}.* TO '${node.mysql.username}'@'localhost';flush privileges;"`;
             
@@ -84,19 +84,16 @@ let node_ids = fx.arg_node_ids(argv);
 
             await ssh.executeCommand(`mv public_html/${node_id}.zip ${node_id}.zip && cd public_html && rm -rf * && rm -rf .*`,ssh_connection);
 
-            //let gitToken = (await fx.currentGitToken()).portalBeta;
-
-            //await ssh.executeCommand(`cd public_html && git init && git config user.name icitify && git config user.email icitifyportals@gmail.com && git remote add origin https://icitify:${gitToken}@github.com/icitify/portal-beta && git pull origin master && mkdir specs && mv ../${node_id}.zip specs/${node_id}.zip && cd specs && unzip -o ${node_id}.zip && rm -rf ${node_id}.zip`,ssh_connection);
+            await ssh.executeCommand(`cd public_html && git clone https://icitifysolution:glpat-zy4ciXhRSvJTq4eV94jQ@gitlab.com/icitifysms/portal.git . && git config user.name icitify && git config user.email icitifyportals@gmail.com && mkdir specs && mv ../${node_id}.zip specs/${node_id}.zip && cd specs && unzip -o ${node_id}.zip && rm -rf ${node_id}.zip`,ssh_connection);
         }
 
         
 
-        await fx.shellExec(`_ set nodes.${node_id}.host ${new_host_ip}`);
-        await fx.shellExec(`_ set nodes.${node_id}.ssh.username ${new_host_username}`);
-        await fx.shellExec(`_ set nodes.${node_id}.ftp.user ${new_host_username}`);
+        await fx.shellExec(`webman set nodes.${node_id}.host ${new_host_ip}`);
+        await fx.shellExec(`webman set nodes.${node_id}.ssh.username ${new_host_username}`);
 
 
-        await fx.shellExec(`_ generate settings.json -n ${node_id}`);
+        await fx.shellExec(`webman push config ${node_id}`);
 
         await ssh.executeCommand(`cd public_html && npm i ejs && cd updates && npm i && node run.js`,ssh_connection);
         
@@ -104,7 +101,7 @@ let node_ids = fx.arg_node_ids(argv);
             // await fx.shellExec(`webman run update htaccess --node-id ${node_id}`).catch(e=>{});
             // await fx.shellExec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
             
-            await fx.shellExec(`_ cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
+            await fx.shellExec(`webman cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
         }
             
         console.log(`\nCheck IP Address: ${node.nodeUrl}/ip-address`);
