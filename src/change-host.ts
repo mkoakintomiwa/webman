@@ -32,6 +32,14 @@ let node_ids = fx.arg_node_ids(argv);
         let nodeSSHConnection = await ssh.nodeSSHConnection(node_id);
         let nodeRootSSHConnection = await ssh.nodeRootSSHConnection(node_id);
 
+        const nodeSSHConnectionInterval = setInterval(()=>{
+            nodeSSHConnection.exec("ls",[]);
+        },1000);
+
+        const nodeRootSSHConnectionInterval = setInterval(() => {
+            nodeRootSSHConnection.exec("ls",[]);
+        },1000);
+
         let config = fx.config();
         // @ts-ignore
         let new_host_root = config["roots"][new_host_ip];
@@ -55,10 +63,11 @@ let node_ids = fx.arg_node_ids(argv);
 
         if (!argv.d){
 
-            await ssh.executeCommand(`cd public_html/specs && rm -rf ${node_id}.zip && zip -r ${node_id}.zip .`,nodeSSHConnection);
+            if (!argv["skip-compress"]){
+                await ssh.executeCommand(`cd public_html/specs && rm -rf ${node_id}.zip && zip -r ${node_id}.zip .`,nodeSSHConnection);
 
-            await ssh.executeCommand(`cd public_html/specs &&  node /nodejs/scp ${node_id}.zip  ${new_host_username}@${new_host_ip}:/home/${new_host_username}/public_html/${node_id}.zip  -p '${node.ssh.password}'`,nodeSSHConnection);
-
+                await ssh.executeCommand(`cd public_html/specs &&  node /nodejs/scp ${node_id}.zip  ${new_host_username}@${new_host_ip}:/home/${new_host_username}/public_html/${node_id}.zip  -p '${node.ssh.password}'`,nodeSSHConnection);
+            }
             await ssh.executeCommand(`cd public_html/specs && rm -rf ${node_id}.zip`,nodeSSHConnection);
 
         } 
@@ -107,8 +116,8 @@ let node_ids = fx.arg_node_ids(argv);
         console.log(`\nCheck IP Address: ${node.nodeUrl}/ip-address`);
 
         console.log(`\nNode URL: ${node.nodeUrl}\n\n`);
-        
 
+        
         ssh_connection.dispose();
         ssh_root_connection.dispose();
         nodeSSHConnection.dispose();

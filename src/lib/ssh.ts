@@ -15,7 +15,7 @@ export function sshOptions(options: NodeSSHOptions = {}): NodeSSHOptions{
     
     var options = fx.setDefaults({
         privateKey: path.join(os.homedir(),".ssh","id_rsa"),
-        readyTimeout: 99999,
+        readyTimeout: 99999999,
         port:22,
         cwd:null
     },options); 
