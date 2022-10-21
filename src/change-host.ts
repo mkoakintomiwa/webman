@@ -54,7 +54,7 @@ let node_ids = fx.arg_node_ids(argv);
         });
 
 
-        if (!argv.d){
+        if (!argv.d && !argv["continue"]){
 
             if (!argv["skip-compress"]){
                 await ssh.executeCommand(`cd public_html/specs && rm -rf ${node_id}.zip && zip -r ${node_id}.zip .`,nodeSSHConnection);
@@ -65,19 +65,23 @@ let node_ids = fx.arg_node_ids(argv);
 
         } 
 
-        await ssh.executeCommand(`mysql --execute "CREATE USER '${node.mysql.username}'@'localhost' IDENTIFIED BY '${node.mysql.password}';"`,ssh_root_connection);
+        if (!argv["continue"]){
 
-        for (let db_name of node.mysql.databases){
-            
-            await ssh.executeCommand(`cd /home/${node.ssh.username} && mysqldump -u root ${db_name} > ${db_name}.sql && node /nodejs/scp ${db_name}.sql ${new_host_username}@${new_host_ip}:/home/${new_host_username}/${db_name}.sql  -p '${node.ssh.password}'`,nodeRootSSHConnection);
+            await ssh.executeCommand(`mysql --execute "CREATE USER '${node.mysql.username}'@'localhost' IDENTIFIED BY '${node.mysql.password}';"`,ssh_root_connection);
 
-            let command = `mysql --execute "DROP DATABASE IF EXISTS ${db_name}; CREATE DATABASE IF NOT EXISTS ${db_name}; GRANT ALL ON ${db_name}.* TO '${node.mysql.username}'@'localhost';flush privileges;"`;
-            
-            console.log(command)
+            for (let db_name of node.mysql.databases){
+                
+                await ssh.executeCommand(`cd /home/${node.ssh.username} && mysqldump -u root ${db_name} > ${db_name}.sql && node /nodejs/scp ${db_name}.sql ${new_host_username}@${new_host_ip}:/home/${new_host_username}/${db_name}.sql  -p '${node.ssh.password}'`,nodeRootSSHConnection);
 
-            await ssh.executeCommand(command,ssh_root_connection);
+                let command = `mysql --execute "DROP DATABASE IF EXISTS ${db_name}; CREATE DATABASE IF NOT EXISTS ${db_name}; GRANT ALL ON ${db_name}.* TO '${node.mysql.username}'@'localhost';flush privileges;"`;
+                
+                console.log(command)
 
-            await ssh.executeCommand(`cd /home/${new_host_username} && mysql -u root ${db_name} < ${db_name}.sql && rm -rf ${db_name}.sql`,ssh_root_connection);
+                await ssh.executeCommand(command,ssh_root_connection);
+
+                await ssh.executeCommand(`cd /home/${new_host_username} && mysql -u root ${db_name} < ${db_name}.sql && rm -rf ${db_name}.sql`,ssh_root_connection);
+
+            }
 
         }
 
@@ -87,28 +91,29 @@ let node_ids = fx.arg_node_ids(argv);
             await ssh.executeCommand(`mv public_html/${node_id}.zip ${node_id}.zip && cd public_html && rm -rf * && rm -rf .*`,ssh_connection);
 
             await ssh.executeCommand(`cd public_html && git clone https://icitifysolution:glpat-zy4ciXhRSvJTq4eV94jQ@gitlab.com/icitifysms/portal.git . && git config user.name icitify && git config user.email icitifyportals@gmail.com && mkdir specs && mv ../${node_id}.zip specs/${node_id}.zip && cd specs && unzip -o ${node_id}.zip && rm -rf ${node_id}.zip`,ssh_connection);
-        }
+        
 
         
 
-        await fx.shellExec(`webman set nodes.${node_id}.host ${new_host_ip}`);
-        await fx.shellExec(`webman set nodes.${node_id}.ssh.username ${new_host_username}`);
+            await fx.shellExec(`webman set nodes.${node_id}.host ${new_host_ip}`);
+            await fx.shellExec(`webman set nodes.${node_id}.ssh.username ${new_host_username}`);
 
 
-        await fx.shellExec(`webman push config ${node_id}`);
+            await fx.shellExec(`webman push config ${node_id}`);
 
-        await ssh.executeCommand(`cd public_html && npm i ejs && cd updates && npm i && node run.js`,ssh_connection);
+            await ssh.executeCommand(`cd public_html && npm i ejs && cd updates && npm i && node run.js`,ssh_connection);
         
-        if(!argv.d){
+    
             // await fx.shellExec(`webman run update htaccess --node-id ${node_id}`).catch(e=>{});
             // await fx.shellExec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
             
             await fx.shellExec(`webman cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
-        }
+        
             
-        console.log(`\nCheck IP Address: ${node.nodeUrl}/ip-address`);
+            console.log(`\nCheck IP Address: ${node.nodeUrl}/ip-address`);
 
-        console.log(`\nNode URL: ${node.nodeUrl}\n\n`);
+            console.log(`\nNode URL: ${node.nodeUrl}\n\n`);
+        }
 
 
         ssh_connection.dispose();
