@@ -32,13 +32,6 @@ let node_ids = fx.arg_node_ids(argv);
         let nodeSSHConnection = await ssh.nodeSSHConnection(node_id);
         let nodeRootSSHConnection = await ssh.nodeRootSSHConnection(node_id);
 
-        const nodeSSHConnectionInterval = setInterval(()=>{
-            nodeSSHConnection.exec("ls",[]);
-        },1000);
-
-        const nodeRootSSHConnectionInterval = setInterval(() => {
-            nodeRootSSHConnection.exec("ls",[]);
-        },1000);
 
         let config = fx.config();
         // @ts-ignore
@@ -117,7 +110,7 @@ let node_ids = fx.arg_node_ids(argv);
 
         console.log(`\nNode URL: ${node.nodeUrl}\n\n`);
 
-        
+
         ssh_connection.dispose();
         ssh_root_connection.dispose();
         nodeSSHConnection.dispose();
