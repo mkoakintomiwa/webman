@@ -121,6 +121,44 @@ program
         
     });
 
+
+
+ program
+    .command("firebase-service-account")
+    .name("firebase-service-account")
+    .description("upload firebase service account to nodes")
+    .argument("[nodeId]","NodeId to push receive firebase service account")
+    .option("--remote","Upload whole config to all remotes in configRemotes using ssh")
+    .option("-a,--all","Upload config to all nodes")
+    .action(async (nodeId, flags)=>{
+        let config = fx.config();
+
+        if (nodeId){
+            pushFirebaseServiceAccount(nodeId);
+        }
+
+        if (flags.all){
+            let nodeIds = fx.activeNodeIds();
+
+            fx.println();
+
+            for (let nodeId of nodeIds){
+                let node = fx.node(nodeId);
+                console.log(chalk.cyanBright(`----------------------------  ${node.name|| ""} (${nodeId})  --------------------`))
+                await pushFirebaseServiceAccount(nodeId);
+                console.log(`\n\n`)
+            }
+        }
+
+        if (flags.remote){
+            for (let remote of config.remotes){
+                console.log(chalk.magentaBright(`\nPushing to ${remote}\n`))
+                await fx.shellExec(`scp ${documentRoot}/.webman/config.json ${remote}`);
+            }
+        }
+        
+    });
+
 program.parse();
 
 
@@ -157,5 +195,22 @@ password = ${node.mysql.password}
 
     fs.unlinkSync(tmpFile);
     if (cnfTmp) fs.unlinkSync(cnfTmp);
+    fx.println();
+}
+
+
+
+
+async function pushFirebaseServiceAccount(nodeId: string){
+    
+    let node = fx.node(nodeId);
+
+    let sshConnection = await ssh.nodeSSHConnection(nodeId);
+
+    await ssh.nodeUploadFile(fx.relativeToDocumentRoot(`mobile-development/appdata/${nodeId}/service_account_credentials.json`),`${fx.remotePublicHtml(nodeId)}/assets/firebase/service_account_credentials.json`,nodeId, sshConnection);
+    
+    sshConnection.dispose();
+
+   
     fx.println();
 }
