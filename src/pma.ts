@@ -20,4 +20,4 @@ const nodeId = argv._[0];
         }
         fx.nodeOpenPhpmyadmin(nodeId);
     }
-});
+})();
