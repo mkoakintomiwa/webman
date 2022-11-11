@@ -12,3 +12,5 @@ if (argv["root"]){
 }else{
     fx.nodeOpenPhpmyadmin(nodeId);
 }
+
+console.log(`Run 'webman install phpmyadmin --node-id ${nodeId}' if phpmyadmin directory does not exist`);
