@@ -1,16 +1,23 @@
-import * as fs from "fs"
 import * as fx from "./lib/functions"
-import * as path from "path"
+import { spawnSync } from "child_process"
 
 const argv = require("yargs").argv;
 const chalk = require("chalk");
 
 const nodeId = argv._[0];
-
-if (argv["root"]){
-    fx.nodeRootOpenPhpmyadmin(nodeId);
-}else{
-    fx.nodeOpenPhpmyadmin(nodeId);
-}
-
-console.log(`Run 'webman install phpmyadmin --node-id ${nodeId}' if phpmyadmin directory does not exist`);
+(async () => {
+    if (argv["root"]){
+        fx.nodeRootOpenPhpmyadmin(nodeId);
+    }else{
+        const node = fx.node(nodeId);
+        const mysql = node.mysql;
+        let pmaLink = `${node.nodeUrl}/phpmyadmin/${mysql.phpmyadminAuthKey}`;
+        let output = spawnSync("bash",["-c", `curl -I ${pmaLink} | head -n 1`]).stdout.toString();
+        let statusCode = parseInt(output.split(/\s+/)[1]);
+        
+        if (statusCode === 404){
+            await fx.shellExec(`webman install phpmyadmin --node-id ${nodeId}`)
+        }
+        fx.nodeOpenPhpmyadmin(nodeId);
+    }
+});
