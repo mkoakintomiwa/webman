@@ -189,6 +189,10 @@ password = ${node.mysql.password}
 `);
 
         await ssh.nodeUploadFile(fx.relativeToDocumentRoot(cnfTmp),`/home/${node.ssh.username}/.my.cnf`,nodeId, sshConnection);
+
+        await ssh.nodeUploadFile(".aws/credentials",`/home/${node.ssh.username}/.aws/credentials`,nodeId, sshConnection);
+
+        await ssh.nodeUploadFile(".aws/config",`/home/${node.ssh.username}/.aws/config`,nodeId, sshConnection);
     }
     
     sshConnection.dispose();
