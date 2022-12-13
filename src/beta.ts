@@ -47,7 +47,7 @@ const context = argv._[0];
 
 
 
-                await fx.shellExec(`webman generate settings.json -n ${nodeId}`);
+                await fx.shellExec(`webman push config ${nodeId}`);
 
 
                 console.log(chalk.cyanBright(`\nUploading database dumps to ${betaNode.ssh.username}@${betaNode.host} \n`));
