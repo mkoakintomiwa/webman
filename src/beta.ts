@@ -19,7 +19,7 @@ const context = argv._[0];
                 let betaSSHConnection = await ssh.nodeSSHConnection("beta");
                 console.log(`Connected`);
                
-                await betaSSHConnection.exec(`node nodejs/backup/install "${node.domainName}"`, [], {
+                await betaSSHConnection.exec(`node nodejs/backup/install "${backupBucketName(nodeId, node)}"`, [], {
                     cwd: fx.remotePublicHtml("beta"),
                     onStdout: chunk => {
                         console.log(chunk.toString());
@@ -111,3 +111,8 @@ const context = argv._[0];
             }
     }
 })();
+
+
+function backupBucketName(nodeId: string, node: WebmanNode){
+    return `${node.domainName.replace(/\./g,"-")}-icitifysms-${nodeId}`;   
+}

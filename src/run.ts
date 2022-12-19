@@ -8,7 +8,7 @@ const argv = require("yargs").parseSync();
 
 
 
-let _document_root = fx.document_root();
+let _document_root = fx.documentRoot();
 var run_through;
 var rootRun = false;
 
@@ -164,7 +164,7 @@ function run_command(context_id){
                             cwd: "/root"
                         });
                     }else{
-                        await ssh.nodeExecuteCommand(custom_command, node,ssh_connection);
+                        await ssh.nodeExecuteCommand(custom_command, nodeId, ssh_connection);
                     }
                         
                 }
