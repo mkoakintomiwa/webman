@@ -18,20 +18,25 @@ program
     .option("--ip <ip-address>","IP Address of the root node")
     .option("-z,--root-ip <root-ip-address>","IP Address of root in config")
     .action(async(nodeId,flags)=>{
+        
+        console.log();
+
         if (nodeId){
-            let node = fx.node(nodeId);
             console.log();
+            let node = fx.node(nodeId);
             fx.shellExec(`ssh -t ${node.ssh.username}@${node.host} "cd ${node.home} ; bash --login"`);
         }else if (flags.hostname){
             
             let ip = flags.ip;
 
-            let root = fx.root(ip);
+            fx.shellExec(`ssh -t hostname@${ip} "cd /home/hostname ; bash --login"`);
     
 
         }else if (flags.rootIp){
             
             let rootIp = flags.rootIp;
+
+             fx.shellExec(`ssh -t root@${rootIp} "cd / ; bash --login"`);
             
         }
     });
