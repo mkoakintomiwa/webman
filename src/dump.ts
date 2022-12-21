@@ -41,5 +41,4 @@ switch(context){
 
 function dump(command){
     console.log(command);
-    fx.copy_to_clipboard(command);   
 }
