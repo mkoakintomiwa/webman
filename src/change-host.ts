@@ -3,6 +3,7 @@ import * as fx from "./lib/functions"
 import * as path from "path"
 import * as ssh from "./lib/ssh"
 import axios from "axios"
+import { spawnSync } from "child_process"
 
 const argv = require("yargs").parseSync();
 const sx = require("./lib/stdout");
@@ -108,9 +109,11 @@ let node_ids = fx.arg_node_ids(argv);
             // await fx.shellExec(`webman run update cronjob --node-id ${node_id}`).catch(e=>{});
             
             await fx.shellExec(`webman cloudflare dns update -h ${new_host_ip} -n ${node_id}`);
+
+            await new Promise(resolve=>setTimeout(resolve, 7000));
         
-            
-            console.log(`\nCheck IP Address: ${node.nodeUrl}/ip-address`);
+            console.log(`\nExpected IP: ${new_host_ip}`);
+            console.log(`Actual IP: ${fx.nodeIp(node_id)}`);
 
             console.log(`\nNode URL: ${node.nodeUrl}\n\n`);
         }

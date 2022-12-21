@@ -19,13 +19,14 @@ let node = fx.node(node_id);
 var parsed = psl.parse(node.domainName);
 
 // @ts-ignore
-let rootDomainName = parsed.domain;
+let rootDomainName: string;
 
 let cloudflare = node.cloudflare;
 
 if (cloudflare){
 
-    let cloudflareAccounts = JSON.parse(fs.readFileSync(path.join(document_root,".webman","cloudflare","accounts.json")).toString());
+    let cloudflareAccounts = JSON.parse(fs.readFileSync(path.join(document_root,".cloudflare","accounts.json")).toString());
+    let cloudflareServerAccount = JSON.parse(fs.readFileSync(path.join(document_root,".cloudflare","server-account.json")).toString());
 
 
     // @ts-ignore
@@ -33,14 +34,31 @@ if (cloudflare){
     // @ts-ignore
     let activity = argv._[1];
 
-    let email = cloudflare.email;
-    let account = cloudflareAccounts[email];
+    let email: string;
+    let account: Record<string, any>
+    let cloudflareHeaders: Record<string, any>
 
-    let cloudflareHeaders = {
-        'X-Auth-Email': email,
-        'X-Auth-Key': account.auth_key,
-        'Content-Type': 'application/json'
-    };
+    if (context === "server"){
+        email = cloudflareServerAccount.username;
+
+        cloudflareHeaders = {
+            'X-Auth-Email': email,
+            'X-Auth-Key': cloudflareServerAccount.auth_key,
+            'Content-Type': 'application/json'
+        };
+        rootDomainName = cloudflareServerAccount.domain;
+
+    }else{
+        email = cloudflare.email;
+        account = cloudflareAccounts[email];
+        rootDomainName = parsed.domain;
+
+        cloudflareHeaders = {
+            'X-Auth-Email': email,
+            'X-Auth-Key': account.auth_key,
+            'Content-Type': 'application/json'
+        };
+    }
 
     let cloudflareEndpoint = `https://api.cloudflare.com/client/v4`;
 
@@ -119,6 +137,38 @@ if (cloudflare){
                     break;
                 }
             break;
+
+
+            case "server":
+
+                switch(activity){
+                    
+                    case "update":
+                        
+                        let dns = await getDNSRecord();  
+
+                        // @ts-ignore
+                        axios({
+                            method: 'put',
+                            url: `${cloudflareEndpoint}/zones/${dns.zone_id}/dns_records/${dns.id}`,
+                            headers: cloudflareHeaders,
+                            data: JSON.stringify({
+                                "type":"A",
+                                "name": `${argv._[2]}.${cloudflareServerAccount.domain}`,
+                                "content":argv._[3],
+                                "ttl": 1,
+                                "proxied": false
+                            })
+                        }).then(function (response) {
+                            if (response.data.success){
+                                console.log("DNS Record successfully updated")
+                            }else{
+                                console.log(response.data);
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                }
         }
     })();
 
@@ -163,10 +213,14 @@ if (cloudflare){
 
 
     async function getDNSRecord(){
-
-        for (let record of await dnsARecords()){
-            if (record.name === node.domainName){
-                return record;
+        let _dnsRecords = await dnsARecords();
+        if (context === "server"){
+            return _dnsRecords[0];
+        }else{
+            for (let record of _dnsRecords){
+                if (record.name === node.domainName){
+                    return record;
+                }
             }
         }
         return null;

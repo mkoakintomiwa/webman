@@ -13,6 +13,7 @@ import * as glob from "glob";
 import * as chalk from "chalk";
 import { ncp } from "ncp";
 import * as _ from "lodash"
+import { spawnSync } from "child_process"
 
 const readline = require('readline');
 require('dotenv').config();
@@ -1410,6 +1411,11 @@ export function nodeRootOpenPhpmyadmin(nodeId: string){
     
     return openInBrowser(`${_node.nodeUrl}/phpmyadmin/${root.mysql.phpmyadminAuthKey}`,"chrome");
 };
+
+export function nodeIp(nodeId: string){
+	let _node = node(nodeId);
+	return spawnSync("bash",["-c", `curl -L ${_node.domainName}/ip-address`]).stdout.toString();
+}
 
 let project_functions_path = path.join(project_specific_scripts_path(),"functions.js");
 
