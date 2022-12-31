@@ -830,6 +830,7 @@ export function nodeIds(){
 export function node(nodeId: string): WebmanNode{
 	let _node: WebmanNode = config()["nodes"][nodeId];
 
+	if (!_node.relDirname) _node.relDirname = "";
 	if (!_node.ssh.privateKey) _node.ssh.privateKey = userPrivateKey();
 
 	return _node;
